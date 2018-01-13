@@ -105,9 +105,9 @@ public class functions{
     }
 
     static public void moveArcade(Gamepad gamepad) throws InterruptedException{
-        double r = Math.hypot(-scaleInputPowerOf2(gamepad.left_stick_x), scaleInputPowerOf2(gamepad.left_stick_y));
-        double robotAngle = Math.atan2(scaleInputPowerOf2(gamepad.left_stick_y), scaleInputPowerOf2(-gamepad.left_stick_x)) - Math.PI / 4;
-        double rightX = scaleInputPowerOf2(-gamepad.right_stick_x);
+        double r = Math.hypot(-scaleInputFixedSpeed(gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+        double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
+        double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
