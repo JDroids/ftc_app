@@ -14,8 +14,8 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
  * Created by dansm on 12/21/2017.
  */
 
-@Autonomous(name="REDRecoveryAuto")
-public class redRecoveryAuto extends LinearOpMode{
+@Autonomous(name="REDJudgeAuto")
+public class redJudgeAuto extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -24,7 +24,7 @@ public class redRecoveryAuto extends LinearOpMode{
 
         initHardwareMap(hardwareMap);
 
-        initServos(false);
+        initServos(AUTONOMOUS);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -72,10 +72,16 @@ public class redRecoveryAuto extends LinearOpMode{
 
         moveLiftForTime(0.3, 1000, this);
 
+        sleep(100);
+
+        moveForTime(-0.3, 500, this);
+
+        turn(90, this);
+
         //go to cryptobox
         moveUntilCryptoWallv2(distanceToWall,vuMark, this);
 
-        turn(90, this);
+        turn(180, this);
 
         sleep(250);
 

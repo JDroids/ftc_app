@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.VuMarkTarget;
+import com.vuforia.VuMarkTargetResult;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -19,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.opencv.core.Mat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +74,19 @@ public class functions{
         return result;
     }
 
+    static public double scaleInputPowerOf2(double dVal){
+        double sign = dVal/ Math.abs(dVal);
+        double result = (Math.pow(dVal, 2)) * sign;
+
+        if (result > 0.7){
+            result = 0.7;
+        }
+        else if (result < -0.7){
+            result = -0.7;
+        }
+        return result;
+    }
+
     static public void setGrabber(double leftServoPosition, double rightServoPosition, int grabbers) throws InterruptedException{
         if(grabbers == BOTH_GRABBERS){
             glyphGrabberTL.setPosition(leftServoPosition);
@@ -89,9 +105,9 @@ public class functions{
     }
 
     static public void moveArcade(Gamepad gamepad) throws InterruptedException{
-        double r = Math.hypot(-scaleInputFixedSpeed(gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
-        double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
-        double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
+        double r = Math.hypot(-scaleInputPowerOf2(gamepad.left_stick_x), scaleInputPowerOf2(gamepad.left_stick_y));
+        double robotAngle = Math.atan2(scaleInputPowerOf2(gamepad.left_stick_y), scaleInputPowerOf2(-gamepad.left_stick_x)) - Math.PI / 4;
+        double rightX = scaleInputPowerOf2(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
@@ -159,7 +175,10 @@ public class functions{
 
     static public void moveInAStraightLine(double speed, boolean strafe){
         if(!strafe){
-            moveInAStraightLine(speed);
+            frontLeftDriveMotor.setPower(-speed);
+            frontRightDriveMotor.setPower(speed);
+            backLeftDriveMotor.setPower(-speed);
+            backRightDriveMotor.setPower(speed);
         }
         else{
             //Strafe; Positive speed is left, negative is right
@@ -171,10 +190,7 @@ public class functions{
     }
 
     static public void moveInAStraightLine(double speed){
-        frontLeftDriveMotor.setPower(speed);
-        frontRightDriveMotor.setPower(-speed);
-        backLeftDriveMotor.setPower(speed);
-        backRightDriveMotor.setPower(-speed);
+        moveInAStraightLine(speed, false);
     }
 
     static public void move(double leftY, double rightY, double leftX, double rightX) throws InterruptedException{
@@ -201,6 +217,14 @@ public class functions{
         frontRightDriveMotor.setPower(0);
         backLeftDriveMotor.setPower(0);
         backRightDriveMotor.setPower(0);
+    }
+
+    static public void moveLiftForTime(double speed, int milliseconds, LinearOpMode linearOpMode){
+        //Positive speed is up
+
+        firstGlyphLift.setPower(speed);
+        linearOpMode.sleep(milliseconds);
+        firstGlyphLift.setPower(0.0);
     }
 
     static public void moveForTime(double power, int milliseconds, LinearOpMode linearOpMode){
@@ -326,7 +350,7 @@ public class functions{
         jewelKnocker.setPosition(0.5);
         linearOpMode.sleep(200);
         jewelArm.setPosition(0);
-        linearOpMode.sleep(600);
+        linearOpMode.sleep(1000);
     }
 
     static public void raiseJewelArms(LinearOpMode linearOpMode){
@@ -372,30 +396,26 @@ public class functions{
         linearOpMode.telemetry.addData("Original Z", originalZ);
         linearOpMode.telemetry.update();
 
-        double maxTurnSpeed = 0.3;
+        if(degrees > 0){
+            frontLeftDriveMotor.setPower(0.3);
+            frontRightDriveMotor.setPower(0.3);
+            backLeftDriveMotor.setPower(0.3);
+            backRightDriveMotor.setPower(0.3);
+        }
+        else{
+            frontLeftDriveMotor.setPower(-0.3);
+            frontRightDriveMotor.setPower(-0.3);
+            backLeftDriveMotor.setPower(-0.3);
+            backRightDriveMotor.setPower(-0.3);
+        }
 
-        while((currentZ >= (degrees + originalZ) || currentZ <= degrees-originalZ) && linearOpMode.opModeIsActive()){
+        while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive()){
             angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
             currentZ = angles.firstAngle;
 
             linearOpMode.telemetry.addData("Current Z", currentZ);
             linearOpMode.telemetry.addData("Original Z", originalZ);
             linearOpMode.telemetry.update();
-
-            final int numberToDivideBy = 5000;
-
-            if(degrees > 0){
-                frontLeftDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
-                frontRightDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
-                backLeftDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
-                backRightDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
-            }
-            else{
-                frontLeftDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
-                frontRightDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
-                backLeftDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
-                backRightDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
-            }
         }
 
         stop();
@@ -445,7 +465,11 @@ public class functions{
             else if (hue == 0){
                 jewelColorFound = JDColor.NONE;
             }
+
+            Log.d("JDHue", "Hue " + Float.toString(hsvValues[0]));
         }
+
+        Log.d("JDHue", "Color detected");
 
         linearOpMode.telemetry.addData("hue", Float.toString(hue));
         linearOpMode.telemetry.addData("Jewel Color", jewelColorFound.toString());
@@ -607,10 +631,12 @@ public class functions{
 
         double  distanceToCrypto = startDistance - cryptoWallMinVal;
 
-        frontLeftDriveMotor.setPower(0.19);
-        frontRightDriveMotor.setPower(-0.19);
-        backLeftDriveMotor.setPower(0.19);
-        backRightDriveMotor.setPower(-0.19);
+        double motorSpeed= 0.17;
+
+        frontLeftDriveMotor.setPower(motorSpeed);
+        frontRightDriveMotor.setPower(-motorSpeed);
+        backLeftDriveMotor.setPower(motorSpeed);
+        backRightDriveMotor.setPower(-motorSpeed);
 
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
@@ -618,6 +644,8 @@ public class functions{
         String msg="";
 
         double distance = readAndFilterRangeSensor(linearOpMode);
+
+        boolean firstTimeIncrementingColumnPassed = true;
 
         while ( linearOpMode.opModeIsActive() ){
 
@@ -637,17 +665,27 @@ public class functions{
                 Log.d("JDRange", msg);
 
                 //column increased only the first time when there is a change in distance
-                if (firstTime){
+
+               if(firstTime && !(targetColumn == 3 && firstTimeIncrementingColumnPassed)){
                     columnsPassed++;
                     firstTime = false;
-                }
+                    Log.d("JDRange", "Incremented columnsPassed");
+               }
+               else if(targetColumn == 3 && firstTimeIncrementingColumnPassed){
+                   Log.d("JDRange", "Sleep 100 Milliseconds");
+                   linearOpMode.sleep(100);
+                   firstTimeIncrementingColumnPassed = false;
+               }
+               else if(firstTime){
+                   columnsPassed++;
+                   firstTime = false;
+                   Log.d("JDRange", "1, 2 Incremented");
+               }
+
 
                 //target column is reached break out the while loop reading range sensor data
                 //if last column let it stop at the 4th column, else let it stop at the exact column
-                if ( (targetColumn == 3 && columnsPassed >  targetColumn) || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS) {
-                    break;
-                }
-                else if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
+                if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
                    break;
                 }
 
@@ -657,10 +695,37 @@ public class functions{
             //reset the first time for the next columns
             if (!firstTime) {
                 firstTime = true;
+
             }
 
             //adjust the minimum distance based on the new reading as the robot might have drifted
             distanceToCrypto = distance - cryptoWallMinVal;
+
+
+
+            //target column is reached or if estimate time elapsed, got to break and stop the robot
+            //if last column let it stop at the 4th column, else let it stop at the exact column
+            if(columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS ){
+                msg = Double.toString(mRuntime.milliseconds()) + ": "
+                        + Double.toString(distance)
+                        + " Column: " + Integer.toString(columnsPassed)
+                        + " CryptoDistance: " + distanceToCrypto;
+                linearOpMode.telemetry.addData("range:", msg);
+                linearOpMode.telemetry.update();
+                Log.d("JDRange", msg);
+
+                if(targetColumn == 3){
+                    Log.d("JDEndCrypto", "Moving backwards for 850 MS");
+                    linearOpMode.sleep(850);
+                }
+                else if(targetColumn == 1){
+                    stop();
+                    Log.d("JDEndCrypto", "Moving forwards for 200 MS");
+                    moveForTime(motorSpeed, 200, linearOpMode);
+                }
+
+                break;
+            }
 
             msg = Double.toString(mRuntime.milliseconds()) + ": "
                     + Double.toString(distance)
@@ -669,15 +734,6 @@ public class functions{
             linearOpMode.telemetry.addData("range:", msg);
             linearOpMode.telemetry.update();
             Log.d("JDRange", msg);
-
-            //target column is reached or if estimate time elapsed, got to break and stop the robot
-            //if last column let it stop at the 4th column, else let it stop at the exact column
-            if ( (targetColumn == 3 && columnsPassed >  targetColumn) || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS)  {
-                break;
-            }
-            else if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS ){
-                break;
-            }
         }
 
         stop();

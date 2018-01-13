@@ -15,5 +15,5 @@ dependencies {
     compile project(':DogeCV')
 }
 android {
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '25.0.3'
 }
