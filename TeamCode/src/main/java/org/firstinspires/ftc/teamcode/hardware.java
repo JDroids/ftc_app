@@ -69,7 +69,6 @@ public class hardware{
             jewelColorSensor = hMap.colorSensor.get("color1");
 
             sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
-            rearRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
         }
         catch(Exception e){

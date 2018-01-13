@@ -23,7 +23,7 @@ public class blueRecoveryAuto extends LinearOpMode{
 
         initHardwareMap(hardwareMap);
 
-        initServos();
+        initServos(false);
 
         double distanceToWall = sideRangeSensor.cmUltrasonic();
 

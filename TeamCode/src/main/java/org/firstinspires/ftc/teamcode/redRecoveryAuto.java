@@ -24,7 +24,7 @@ public class redRecoveryAuto extends LinearOpMode{
 
         initHardwareMap(hardwareMap);
 
-        initServos();
+        initServos(false);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -63,10 +63,12 @@ public class redRecoveryAuto extends LinearOpMode{
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 
-        sleep(1000);
+        sleep(300);
 
         //grab the block
         closeGrabber(BOTTOM_GRABBER);
+
+        sleep(500);
 
 
         //moveUntilCryptoWall(distanceToWall, vuMark, RED, this);
@@ -74,7 +76,7 @@ public class redRecoveryAuto extends LinearOpMode{
         //go to cryptobox
         moveUntilCryptoWallv2(distanceToWall,vuMark, this);
 
-        //turn(90, this);
+        turn(90, this);
 
         //sleep(100);
 

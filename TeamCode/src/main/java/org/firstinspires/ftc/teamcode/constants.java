@@ -9,7 +9,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class constants{
     static final double STRAFING_LIMIT = 0.1;
-    static final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.65, 0.15};
+    static final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.65, 0.3};
     static final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.1, 0.8};
     static final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.6};
     static final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};

@@ -33,7 +33,7 @@ public class JDTeleop extends LinearOpMode{
         waitForStart();
         //Code to run after play is pressed
 
-        initServos();
+        initServos(true);
 
         while(opModeIsActive()){
             gamepad1LeftY = scaleInputFixedSpeed(gamepad1.left_stick_y);

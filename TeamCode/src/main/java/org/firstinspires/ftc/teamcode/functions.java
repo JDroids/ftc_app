@@ -108,10 +108,17 @@ public class functions{
         jewelArm.setPosition(jewelArmPosition);
     }
 
-    static public void initServos() throws InterruptedException{
-        setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
-        setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
-        setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
+    static public void initServos(boolean Teleop) throws InterruptedException{
+        if(Teleop){
+            setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
+            setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
+            setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
+        }
+        else {
+            setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
+            setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
+            setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
+        }
     }
 
     static public void closeGrabber(int grabber) throws InterruptedException{
@@ -352,8 +359,6 @@ public class functions{
     static public void turn(int degrees, LinearOpMode linearOpMode){
         Orientation angles;
 
-        //TODO: reset IMU
-
         angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
         float originalZ = angles.firstAngle;
@@ -363,33 +368,33 @@ public class functions{
         linearOpMode.telemetry.addData("Original Z", originalZ);
         linearOpMode.telemetry.update();
 
-        if(degrees > 0){
-            frontLeftDriveMotor.setPower(0.3);
-            frontRightDriveMotor.setPower(0.3);
-            backLeftDriveMotor.setPower(0.3);
-            backRightDriveMotor.setPower(0.3);
-        }
-        else{
-            frontLeftDriveMotor.setPower(-0.3);
-            frontRightDriveMotor.setPower(-0.3);
-            backLeftDriveMotor.setPower(-0.3);
-            backRightDriveMotor.setPower(-0.3);
-        }
+        double maxTurnSpeed = 0.3;
 
-        while((!(currentZ >= degrees - 5) && (currentZ <= degrees + 5)) && linearOpMode.opModeIsActive()){
+        while((currentZ >= (degrees + originalZ) || currentZ <= degrees-originalZ) && linearOpMode.opModeIsActive()){
             angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
             currentZ = angles.firstAngle;
 
             linearOpMode.telemetry.addData("Current Z", currentZ);
             linearOpMode.telemetry.addData("Original Z", originalZ);
             linearOpMode.telemetry.update();
+
+            final int numberToDivideBy = 5000;
+
+            if(degrees > 0){
+                frontLeftDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
+                frontRightDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
+                backLeftDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
+                backRightDriveMotor.setPower(maxTurnSpeed - ((degrees+originalZ)/numberToDivideBy)*0.3);
+            }
+            else{
+                frontLeftDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
+                frontRightDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
+                backLeftDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
+                backRightDriveMotor.setPower(-maxTurnSpeed - ((degrees-originalZ)/numberToDivideBy)*0.3);
+            }
         }
 
         stop();
-    }
-
-    static public void turnPID(int degrees, LinearOpMode linearOpMode){
-
     }
 
     static public JDColor detectJewelColor(LinearOpMode linearOpMode){
@@ -482,7 +487,7 @@ public class functions{
 
         if (vuMark == RelicRecoveryVuMark.UNKNOWN){
             //if more than 3 seconds and vumark is not found, default to LEFT
-            return RelicRecoveryVuMark.LEFT;
+            return RelicRecoveryVuMark.RIGHT;
         }
 
         return vuMark;
@@ -564,13 +569,15 @@ public class functions{
     //discard any accidental bad reading from the sensor
     //break out of the loop if unable to read good sensor data within 200ms
     static public double readAndFilterRangeSensor(LinearOpMode linearOpMode){
-        long startTime = System.nanoTime();
-        long elapsedTime = 0;
+        ElapsedTime mRuntime = new ElapsedTime();
+        mRuntime.reset();
 
         double distance =  sideRangeSensor.cmUltrasonic();
-        while ( (distance == 255 || distance ==0 || elapsedTime < 200)  && linearOpMode.opModeIsActive() ){
-            sideRangeSensor.cmUltrasonic();
-            elapsedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+        while ( (distance == 255 || distance == 0)  && linearOpMode.opModeIsActive() ){
+            if(mRuntime.milliseconds() >= 200){
+                break;
+            }
+            distance = sideRangeSensor.cmUltrasonic();
         }
         return distance;
     }
@@ -580,13 +587,13 @@ public class functions{
         int cryptoWallMinVal = 5;
 
         if(vuMark == RelicRecoveryVuMark.LEFT){
-            targetColumn = 1;
+            targetColumn = 3;
         }
         else if(vuMark == RelicRecoveryVuMark.CENTER){
             targetColumn = 2;
         }
         else if(vuMark == RelicRecoveryVuMark.RIGHT){
-            targetColumn = 3;
+            targetColumn = 1;
         }
         else{
             targetColumn = 1;
@@ -596,10 +603,10 @@ public class functions{
 
         double  distanceToCrypto = startDistance - cryptoWallMinVal;
 
-        frontLeftDriveMotor.setPower(0.15);
-        frontRightDriveMotor.setPower(-0.15);
-        backLeftDriveMotor.setPower(0.15);
-        backRightDriveMotor.setPower(-0.15);
+        frontLeftDriveMotor.setPower(0.19);
+        frontRightDriveMotor.setPower(-0.19);
+        backLeftDriveMotor.setPower(0.19);
+        backRightDriveMotor.setPower(-0.19);
 
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
@@ -617,6 +624,14 @@ public class functions{
             //sometimes the distance is less than the minimum distance of 5, so check if less than 5 or less than 4
             while (  (distance <= distanceToCrypto || distance <= distanceToCrypto-1) && linearOpMode.opModeIsActive()){
 
+                msg = Double.toString(mRuntime.milliseconds()) + ": "
+                        + Double.toString(distance)
+                        + " Column: " + Integer.toString(columnsPassed)
+                        + " CryptoDistance: " + distanceToCrypto;
+                linearOpMode.telemetry.addData("range:", msg);
+                linearOpMode.telemetry.update();
+                Log.d("JDRange", msg);
+
                 //column increased only the first time when there is a change in distance
                 if (firstTime){
                     columnsPassed++;
@@ -627,13 +642,7 @@ public class functions{
                 if (columnsPassed >= targetColumn ){
                     break;
                 }
-                msg = Double.toString(mRuntime.milliseconds()) + ": "
-                        + Double.toString(distance)
-                        + " Column: " + Integer.toString(columnsPassed)
-                        + " CryptoDistance: " + distanceToCrypto;
-                linearOpMode.telemetry.addData("range:", msg);
-                linearOpMode.telemetry.update();
-                Log.d("JDRange", msg);
+
 
                 distance = readAndFilterRangeSensor(linearOpMode);
             }
@@ -654,15 +663,36 @@ public class functions{
             linearOpMode.telemetry.update();
             Log.d("JDRange", msg);
 
+
             //if target reached break out of the main while loop
-            if (columnsPassed >= targetColumn ){
+            /*if (columnsPassed >= targetColumn && targetColumn == 3){
+                mRuntime.reset();
+                frontLeftDriveMotor.setPower(0.19);
+                frontRightDriveMotor.setPower(-0.19);
+                backLeftDriveMotor.setPower(0.19);
+                backRightDriveMotor.setPower(-0.19);
+                while(mRuntime.milliseconds() < 400){
+                    distance = readAndFilterRangeSensor(linearOpMode);
+                    distanceToCrypto = distance - cryptoWallMinVal;
+                    msg = Double.toString(mRuntime.milliseconds()) + ": "
+                            + Double.toString(distance)
+                            + " Column: " + Integer.toString(columnsPassed)
+                            + " CryptoDistance: " + distanceToCrypto;
+                    linearOpMode.telemetry.addData("range:", msg);
+                    linearOpMode.telemetry.update();
+                    Log.d("JDRange", msg);
+                    if(distance <= distanceToCrypto || distance <= distanceToCrypto-1){
+                        break;
+                    }
+                }
+                break;
+            }*/
+            /*else*/ if(columnsPassed >= targetColumn ) {
                 break;
             }
 
         }
         stop();
-
-
 
     }
 
