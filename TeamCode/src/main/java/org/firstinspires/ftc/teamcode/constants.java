@@ -37,5 +37,6 @@ public class constants{
     static final int BLUE = 1;
 
     static final double MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS = 0.1;
+    static final double MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS = 2900;
 
 }

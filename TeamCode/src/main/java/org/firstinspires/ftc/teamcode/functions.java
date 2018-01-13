@@ -228,6 +228,7 @@ public class functions{
             else{
                 //Don't allow to move up any further
                 firstGlyphLift.setPower(0);
+                firstLiftDirection = UP;
             }
         }
         else if(!firstLiftSwitch.getState() && firstLiftDirection == DOWN){
@@ -243,6 +244,7 @@ public class functions{
             else{
                 //Don't allow to move down any further
                 firstGlyphLift.setPower(0);
+                firstLiftDirection = DOWN;
             }
         }
         else{
@@ -271,10 +273,11 @@ public class functions{
             }
             else{
                 secondGlyphLift.setPower(0);
+                secondLiftDirection = UP;
             }
         }
         else if(!secondLiftSwitch.getState() && secondLiftDirection == DOWN){
-            linearOpMode.telemetry.addData("Second Lift", "Bottom Limit Reached - Move Down");
+            linearOpMode.telemetry.addData("Second Lift", "Bottom Limit Reached - Move Up");
             linearOpMode.telemetry.update();
 
             if(gamepad2.right_stick_y < 0){
@@ -284,6 +287,7 @@ public class functions{
             }
             else{
                 secondGlyphLift.setPower(0);
+                secondLiftDirection = DOWN;
             }
         }
         else{
@@ -638,17 +642,20 @@ public class functions{
                     firstTime = false;
                 }
 
-                //target column is reached
-                if (columnsPassed >= targetColumn ){
+                //target column is reached break out the while loop reading range sensor data
+                //if last column let it stop at the 4th column, else let it stop at the exact column
+                if ( (targetColumn == 3 && columnsPassed >  targetColumn) || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS) {
                     break;
                 }
-
+                else if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
+                   break;
+                }
 
                 distance = readAndFilterRangeSensor(linearOpMode);
             }
 
             //reset the first time for the next columns
-            if (!firstTime){
+            if (!firstTime) {
                 firstTime = true;
             }
 
@@ -663,35 +670,16 @@ public class functions{
             linearOpMode.telemetry.update();
             Log.d("JDRange", msg);
 
-
-            //if target reached break out of the main while loop
-            /*if (columnsPassed >= targetColumn && targetColumn == 3){
-                mRuntime.reset();
-                frontLeftDriveMotor.setPower(0.19);
-                frontRightDriveMotor.setPower(-0.19);
-                backLeftDriveMotor.setPower(0.19);
-                backRightDriveMotor.setPower(-0.19);
-                while(mRuntime.milliseconds() < 400){
-                    distance = readAndFilterRangeSensor(linearOpMode);
-                    distanceToCrypto = distance - cryptoWallMinVal;
-                    msg = Double.toString(mRuntime.milliseconds()) + ": "
-                            + Double.toString(distance)
-                            + " Column: " + Integer.toString(columnsPassed)
-                            + " CryptoDistance: " + distanceToCrypto;
-                    linearOpMode.telemetry.addData("range:", msg);
-                    linearOpMode.telemetry.update();
-                    Log.d("JDRange", msg);
-                    if(distance <= distanceToCrypto || distance <= distanceToCrypto-1){
-                        break;
-                    }
-                }
-                break;
-            }*/
-            /*else*/ if(columnsPassed >= targetColumn ) {
+            //target column is reached or if estimate time elapsed, got to break and stop the robot
+            //if last column let it stop at the 4th column, else let it stop at the exact column
+            if ( (targetColumn == 3 && columnsPassed >  targetColumn) || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS)  {
                 break;
             }
-
+            else if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS ){
+                break;
+            }
         }
+
         stop();
 
     }
