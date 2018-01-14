@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
+import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -105,7 +106,7 @@ public class functions{
     }
 
     static public void moveArcade(Gamepad gamepad) throws InterruptedException{
-        double r = Math.hypot(-scaleInputFixedSpeed(gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+        double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
         double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -222,9 +223,17 @@ public class functions{
     static public void moveLiftForTime(double speed, int milliseconds, LinearOpMode linearOpMode){
         //Positive speed is up
 
-        firstGlyphLift.setPower(speed);
+        firstGlyphLift.setPower(-speed);
         linearOpMode.sleep(milliseconds);
         firstGlyphLift.setPower(0.0);
+    }
+
+    static public void moveSecondLiftForTime(double speed, int milliseconds, LinearOpMode linearOpMode){
+        //Positive speed is up
+
+        secondGlyphLift.setPower(speed);
+        linearOpMode.sleep(milliseconds);
+        secondGlyphLift.setPower(0.0);
     }
 
     static public void moveForTime(double power, int milliseconds, LinearOpMode linearOpMode){
@@ -283,6 +292,7 @@ public class functions{
             linearOpMode.telemetry.addData("First Lift", "Can move freely", true);
             linearOpMode.telemetry.update();
         }
+        Log.d("JDLift", "Lift Direction (0= )"Integer.toString(firstLiftDirection))
     }
 
     static public void secondLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
@@ -328,7 +338,8 @@ public class functions{
         }
     }
 
-    static public void initDogeCV(HardwareMap hMap, JDColor color){
+    static public CryptoboxDetector initDogeCVForCryptobox(HardwareMap hMap, JDColor color){
+
         CryptoboxDetector cryptoboxDetector = new CryptoboxDetector();
         cryptoboxDetector.init(hMap.appContext, CameraViewDisplay.getInstance());
 
@@ -344,6 +355,36 @@ public class functions{
         cryptoboxDetector.rotateMat = true;
 
         cryptoboxDetector.enable();
+
+        return cryptoboxDetector;
+    }
+
+    static public JewelDetector initDogeCVForJewel(HardwareMap hMap){
+        JewelDetector jewelDetector = new JewelDetector();
+        jewelDetector.init(hMap.appContext, CameraViewDisplay.getInstance());
+        jewelDetector.downScaleFactor = 0.4;
+
+        jewelDetector.speed = JewelDetector.JewelDetectionSpeed.BALANCED;
+        jewelDetector.rotateMat = true;
+
+        jewelDetector.enable();
+
+        return jewelDetector;
+    }
+
+    static public void readJewelWithDogeCV(JewelDetector jewelDetector, LinearOpMode linearOpMode){
+        while(linearOpMode.opModeIsActive()){
+            ElapsedTime mRuntime = new ElapsedTime();
+
+            linearOpMode.telemetry.addData("Status", "Run Time: " + mRuntime.toString());
+            Log.d("JDJewel", "Run Time: " + mRuntime.toString());
+
+            linearOpMode.telemetry.addData("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString()); // Current Result
+            Log.d("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString());
+
+            linearOpMode.telemetry.addData("Last Order", "Jewel Order: " + jewelDetector.getLastOrder().toString()); // Last Known Result
+            Log.d("Last Order", "Jewel Order: " + jewelDetector.getLastOrder().toString());
+        }
     }
 
     static public void lowerJewelArms(LinearOpMode linearOpMode){
@@ -479,7 +520,7 @@ public class functions{
     }
 
     static public RelicRecoveryVuMark getVumark(LinearOpMode linearOpMode, HardwareMap hMap){
-        VuforiaLocalizer vuforia;
+        ClosableVuforiaLocalizer vuforia;
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
 
         int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
@@ -487,7 +528,7 @@ public class functions{
         parameters.vuforiaLicenseKey = " AZcIMlr/////AAAAGe1W/L9P20hXupxJsIH5bIMDl46JPwjrX2kI+L6+tigIG9bhthzvrEWVBni6g4Jkvs76N/hIT0bFun78pnNDqkG3ZP24XLj45VHA2rYKp8UDww/vfy8xrtvHxedihdX1A2vMWg8Ub8tLjBMgEAqcAYYUMwPRQfI61KQmXvAJBV79XtQughxCh/fbrtoux6WV6HHs8OydP7kPUaUU3f0z5ZOF/TUvcqFFotqnLg/KwXMxxrouRyDGCIbpbP7cYabiR7ShIGvrYoRKtbpwxS3WLSjjTd7ynvoidYipWZ60e6t+wUCzdXahS8g0veYuTQ+vwBqljhtLUWnCUjbJh2jocjxV9kLGgqlPFCmLHZyurYkX";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
 
-        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        vuforia = new ClosableVuforiaLocalizer(parameters);
 
         VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
@@ -513,10 +554,7 @@ public class functions{
             linearOpMode.telemetry.update();
         }
 
-        if (vuMark == RelicRecoveryVuMark.UNKNOWN){
-            //if more than 3 seconds and vumark is not found, default to LEFT
-            return RelicRecoveryVuMark.RIGHT;
-        }
+        vuforia.close();
 
         return vuMark;
 
@@ -536,13 +574,13 @@ public class functions{
             targetColumn = 3;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT && color == BLUE){
-            targetColumn = 3;
+            targetColumn = 1;
         }
         else if(vuMark == RelicRecoveryVuMark.CENTER && color == BLUE){
             targetColumn = 2;
         }
         else if(vuMark == RelicRecoveryVuMark.RIGHT && color == BLUE){
-            targetColumn = 1;
+            targetColumn = 3;
         }
         else{
             targetColumn = 1;
@@ -610,22 +648,68 @@ public class functions{
         return distance;
     }
 
-    static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, LinearOpMode linearOpMode){
+    static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
         int targetColumn;
         int cryptoWallMinVal = 5;
 
-        if(vuMark == RelicRecoveryVuMark.LEFT){
+        if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             targetColumn = 3;
         }
-        else if(vuMark == RelicRecoveryVuMark.CENTER){
+        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             targetColumn = 2;
         }
-        else if(vuMark == RelicRecoveryVuMark.RIGHT){
+        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             targetColumn = 1;
         }
+        else if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            targetColumn = 1;
+        }
+
+        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            targetColumn = 1;
+        }
+        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            targetColumn = 2;
+        }
+        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            targetColumn = 3;
+        }
+        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            targetColumn = 1;
+        }
+
+        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 3;
+        }
+        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 2;
+        }
+        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 1;
+        }
+        else if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 1;
+        }
+
+        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 1;
+        }
+        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 2;
+        }
+        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 3;
+        }
+        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            targetColumn = 1;
+        }
+
         else{
             targetColumn = 1;
         }
+
+
+
         int columnsPassed = 0;
         boolean firstTime=true;
 
@@ -633,10 +717,18 @@ public class functions{
 
         double motorSpeed= 0.17;
 
-        frontLeftDriveMotor.setPower(motorSpeed);
-        frontRightDriveMotor.setPower(-motorSpeed);
-        backLeftDriveMotor.setPower(motorSpeed);
-        backRightDriveMotor.setPower(-motorSpeed);
+        if(allianceColor == JDColor.RED) {
+            frontLeftDriveMotor.setPower(motorSpeed);
+            frontRightDriveMotor.setPower(-motorSpeed);
+            backLeftDriveMotor.setPower(motorSpeed);
+            backRightDriveMotor.setPower(-motorSpeed);
+        }
+        else if(allianceColor == JDColor.BLUE){
+            frontLeftDriveMotor.setPower(-motorSpeed);
+            frontRightDriveMotor.setPower(motorSpeed);
+            backLeftDriveMotor.setPower(-motorSpeed);
+            backRightDriveMotor.setPower(motorSpeed);
+        }
 
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.functions.initDogeCV;
+import static org.firstinspires.ftc.teamcode.functions.*;
 
 
 /**
@@ -21,9 +21,7 @@ public class detectCryptobox extends LinearOpMode{
         //Code to run after init is pressed
         ElapsedTime runtime = new ElapsedTime();
         CryptoboxDetector cryptoboxDetector = null;
-        cryptoboxDetector = new CryptoboxDetector();
-
-        initDogeCV(hardwareMap, constants.JDColor.RED);
+        cryptoboxDetector = initDogeCVForCryptobox(hardwareMap, constants.JDColor.RED);
 
         waitForStart();
         //Code to run after play is pressed

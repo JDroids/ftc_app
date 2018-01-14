@@ -16,8 +16,8 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
  * Created by dansm on 12/21/2017.
  */
 
-@Autonomous(name="REDJudgeAuto")
-public class redJudgeAuto extends LinearOpMode{
+@Autonomous(name="BLUEJudgeAuto")
+public class blueJudgeAuto extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -62,7 +62,7 @@ public class redJudgeAuto extends LinearOpMode{
         //get the jewel
         lowerJewelArms(this);
         JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.RED, this);
+        knockJewel(jewelColor, JDColor.BLUE, this);
         raiseJewelArms(this);
 
         sleep(300);
@@ -96,7 +96,7 @@ public class redJudgeAuto extends LinearOpMode{
         Log.d("JDRange", Double.toString(distanceToWall));
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
+        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
 
         turn(180, this);
 

@@ -70,10 +70,10 @@ public class redRecoveryAuto extends LinearOpMode{
 
         sleep(500);
 
-        moveLiftForTime(0.3, 1000, this);
+        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1000, this);
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, this);
+        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
 
         turn(90, this);
 
@@ -93,7 +93,7 @@ public class redRecoveryAuto extends LinearOpMode{
 
         moveForTime(-0.3, 500, this);
 
-        openGrabberWide(BOTTOM_GRABBER);
+        openGrabberWide(BOTH_GRABBERS);
 
         //time to look for the second and third glyph
 

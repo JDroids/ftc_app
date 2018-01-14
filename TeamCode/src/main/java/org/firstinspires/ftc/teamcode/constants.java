@@ -10,7 +10,7 @@ package org.firstinspires.ftc.teamcode;
 public class constants{
     static final double STRAFING_LIMIT = 0.1;
     static final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.65, 0.3};
-    static final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.1, 0.8};
+    static final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 1.0};
     static final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.6};
     static final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};
 
@@ -28,6 +28,7 @@ public class constants{
     static final int DOWN = -1;
 
     public enum JDColor {NONE, RED, BLUE};
+    public enum FIELD_SIDE {RECOVERY_SIDE, JUDGE_SIDE};
 
     static final int BOTH_GRABBERS = 0;
     static final int BOTTOM_GRABBER = 1;
@@ -41,5 +42,7 @@ public class constants{
 
     static final boolean TELEOP = true;
     static final boolean AUTONOMOUS = false;
+
+    static final double GLYPH_LIFT_AUTO_SPEED = 0.7;
 
 }
