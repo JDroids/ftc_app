@@ -31,8 +31,8 @@ public class JDTeleopUsingArcade extends LinearOpMode{
 
         initServos(TELEOP);
 
-        moveLiftForTime(0.7, 400, this);
-        moveSecondLiftForTime(0.7, 250, this);
+        moveLiftForTime(0.7, 500, this);
+        moveSecondLiftForTime(0.7, 500, this);
 
         while(opModeIsActive()) {
             moveArcade(gamepad1);

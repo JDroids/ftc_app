@@ -45,4 +45,7 @@ public class constants{
 
     static final double GLYPH_LIFT_AUTO_SPEED = 0.7;
 
+    static final int FRONT_FACING_CAMERA = 1;
+    static final int BACK_CAMERA = 0;
+
 }

@@ -52,10 +52,14 @@ public class functions{
 
         double result = Math.abs(dVal);
 
-        if( result < 0.4 ){
-            result = 0.3;
+        if(result < 0.3){
+            result = 0.25;
         }
-        else if (result < 0.7){
+
+        else if(result < 0.5 ){
+            result = 0.4;
+        }
+        else if(result < 0.7){
             result = 0.6;
         }
         else{
@@ -292,7 +296,6 @@ public class functions{
             linearOpMode.telemetry.addData("First Lift", "Can move freely", true);
             linearOpMode.telemetry.update();
         }
-        Log.d("JDLift", "Lift Direction (0= )"Integer.toString(firstLiftDirection))
     }
 
     static public void secondLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
@@ -341,7 +344,7 @@ public class functions{
     static public CryptoboxDetector initDogeCVForCryptobox(HardwareMap hMap, JDColor color){
 
         CryptoboxDetector cryptoboxDetector = new CryptoboxDetector();
-        cryptoboxDetector.init(hMap.appContext, CameraViewDisplay.getInstance());
+        cryptoboxDetector.init(hMap.appContext, CameraViewDisplay.getInstance(), FRONT_FACING_CAMERA);
 
         cryptoboxDetector.downScaleFactor = 0.4;
         if(color == JDColor.RED){
@@ -354,6 +357,8 @@ public class functions{
         cryptoboxDetector.speed = CryptoboxDetector.CryptoboxSpeed.BALANCED;
         cryptoboxDetector.rotateMat = true;
 
+
+
         cryptoboxDetector.enable();
 
         return cryptoboxDetector;
@@ -361,7 +366,7 @@ public class functions{
 
     static public JewelDetector initDogeCVForJewel(HardwareMap hMap){
         JewelDetector jewelDetector = new JewelDetector();
-        jewelDetector.init(hMap.appContext, CameraViewDisplay.getInstance());
+        jewelDetector.init(hMap.appContext, CameraViewDisplay.getInstance(), FRONT_FACING_CAMERA);
         jewelDetector.downScaleFactor = 0.4;
 
         jewelDetector.speed = JewelDetector.JewelDetectionSpeed.BALANCED;
@@ -380,10 +385,15 @@ public class functions{
             Log.d("JDJewel", "Run Time: " + mRuntime.toString());
 
             linearOpMode.telemetry.addData("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString()); // Current Result
-            Log.d("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString());
+            Log.d("JDJewel", "Current Order: " + jewelDetector.getCurrentOrder().toString());
 
             linearOpMode.telemetry.addData("Last Order", "Jewel Order: " + jewelDetector.getLastOrder().toString()); // Last Known Result
-            Log.d("Last Order", "Jewel Order: " + jewelDetector.getLastOrder().toString());
+            Log.d("JDJewel", "Last Known Order: " + jewelDetector.getLastOrder().toString());
+
+            if(linearOpMode.isStopRequested()){
+                jewelDetector.disable();
+                break;
+            }
         }
     }
 
@@ -715,7 +725,7 @@ public class functions{
 
         double  distanceToCrypto = startDistance - cryptoWallMinVal;
 
-        double motorSpeed= 0.17;
+        double motorSpeed = 0.18;
 
         if(allianceColor == JDColor.RED) {
             frontLeftDriveMotor.setPower(motorSpeed);
