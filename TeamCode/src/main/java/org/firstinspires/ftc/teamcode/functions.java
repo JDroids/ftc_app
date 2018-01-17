@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import static org.firstinspires.ftc.teamcode.constants.*;
 import static org.firstinspires.ftc.teamcode.hardware.*;
 
-;
+
 
 /**
  * Created by dansm on 12/13/2017.
@@ -499,7 +499,7 @@ public class functions{
 
             // values is a reference to the hsvValues array.
             final float values[] = hsvValues;
-           // sometimes it helps to multiply the raw RGB values with a scale factor
+            // sometimes it helps to multiply the raw RGB values with a scale factor
             // to amplify/attentuate the measured values.
             final double SCALE_FACTOR = 255;
             jewelColorSensor.enableLed(true);
@@ -640,8 +640,8 @@ public class functions{
             }
 
             if (columnsPassed >= targetColumn){
-               stop();
-               break;
+                stop();
+                break;
             }
 
             linearOpMode.telemetry.addData("Distance to Wall", distanceToWall);
@@ -684,8 +684,8 @@ public class functions{
                 break;
 
             case CENTER:
-               targetColumn = 2;
-               break;
+                targetColumn = 2;
+                break;
 
             case RIGHT:
                 if (allianceColor == JDColor.RED) {
@@ -705,67 +705,8 @@ public class functions{
     }
 
     static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
-        int targetColumn;
+        int targetColumn = targetColumn(vuMark, allianceColor, fieldSide);
         int cryptoWallMinVal = 5;
-
-
-        if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 3;
-        }
-        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 2;
-        }
-        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 1;
-        }
-        else if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 1;
-        }
-
-        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 1;
-        }
-        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 2;
-        }
-        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 3;
-        }
-        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
-            targetColumn = 1;
-        }
-
-        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 3;
-        }
-        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 2;
-        }
-        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 1;
-        }
-        else if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 1;
-        }
-
-        else if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 1;
-        }
-        else if(vuMark == RelicRecoveryVuMark.CENTER && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 2;
-        }
-        else if(vuMark == RelicRecoveryVuMark.RIGHT && allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 3;
-        }
-        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
-            targetColumn = 1;
-        }
-
-        else{
-            targetColumn = 1;
-        }
-
-
 
         int columnsPassed = 0;
         boolean firstTime=true;
@@ -815,27 +756,27 @@ public class functions{
 
                 //column increased only the first time when there is a change in distance
 
-               if(firstTime && !(targetColumn == 3 && firstTimeIncrementingColumnPassed)){
+                if(firstTime && !(targetColumn == 3 && firstTimeIncrementingColumnPassed)){
                     columnsPassed++;
                     firstTime = false;
                     Log.d("JDRange", "Incremented columnsPassed");
-               }
-               else if(targetColumn == 3 && firstTimeIncrementingColumnPassed){
-                   Log.d("JDRange", "Sleep 100 Milliseconds");
-                   linearOpMode.sleep(100);
-                   firstTimeIncrementingColumnPassed = false;
-               }
-               else if(firstTime){
-                   columnsPassed++;
-                   firstTime = false;
-                   Log.d("JDRange", "1, 2 Incremented");
-               }
+                }
+                else if(targetColumn == 3 && firstTimeIncrementingColumnPassed){
+                    Log.d("JDRange", "Sleep 100 Milliseconds");
+                    linearOpMode.sleep(100);
+                    firstTimeIncrementingColumnPassed = false;
+                }
+                else if(firstTime){
+                    columnsPassed++;
+                    firstTime = false;
+                    Log.d("JDRange", "1, 2 Incremented");
+                }
 
 
                 //target column is reached break out the while loop reading range sensor data
                 //if last column let it stop at the 4th column, else let it stop at the exact column
                 if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
-                   break;
+                    break;
                 }
 
                 distance = readAndFilterRangeSensor(linearOpMode);
