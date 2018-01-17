@@ -38,7 +38,7 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
 
 public class functions{
 
-    //scaling logic 2 to use 3 fixed speeds as opposed to varying speeds to avoid jerks while driving
+    //scaling logic 2 to use 4 fixed speeds as opposed to varying speeds to avoid jerks while driving
     static public double scaleInputFixedSpeed(double dVal) throws InterruptedException{
         int sign;
 
@@ -129,6 +129,7 @@ public class functions{
         jewelArm.setPosition(jewelArmPosition);
     }
 
+    //open wide in Telep and open full wide in autonomous
     static public void initServos(boolean Teleop) throws InterruptedException{
         if(Teleop){
             setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
@@ -255,10 +256,10 @@ public class functions{
             linearOpMode.telemetry.addData("First Lift", "Top Limit Reached - Move Down");
             linearOpMode.telemetry.update();
 
-            if (gamepad2.left_stick_y > 0){
+            if (gamepad2.left_stick_y > LIFT_TWITCH_THRESHOLD){
                 //Move down at a slow speed as gravity is pulling it down
                 firstGlyphLift.setPower(0.3);
-                //LinearOpMode.class.wait allows sensor to move away from the magnet
+                //allows sensor to move away from the magnet
                 linearOpMode.sleep(200);
                 firstLiftDirection = DOWN;
             }
@@ -272,25 +273,29 @@ public class functions{
             linearOpMode.telemetry.addData("First Lift", "Bottom Limit Reached - Move Up");
             linearOpMode.telemetry.update();
 
-            if(gamepad2.left_stick_y < 0){
-                firstGlyphLift.setPower(-0.5);
-               //LinearOpMode.class.wait allows sensor to move away from the magnet
-                linearOpMode.sleep(500);
+            if(gamepad2.left_stick_y < -LIFT_TWITCH_THRESHOLD){
+                firstGlyphLift.setPower(-0.8);
+                //allows sensor to move away from the magnet
+                linearOpMode.sleep(600);
                 firstLiftDirection = UP;
             }
-            else{
+            else {
                 //Don't allow to move down any further
                 firstGlyphLift.setPower(0);
                 firstLiftDirection = DOWN;
             }
         }
         else{
-            firstGlyphLift.setPower(scaleInput(gamepad2.left_stick_y));
-            if(gamepad2.left_stick_y < 0){
+            if(gamepad2.left_stick_y < -LIFT_TWITCH_THRESHOLD){
+                firstGlyphLift.setPower(-0.8); //going up is steady speed of 0.8
                 firstLiftDirection = UP;
             }
-            else if(gamepad2.left_stick_y > 0){
+            else if(gamepad2.left_stick_y > LIFT_TWITCH_THRESHOLD){
+                firstGlyphLift.setPower(gamepad2.left_stick_y/3);
                 firstLiftDirection = DOWN;
+            }
+            else{
+                firstGlyphLift.setPower(0);
             }
 
             linearOpMode.telemetry.addData("First Lift", "Can move freely", true);
@@ -303,7 +308,7 @@ public class functions{
             linearOpMode.telemetry.addData("Second Lift", "Top Limit Reached - Move Down");
             linearOpMode.telemetry.update();
 
-            if (gamepad2.right_stick_y > 0){
+            if (gamepad2.right_stick_y > LIFT_TWITCH_THRESHOLD){
                 secondGlyphLift.setPower(-0.3);
                 linearOpMode.sleep(500);
                 secondLiftDirection = DOWN;
@@ -317,7 +322,7 @@ public class functions{
             linearOpMode.telemetry.addData("Second Lift", "Bottom Limit Reached - Move Up");
             linearOpMode.telemetry.update();
 
-            if(gamepad2.right_stick_y < 0){
+            if(gamepad2.right_stick_y < -LIFT_TWITCH_THRESHOLD){
                 secondGlyphLift.setPower(0.5);
                 linearOpMode.sleep(500);
                 secondLiftDirection = UP;
@@ -329,13 +334,18 @@ public class functions{
         }
         else{
 
-            secondGlyphLift.setPower(gamepad2.right_stick_y/-2);
-            if(gamepad2.right_stick_y < 0){
+            if(gamepad2.right_stick_y < -LIFT_TWITCH_THRESHOLD){
+                secondGlyphLift.setPower(gamepad2.right_stick_y/-1.3);  //76% going up 
                 secondLiftDirection = UP;
             }
-            else if(gamepad2.right_stick_y > 0){
+            else if(gamepad2.right_stick_y > LIFT_TWITCH_THRESHOLD){
+                secondGlyphLift.setPower(gamepad2.right_stick_y/-2);  //50% going down
                 secondLiftDirection = DOWN;
             }
+            else{
+                secondGlyphLift.setPower(0);
+            }
+
             linearOpMode.telemetry.addData("Second Lift", "Can move freely");
             linearOpMode.telemetry.update();
         }
@@ -658,9 +668,46 @@ public class functions{
         return distance;
     }
 
+    static int targetColumn(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide)
+    {
+        int targetColumn = 1;
+
+        switch (vuMark)
+        {
+            case LEFT:
+                if (allianceColor == JDColor.RED) {
+                    targetColumn = 3;
+                }
+                else if (allianceColor == JDColor.BLUE){
+                    targetColumn = 1;
+                }
+                break;
+
+            case CENTER:
+               targetColumn = 2;
+               break;
+
+            case RIGHT:
+                if (allianceColor == JDColor.RED) {
+                    targetColumn = 1;
+                }
+                else if (allianceColor == JDColor.BLUE){
+                    targetColumn = 3;
+                }
+                break;
+
+            default:
+                targetColumn = 1;
+                break;
+        }
+
+        return  targetColumn;
+    }
+
     static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
         int targetColumn;
         int cryptoWallMinVal = 5;
+
 
         if(vuMark == RelicRecoveryVuMark.LEFT && allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             targetColumn = 3;

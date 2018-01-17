@@ -36,6 +36,7 @@ public class redJudgeAuto extends LinearOpMode{
         parameters.loggingTag          = "IMU";
 
         imuSensor.initialize(parameters);
+
         int MaxValue = 255;
         double distanceToWall = sideRangeSensor.cmUltrasonic();;
 
@@ -45,11 +46,11 @@ public class redJudgeAuto extends LinearOpMode{
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
-
         telemetry.addData("Distance to wall", distanceToWall);
         telemetry.update();
 
         waitForStart();
+
         //Code to run after play is pressed
 
         //detect the VuMark
@@ -86,9 +87,10 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
+        //read the crypto wall after turning
+        distanceToWall = sideRangeSensor.cmUltrasonic();
         while ( !(distanceToWall < MaxValue) && opModeIsActive()) {
             distanceToWall = sideRangeSensor.cmUltrasonic();
-
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }

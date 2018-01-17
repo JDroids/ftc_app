@@ -48,4 +48,6 @@ public class constants{
     static final int FRONT_FACING_CAMERA = 1;
     static final int BACK_CAMERA = 0;
 
+    static final double LIFT_TWITCH_THRESHOLD = 0.15;
+
 }
