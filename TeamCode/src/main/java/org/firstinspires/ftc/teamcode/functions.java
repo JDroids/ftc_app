@@ -6,9 +6,11 @@ import android.util.Log;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
 import com.disnodeteam.dogecv.detectors.JewelDetector;
+import com.disnodeteam.dogecv.math.Line;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.VuMarkTarget;
 import com.vuforia.VuMarkTargetResult;
@@ -37,6 +39,18 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
 
 
 public class functions{
+
+    static public void moveDistanceUltrasonic(UltrasonicSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
+        double distance = readAndFilterRangeSensor(linearOpMode);
+
+        moveInAStraightLine(power);
+
+        while(distance < targetDistance && linearOpMode.opModeIsActive()){
+            distance = readAndFilterRangeSensor(linearOpMode);
+        }
+
+        stop();
+    }
 
     //scaling logic 2 to use 4 fixed speeds as opposed to varying speeds to avoid jerks while driving
     static public double scaleInputFixedSpeed(double dVal) throws InterruptedException{
@@ -713,19 +727,20 @@ public class functions{
 
         double  distanceToCrypto = startDistance - cryptoWallMinVal;
 
-        double motorSpeed = 0.18;
+        double motorSpeedRed = 0.18;
+        double motorSpeedBlue = 0.20;
 
         if(allianceColor == JDColor.RED) {
-            frontLeftDriveMotor.setPower(motorSpeed);
-            frontRightDriveMotor.setPower(-motorSpeed);
-            backLeftDriveMotor.setPower(motorSpeed);
-            backRightDriveMotor.setPower(-motorSpeed);
+            frontLeftDriveMotor.setPower(motorSpeedRed);
+            frontRightDriveMotor.setPower(-motorSpeedRed);
+            backLeftDriveMotor.setPower(motorSpeedRed);
+            backRightDriveMotor.setPower(-motorSpeedRed);
         }
         else if(allianceColor == JDColor.BLUE){
-            frontLeftDriveMotor.setPower(-motorSpeed);
-            frontRightDriveMotor.setPower(motorSpeed);
-            backLeftDriveMotor.setPower(-motorSpeed);
-            backRightDriveMotor.setPower(motorSpeed);
+            frontLeftDriveMotor.setPower(-motorSpeedBlue);
+            frontRightDriveMotor.setPower(motorSpeedBlue);
+            backLeftDriveMotor.setPower(-motorSpeedBlue);
+            backRightDriveMotor.setPower(motorSpeedBlue);
         }
 
         ElapsedTime mRuntime = new ElapsedTime();
@@ -811,7 +826,7 @@ public class functions{
                 else if(targetColumn == 1){
                     stop();
                     Log.d("JDEndCrypto", "Moving forwards for 200 MS");
-                    moveForTime(motorSpeed, 200, linearOpMode);
+                    moveForTime(motorSpeedRed, 200, linearOpMode);
                 }
 
                 break;

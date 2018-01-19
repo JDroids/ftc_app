@@ -85,15 +85,22 @@ public class blueRecoveryAuto extends LinearOpMode{
 
         sleep(250);
 
+        moveForTime(0.3, 3000, this);
+
+        openGrabberWide(BOTTOM_GRABBER);
+
+        sleep(250);
+
+        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1000, this);
+
         moveForTime(-0.3, 500, this);
 
-        closeGrabber(BOTH_GRABBERS);
+        moveLiftForTime(-GLYPH_LIFT_AUTO_SPEED, 750, this);
 
         moveForTime(0.3, 750, this);
 
         moveForTime(-0.3, 500, this);
 
-        openGrabberWide(BOTH_GRABBERS);
 
         //time to look for the second and third glyph
 

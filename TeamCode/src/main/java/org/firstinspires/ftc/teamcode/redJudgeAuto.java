@@ -110,15 +110,21 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(250);
 
-        moveForTime(-0.2, 500, this);
+        moveForTime(0.3, 3000, this);
 
-        closeGrabber(BOTH_GRABBERS);
+        openGrabberWide(BOTTOM_GRABBER);
 
-        moveForTime(0.2, 750, this);
+        sleep(250);
 
-        moveForTime(-0.2, 500, this);
+        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1000, this);
 
-        openGrabberWide(BOTH_GRABBERS);
+        moveForTime(-0.3, 500, this);
+
+        moveLiftForTime(-GLYPH_LIFT_AUTO_SPEED, 750, this);
+
+        moveForTime(0.3, 750, this);
+
+        moveForTime(-0.3, 500, this);
 
         //time to look for the second and third glyph
 
