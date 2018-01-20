@@ -72,7 +72,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(500);
 
-        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1000, this);
+        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         sleep(100);
 
@@ -100,29 +100,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         turn(180, this);
 
-        sleep(250);
-
-        moveForTime(0.2, 1500, this);
-
-        openGrabber(BOTH_GRABBERS);
-
-        sleep(250);
-
-        moveForTime(0.3, 3000, this);
-
-        openGrabberWide(BOTTOM_GRABBER);
-
-        sleep(250);
-
-        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1000, this);
-
-        moveForTime(-0.3, 500, this);
-
-        moveLiftForTime(-GLYPH_LIFT_AUTO_SPEED, 750, this);
-
-        moveForTime(0.3, 750, this);
-
-        moveForTime(-0.3, 500, this);
+        depositGlyph(this);
 
         //time to look for the second and third glyph
 

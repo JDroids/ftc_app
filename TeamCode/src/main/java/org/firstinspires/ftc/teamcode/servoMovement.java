@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
 /**
  * Created by dansm on 12/22/2017.
  */
-
+@Disabled
 @TeleOp(name="Check Servo Position")
 
 public class servoMovement extends LinearOpMode{

@@ -7,6 +7,7 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
 import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.disnodeteam.dogecv.math.Line;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -40,12 +41,16 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
 
 public class functions{
 
-    static public void moveDistanceUltrasonic(UltrasonicSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
+    static public void moveDistanceUltrasonic(ModernRoboticsI2cRangeSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
         double distance = readAndFilterRangeSensor(linearOpMode);
 
         moveInAStraightLine(power);
+        ElapsedTime mRuntime = new ElapsedTime();
+
+        mRuntime.reset();
 
         while(distance < targetDistance && linearOpMode.opModeIsActive()){
+            Log.d("JDRangeRear", "Time: "+ Double.toString(mRuntime.milliseconds()) + "Distance: " + Double.toString(distance));
             distance = readAndFilterRangeSensor(linearOpMode);
         }
 
@@ -262,6 +267,23 @@ public class functions{
         stop();
     }
 
+    static public void depositGlyph(LinearOpMode linearOpMode) throws InterruptedException{
+        moveForTime(0.3, 450, linearOpMode);
+
+        linearOpMode.sleep(250);
+
+        openGrabberWide(BOTTOM_GRABBER);
+
+        linearOpMode.sleep(250);
+
+        moveForTime(0.3, 650, linearOpMode);
+
+        linearOpMode.sleep(250);
+
+        moveForTime(-0.3, 300, linearOpMode);
+
+    }
+
     static public int firstLiftDirection = -1;
     static public int secondLiftDirection = -1;
 
@@ -272,9 +294,9 @@ public class functions{
 
             if (gamepad2.left_stick_y > LIFT_TWITCH_THRESHOLD){
                 //Move down at a slow speed as gravity is pulling it down
-                firstGlyphLift.setPower(0.3);
+                firstGlyphLift.setPower(0.4);
                 //allows sensor to move away from the magnet
-                linearOpMode.sleep(200);
+                linearOpMode.sleep(450);
                 firstLiftDirection = DOWN;
             }
             else{
@@ -305,7 +327,7 @@ public class functions{
                 firstLiftDirection = UP;
             }
             else if(gamepad2.left_stick_y > LIFT_TWITCH_THRESHOLD){
-                firstGlyphLift.setPower(gamepad2.left_stick_y/3);
+                firstGlyphLift.setPower(gamepad2.left_stick_y/2);
                 firstLiftDirection = DOWN;
             }
             else{
@@ -715,7 +737,7 @@ public class functions{
                 break;
         }
 
-        return  targetColumn;
+        return targetColumn;
     }
 
     static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
@@ -727,7 +749,7 @@ public class functions{
 
         double  distanceToCrypto = startDistance - cryptoWallMinVal;
 
-        double motorSpeedRed = 0.18;
+        double motorSpeedRed = 0.20;
         double motorSpeedBlue = 0.20;
 
         if(allianceColor == JDColor.RED) {
@@ -818,18 +840,46 @@ public class functions{
                 linearOpMode.telemetry.addData("range:", msg);
                 linearOpMode.telemetry.update();
                 Log.d("JDRange", msg);
+                if(allianceColor == JDColor.RED) {
+                    if (targetColumn == 3) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 1200 MS");
+                        moveForTime(-motorSpeedRed, 1200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 1200 MS");
+                    } else if (targetColumn == 2) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
+                        moveForTime(-motorSpeedRed, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 200 MS");
+                    } else if (targetColumn == 1) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
+                        moveForTime(-motorSpeedRed, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved backwards for 200 MS");
+                    }
 
-                if(targetColumn == 3){
-                    Log.d("JDEndCrypto", "Moving backwards for 850 MS");
-                    linearOpMode.sleep(850);
+                    break;
                 }
-                else if(targetColumn == 1){
-                    stop();
-                    Log.d("JDEndCrypto", "Moving forwards for 200 MS");
-                    moveForTime(motorSpeedRed, 200, linearOpMode);
-                }
+                else if(allianceColor == JDColor.BLUE){
+                    if (targetColumn == 3) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 1200 MS");
+                        moveForTime(motorSpeedBlue, 1200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 1200 MS");
+                    } else if (targetColumn == 2) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
+                        moveForTime(motorSpeedBlue, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 200 MS");
+                    } else if (targetColumn == 1) {
+                        stop();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
+                        moveForTime(motorSpeedBlue, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved forwards for 200 MS");
+                    }
 
-                break;
+                    break;
+                }
             }
 
             msg = Double.toString(mRuntime.milliseconds()) + ": "

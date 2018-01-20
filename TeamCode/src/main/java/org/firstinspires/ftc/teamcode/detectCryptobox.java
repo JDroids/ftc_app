@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.functions.*;
 /**
  * Created by dansm on 12/17/2017.
  */
-
+@Disabled
 @TeleOp(name="DogeCV Red Crypto Detection")
 
 public class detectCryptobox extends LinearOpMode{
