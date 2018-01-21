@@ -76,7 +76,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveForTime(-0.3, 1150, this);
+        moveForTime(0.3, 1150, this);
 
         turn(90, this);
 
@@ -98,7 +98,7 @@ public class blueJudgeAuto extends LinearOpMode{
         //go to cryptobox
         moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
 
-        turn(180, this);
+        turn(0, this);
 
         depositGlyph(this);
 

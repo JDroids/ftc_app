@@ -498,22 +498,33 @@ public class functions{
             frontRightDriveMotor.setPower(0.3);
             backLeftDriveMotor.setPower(0.3);
             backRightDriveMotor.setPower(0.3);
+
+            while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive()){
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                currentZ = angles.firstAngle;
+
+                linearOpMode.telemetry.addData("Current Z", currentZ);
+                linearOpMode.telemetry.addData("Original Z", originalZ);
+                linearOpMode.telemetry.update();
+            }
         }
         else{
             frontLeftDriveMotor.setPower(-0.3);
             frontRightDriveMotor.setPower(-0.3);
             backLeftDriveMotor.setPower(-0.3);
             backRightDriveMotor.setPower(-0.3);
+
+            while((!(currentZ <= degrees + 3) && (currentZ >= degrees - 3)) && linearOpMode.opModeIsActive()){
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                currentZ = angles.firstAngle;
+
+                linearOpMode.telemetry.addData("Current Z", currentZ);
+                linearOpMode.telemetry.addData("Original Z", originalZ);
+                linearOpMode.telemetry.update();
+            }
         }
 
-        while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive()){
-            angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-            currentZ = angles.firstAngle;
 
-            linearOpMode.telemetry.addData("Current Z", currentZ);
-            linearOpMode.telemetry.addData("Original Z", originalZ);
-            linearOpMode.telemetry.update();
-        }
 
         stop();
     }
