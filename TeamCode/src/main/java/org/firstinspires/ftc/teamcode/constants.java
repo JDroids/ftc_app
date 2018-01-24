@@ -1,6 +1,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+
 /**
  * Created by dansm on 12/11/2017.
  */
@@ -49,5 +52,8 @@ public class constants{
     static final int BACK_CAMERA = 0;
 
     static final double LIFT_TWITCH_THRESHOLD = 0.15;
+
+    static final Scalar LOWER_BLUE = new Scalar(90, 128, 30);
+    static final Scalar UPPER_BLUE = new Scalar(170, 255, 255);
 
 }
