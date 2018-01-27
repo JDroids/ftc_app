@@ -6,6 +6,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -34,8 +35,10 @@ public class hardware{
     static DigitalChannel secondLiftSwitch = null;
 
     static ColorSensor jewelColorSensor = null;
-    static ModernRoboticsI2cRangeSensor sideRangeSensor;
-    static ModernRoboticsI2cRangeSensor rearRangeSensor;
+    static DistanceSensor jewelDistanceSensor = null;
+
+    static ModernRoboticsI2cRangeSensor sideRangeSensor = null;
+    static ModernRoboticsI2cRangeSensor rearRangeSensor = null;
     static BNO055IMU imuSensor = null;
 
     static public void initHardwareMap(HardwareMap map){
@@ -67,6 +70,8 @@ public class hardware{
             imuSensor = hMap.get(BNO055IMU.class, "imu");
 
             jewelColorSensor = hMap.colorSensor.get("color1");
+
+            jewelDistanceSensor = hMap.get(DistanceSensor.class, "color1");
 
             sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
 

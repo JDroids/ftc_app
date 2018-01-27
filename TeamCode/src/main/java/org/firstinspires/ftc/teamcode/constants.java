@@ -56,4 +56,11 @@ public class constants{
     static final Scalar LOWER_BLUE = new Scalar(90, 128, 30);
     static final Scalar UPPER_BLUE = new Scalar(170, 255, 255);
 
+    static final Scalar DARK_LOWER_RED = new Scalar(0, 113, 140);
+    static final Scalar DARK_UPPER_RED = new Scalar(11, 255, 255);
+
+    static final Scalar BRIGHT_LOWER_RED = new Scalar(166, 113, 140);
+    static final Scalar BRIGHT_UPPER_RED = new Scalar(180, 255, 255);
+
+
 }

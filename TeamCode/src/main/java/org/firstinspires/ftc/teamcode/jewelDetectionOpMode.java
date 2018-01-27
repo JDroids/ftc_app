@@ -16,8 +16,6 @@ public class jewelDetectionOpMode extends LinearOpMode{
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         jewelVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
-        //Only show jewels instead of full camera frame
-
         // start the vision system
         jewelVision.enable();
 
@@ -25,8 +23,10 @@ public class jewelDetectionOpMode extends LinearOpMode{
 
         while(opModeIsActive()){
 
+            if(!opModeIsActive()){
+                break;
+            }
         }
-
         jewelVision.disable();
     }
 }

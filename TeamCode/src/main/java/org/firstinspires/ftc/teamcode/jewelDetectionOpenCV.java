@@ -15,18 +15,13 @@ import static org.firstinspires.ftc.teamcode.constants.*;
  */
 
 public class jewelDetectionOpenCV extends OpenCVPipeline {
-    private boolean showBlue = true;
     // To keep it such that we don't have to instantiate a new Mat every call to processFrame,
     // we declare the Mats up here and reuse them. This is easier on the garbage collector.
     private Mat hsv = new Mat();
     private Mat thresholded = new Mat();
-    private Mat thresholded_rgba = new Mat();
+    private Mat thresholded_rgba = new Mat();;
     private Mat outputMat = new Mat();
 
-
-    public void setShowBlue(boolean enabled) {
-        showBlue = enabled;
-    }
 
     // This is called every camera frame.
     @Override
@@ -36,12 +31,13 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
         // Then, we threshold our hsv image so that we get a black/white binary image where white
         // is the blues listed in the specified range
         Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, thresholded);
+
         // Then we display our nice little binary threshold on screen
 
         // since the thresholded image data is a black and white image, we have to convert it back to rgba
         Imgproc.cvtColor(thresholded, thresholded_rgba, Imgproc.COLOR_GRAY2RGBA);
 
-        //outputMat.copyTo(thresholded_rgba, rgba);
+
 
         outputMat = thresholded_rgba;
 
