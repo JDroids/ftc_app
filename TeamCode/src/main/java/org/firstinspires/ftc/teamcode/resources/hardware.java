@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.resources;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -15,31 +15,31 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 public class hardware{
-    static DcMotor frontLeftDriveMotor = null;
-    static DcMotor frontRightDriveMotor = null;
-    static DcMotor backLeftDriveMotor = null;
-    static DcMotor backRightDriveMotor = null;
+    static public  DcMotor frontLeftDriveMotor = null;
+    static public  DcMotor frontRightDriveMotor = null;
+    static public  DcMotor backLeftDriveMotor = null;
+    static public  DcMotor backRightDriveMotor = null;
 
-    static DcMotor firstGlyphLift = null;
-    static DcMotor secondGlyphLift = null;
+    static public  DcMotor firstGlyphLift = null;
+    static public  DcMotor secondGlyphLift = null;
 
-    static Servo glyphGrabberTL = null;
-    static Servo glyphGrabberTR = null;
-    static Servo glyphGrabberBL = null;
-    static Servo glyphGrabberBR = null;
+    static public  Servo glyphGrabberTL = null;
+    static public  Servo glyphGrabberTR = null;
+    static public  Servo glyphGrabberBL = null;
+    static public  Servo glyphGrabberBR = null;
 
-    static Servo jewelKnocker = null;
-    static Servo jewelArm = null;
+    static public  Servo jewelKnocker = null;
+    static public  Servo jewelArm = null;
 
-    static DigitalChannel firstLiftSwitch = null;
-    static DigitalChannel secondLiftSwitch = null;
+    static public  DigitalChannel firstLiftSwitch = null;
+    static public  DigitalChannel secondLiftSwitch = null;
 
-    static ColorSensor jewelColorSensor = null;
-    static DistanceSensor jewelDistanceSensor = null;
+    static public  ColorSensor jewelColorSensor = null;
+    static public  DistanceSensor jewelDistanceSensor = null;
 
-    static ModernRoboticsI2cRangeSensor sideRangeSensor = null;
-    static ModernRoboticsI2cRangeSensor rearRangeSensor = null;
-    static BNO055IMU imuSensor = null;
+    static public  ModernRoboticsI2cRangeSensor sideRangeSensor = null;
+    static public  ModernRoboticsI2cRangeSensor rearRangeSensor = null;
+    static public  BNO055IMU imuSensor = null;
 
     static public void initHardwareMap(HardwareMap map){
         HardwareMap hMap = map;

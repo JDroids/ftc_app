@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.resources;
 
 import android.graphics.Color;
 import android.util.Log;
@@ -25,12 +25,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.ClosableVuforiaLocalizer;
 import org.opencv.core.Mat;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.firstinspires.ftc.teamcode.constants.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
 
@@ -423,7 +424,7 @@ public class functions{
         return jewelDetector;
     }
 
-    static public void readJewelWithDogeCV(JewelDetector jewelDetector, LinearOpMode linearOpMode){
+    static public void readJewelsWithDogeCV(JewelDetector jewelDetector, LinearOpMode linearOpMode){
         while(linearOpMode.opModeIsActive()){
             ElapsedTime mRuntime = new ElapsedTime();
 

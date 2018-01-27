@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -6,16 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
-import static org.firstinspires.ftc.teamcode.constants.*;
-import static org.firstinspires.ftc.teamcode.functions.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 /**
  * Created by dansm on 12/21/2017.
  */
 
-@Autonomous(name="BLUERecoveryAuto")
-public class blueRecoveryAuto extends LinearOpMode{
+@Autonomous(name="REDRecoveryAuto")
+public class redRecoveryAuto extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -60,7 +60,7 @@ public class blueRecoveryAuto extends LinearOpMode{
         //get the jewel
         lowerJewelArms(this);
         JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.BLUE, this);
+        knockJewel(jewelColor, JDColor.RED, this);
         raiseJewelArms(this);
 
         sleep(300);
@@ -73,11 +73,11 @@ public class blueRecoveryAuto extends LinearOpMode{
         moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.RECOVERY_SIDE, this);
+        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
 
         turn(90, this);
 
-        depositGlyph(this);
+       depositGlyph(this);
 
 
         //time to look for the second and third glyph

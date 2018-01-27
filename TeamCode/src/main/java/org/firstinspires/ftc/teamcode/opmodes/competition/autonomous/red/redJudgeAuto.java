@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 
 import android.util.Log;
 
@@ -8,16 +8,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
-import static org.firstinspires.ftc.teamcode.constants.*;
-import static org.firstinspires.ftc.teamcode.functions.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 /**
  * Created by dansm on 12/21/2017.
  */
 
-@Autonomous(name="BLUEJudgeAuto")
-public class blueJudgeAuto extends LinearOpMode{
+@Autonomous(name="REDJudgeAuto")
+public class redJudgeAuto extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -36,6 +36,7 @@ public class blueJudgeAuto extends LinearOpMode{
         parameters.loggingTag          = "IMU";
 
         imuSensor.initialize(parameters);
+
         int MaxValue = 255;
         double distanceToWall = sideRangeSensor.cmUltrasonic();;
 
@@ -45,11 +46,11 @@ public class blueJudgeAuto extends LinearOpMode{
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
-
         telemetry.addData("Distance to wall", distanceToWall);
         telemetry.update();
 
         waitForStart();
+
         //Code to run after play is pressed
 
         //detect the VuMark
@@ -62,7 +63,7 @@ public class blueJudgeAuto extends LinearOpMode{
         //get the jewel
         lowerJewelArms(this);
         JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.BLUE, this);
+        knockJewel(jewelColor, JDColor.RED, this);
         raiseJewelArms(this);
 
         sleep(300);
@@ -76,19 +77,20 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveForTime(0.3, 1150, this);
+        moveForTime(-0.3, 1250, this);
 
         turn(90, this);
 
         sleep(100);
 
-        moveForTime(0.3, 500, this);
+        moveForTime(0.3, 750, this);
 
         sleep(100);
 
+        //read the crypto wall after turning
+        distanceToWall = sideRangeSensor.cmUltrasonic();
         while ( !(distanceToWall < MaxValue) && opModeIsActive()) {
             distanceToWall = sideRangeSensor.cmUltrasonic();
-
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
@@ -96,11 +98,12 @@ public class blueJudgeAuto extends LinearOpMode{
         Log.d("JDRange", Double.toString(distanceToWall));
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
+        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        turn(0, this);
+        turn(180, this);
 
         depositGlyph(this);
+
 
         //time to look for the second and third glyph
 

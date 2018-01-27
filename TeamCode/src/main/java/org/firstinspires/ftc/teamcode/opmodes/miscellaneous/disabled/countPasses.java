@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.constants.*;
-import static org.firstinspires.ftc.teamcode.functions.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 /**
  * Created by dansm on 12/15/2017.
@@ -43,7 +43,7 @@ public class countPasses extends LinearOpMode{
                 backLeftDriveMotor.setPower(0);
                 backRightDriveMotor.setPower(0);
 
-                functions.turn(90, this);
+                turn(90, this);
             }
 
             telemetry.addData("Distance to Wall", distanceToWall);

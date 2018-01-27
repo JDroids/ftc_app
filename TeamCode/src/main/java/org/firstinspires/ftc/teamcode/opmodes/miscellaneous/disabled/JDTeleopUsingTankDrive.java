@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.constants.FIRST_LIFT;
-import static org.firstinspires.ftc.teamcode.constants.SECOND_LIFT;
-import static org.firstinspires.ftc.teamcode.functions.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
-
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
 /**
@@ -17,9 +15,9 @@ import static org.firstinspires.ftc.teamcode.hardware.*;
 
 
 @Disabled
-@TeleOp(name="JDTeleOpJava")
+@TeleOp(name="JDTeleOpTankDrive")
 
-public class JDTeleop extends LinearOpMode{
+public class JDTeleopUsingTankDrive extends LinearOpMode{
     @Override
 
     public void runOpMode() throws InterruptedException{
@@ -47,13 +45,13 @@ public class JDTeleop extends LinearOpMode{
             move(gamepad1LeftY, gamepad1RightY, gamepad1LeftX, gamepad1RightX);
 
             if(gamepad2.a){
-                closeGrabber(constants.BOTH_GRABBERS);
+                closeGrabber(BOTH_GRABBERS);
             }
             else if(gamepad2.b){
-                openGrabber(constants.BOTH_GRABBERS);
+                openGrabber(BOTH_GRABBERS);
             }
             else if(gamepad2.y){
-                openGrabberWide(constants.BOTH_GRABBERS);
+                openGrabberWide(BOTH_GRABBERS);
             }
 
             firstLift(gamepad2, this);

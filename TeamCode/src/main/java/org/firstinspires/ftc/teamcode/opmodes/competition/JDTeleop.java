@@ -1,20 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.functions.*;
-import static org.firstinspires.ftc.teamcode.hardware.*;
-import static org.firstinspires.ftc.teamcode.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
 
 
 /**
  * Created by dansm on 12/7/2017.
  */
 
-@TeleOp(name="JDTeleOpJavaArcade")
+@TeleOp(name="JDTeleOp")
 
-public class JDTeleopUsingArcade extends LinearOpMode{
+public class JDTeleop extends LinearOpMode{
 
     @Override
 
