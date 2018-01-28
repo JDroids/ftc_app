@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.resources;
 
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.OpenCVPipeline;
@@ -31,7 +31,7 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
     private Mat outputMat = new Mat();
 
     private MatOfInt histSize = new MatOfInt(256);
-    private MatOfInt channels = new MatOfInt(1);
+    private MatOfInt channels = new MatOfInt(0);
     private Mat mask = new Mat();
 
     private MatOfFloat range[] = new MatOfFloat[]{new MatOfFloat(0), new MatOfFloat(256)};
@@ -45,12 +45,12 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
     public Mat processFrame(Mat rgba, Mat gray) {
         Core.split(rgba, bgr_planes);
 
-        /*
-        Imgproc.calcHist(bgr_planes, channels, mask, b_hist, 1, histSize, range, uniform, accumulate);
-        Imgproc.calcHist(bgr_planes, 1, 0, g_hist, 1, histSize, range, uniform, accumulate);
-        Imgproc.calcHist(bgr_planes, 1, 0, r_hist, 1, histSize, range, uniform, accumulate);
-        */
 
+        Imgproc.calcHist((List<Mat>) bgr_planes.get(0), channels, mask, b_hist, histSize, new MatOfFloat(255),  accumulate);
+        //Imgproc.calcHist(bgr_planes, 1, 0, g_hist, 1, histSize, range, uniform, accumulate);
+        //Imgproc.calcHist(bgr_planes, 1, 0, r_hist, 1, histSize, range, uniform, accumulate);
+
+        outputMat = b_hist;
 
         return outputMat;
     }

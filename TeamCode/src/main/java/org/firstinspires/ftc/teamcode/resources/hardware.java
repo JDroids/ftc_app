@@ -23,6 +23,8 @@ public class hardware{
     static public  DcMotor firstGlyphLift = null;
     static public  DcMotor secondGlyphLift = null;
 
+    static public DcMotor relicExtender = null;
+
     static public  Servo glyphGrabberTL = null;
     static public  Servo glyphGrabberTR = null;
     static public  Servo glyphGrabberBL = null;
@@ -57,6 +59,8 @@ public class hardware{
             glyphGrabberTR = hMap.servo.get("glyphGrabberTR");
             glyphGrabberBL = hMap.servo.get("glyphGrabberBL");
             glyphGrabberBR = hMap.servo.get("glyphGrabberBR");
+
+            relicExtender = hMap.dcMotor.get("relicMotor");
 
             jewelKnocker = hMap.servo.get("servoJewelKnock");
             jewelArm = hMap.servo.get("servoJewelArm");

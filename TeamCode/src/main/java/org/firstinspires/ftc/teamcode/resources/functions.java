@@ -9,6 +9,7 @@ import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.disnodeteam.dogecv.math.Line;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
@@ -530,6 +531,7 @@ public class functions{
         stop();
     }
 
+
     static public JDColor detectJewelColor(LinearOpMode linearOpMode){
 
         float hue = 0;
@@ -585,6 +587,49 @@ public class functions{
         linearOpMode.telemetry.update();
         jewelColorSensor.enableLed(false);
         return jewelColorFound;
+    }
+
+    static public void moveEncoders(int inches, double power, LinearOpMode linearOpMode){
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        int ticks = (int) ((((Math.PI*4)/16) * 112) * inches)/4;
+
+        frontLeftDriveMotor.setTargetPosition(-ticks);
+        frontRightDriveMotor.setTargetPosition(ticks);
+        backLeftDriveMotor.setTargetPosition(-ticks);
+        backRightDriveMotor.setTargetPosition(ticks);
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeftDriveMotor.setPower(-power);
+        frontRightDriveMotor.setPower(power);
+        backLeftDriveMotor.setPower(-power);
+        backRightDriveMotor.setPower(power);
+
+        if(inches > 0){
+            while(backLeftDriveMotor.getCurrentPosition() <= ticks && backRightDriveMotor.getCurrentPosition() <= ticks && linearOpMode.opModeIsActive()){}
+        }
+        else{
+            while(backLeftDriveMotor.getCurrentPosition() >= ticks && backRightDriveMotor.getCurrentPosition() >= ticks && linearOpMode.opModeIsActive()){}
+        }
+
+        stop();
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     static public RelicRecoveryVuMark getVumark(LinearOpMode linearOpMode, HardwareMap hMap){
@@ -708,9 +753,6 @@ public class functions{
 
         double distance =  sideRangeSensor.cmUltrasonic();
         while ( (distance == 255 || distance == 0)  && linearOpMode.opModeIsActive() ){
-            if(mRuntime.milliseconds() >= 200){
-                break;
-            }
             distance = sideRangeSensor.cmUltrasonic();
         }
         return distance;
@@ -750,6 +792,32 @@ public class functions{
         }
 
         return targetColumn;
+    }
+
+    static public void moveToCryptoColumnEncoders(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
+        int distanceToTravel = 0; //It should always be set to something other than 0, this is just so the compiler doesn't yell at me
+
+        if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            switch(vuMark){
+                case LEFT:
+                    distanceToTravel = -11;
+                    break;
+                case CENTER:
+                    distanceToTravel = -4;
+                    break;
+                case RIGHT:
+                    distanceToTravel = 2;
+                    break;
+                default:
+                    distanceToTravel = 2;
+            }
+
+            moveEncoders(distanceToTravel, -0.7, linearOpMode);
+        }
+
+
+
+
     }
 
     static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){

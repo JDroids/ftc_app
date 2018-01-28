@@ -37,17 +37,14 @@ public class redJudgeAuto extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-        int MaxValue = 255;
-        double distanceToWall = sideRangeSensor.cmUltrasonic();;
 
-        //filter bad data maximum value
-        while ( !(distanceToWall < MaxValue) && opModeIsActive()) {
-            distanceToWall = sideRangeSensor.cmUltrasonic();
+        double distanceToWall = readAndFilterRangeSensor(this);
+
+        while(!isStarted()) {
+            distanceToWall = readAndFilterRangeSensor(this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
-        telemetry.addData("Distance to wall", distanceToWall);
-        telemetry.update();
 
         waitForStart();
 
@@ -77,28 +74,18 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveForTime(-0.3, 1250, this);
+        moveEncoders(-36, -0.7, this);
+
+        sleep(100);
 
         turn(90, this);
 
         sleep(100);
 
-        moveForTime(0.3, 750, this);
-
         sleep(100);
 
-        //read the crypto wall after turning
-        distanceToWall = sideRangeSensor.cmUltrasonic();
-        while ( !(distanceToWall < MaxValue) && opModeIsActive()) {
-            distanceToWall = sideRangeSensor.cmUltrasonic();
-            telemetry.addData("Distance to wall", distanceToWall);
-            telemetry.update();
-        }
-
-        Log.d("JDRange", Double.toString(distanceToWall));
-
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
+        moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
         turn(180, this);
 
@@ -106,6 +93,7 @@ public class redJudgeAuto extends LinearOpMode{
 
 
         //time to look for the second and third glyph
+
 
     }
 }

@@ -34,18 +34,16 @@ public class redRecoveryAuto extends LinearOpMode{
         parameters.loggingTag          = "IMU";
 
         imuSensor.initialize(parameters);
-        int MaxValue = 255;
-        double distanceToWall = sideRangeSensor.cmUltrasonic();;
 
-        //filter bad data maximum value
-        while ( !(distanceToWall < MaxValue) && opModeIsActive()) {
-            distanceToWall = sideRangeSensor.cmUltrasonic();
+
+        double distanceToWall = readAndFilterRangeSensor(this);
+
+
+        while(!isStarted()) {
+            distanceToWall = readAndFilterRangeSensor(this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
-
-        telemetry.addData("Distance to wall", distanceToWall);
-        telemetry.update();
 
         waitForStart();
         //Code to run after play is pressed

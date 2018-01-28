@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.resources.jewelDetectionOpenCV;
+
 /**
  * Created by dansm on 1/21/2018.
  */
 
-@Autonomous(name="Jewel Detection OpenCV")
+@Autonomous(name="Jewel Detection Custom")
 
 public class jewelDetectionOpMode extends LinearOpMode{
     public void runOpMode(){
