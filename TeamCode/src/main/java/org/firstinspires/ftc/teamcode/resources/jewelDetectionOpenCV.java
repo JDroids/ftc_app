@@ -6,6 +6,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -26,7 +28,11 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
 
     private List<Mat> bgr_planes = new ArrayList<Mat>();
 
-    private Mat b_hist, g_hist, r_hist;
+    private Mat b_hist, r_hist;
+    private Mat croppedImage = new Mat();
+
+    private Point p1 = new Point(336, 1462);
+    private Point p4 = new Point(1020, 1914);
 
     private Mat outputMat = new Mat();
 
@@ -34,8 +40,12 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
     private MatOfInt channels = new MatOfInt(0);
     private Mat mask = new Mat();
 
+    private Rect rectCrop = new Rect((int) p1.x,(int) p1.y,(int) (p4.x-p1.x+1),(int) (p4.y-p1.y+1));
+
     private MatOfFloat range[] = new MatOfFloat[]{new MatOfFloat(0), new MatOfFloat(256)};
 
+    private int lastBlue;
+    private int lastRed;
 
     private boolean uniform = true;
     private boolean accumulate = false;
@@ -43,12 +53,14 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
     // This is called every camera frame.
     @Override
     public Mat processFrame(Mat rgba, Mat gray) {
-        Core.split(rgba, bgr_planes);
+        croppedImage = rgba.submat(rectCrop);
 
+        Core.split(croppedImage, bgr_planes);
 
-        Imgproc.calcHist((List<Mat>) bgr_planes.get(0), channels, mask, b_hist, histSize, new MatOfFloat(255),  accumulate);
-        //Imgproc.calcHist(bgr_planes, 1, 0, g_hist, 1, histSize, range, uniform, accumulate);
-        //Imgproc.calcHist(bgr_planes, 1, 0, r_hist, 1, histSize, range, uniform, accumulate);
+        Imgproc.calcHist((List<Mat>) bgr_planes.get(0), channels, mask, b_hist, histSize, new MatOfFloat(256));
+        Imgproc.calcHist((List<Mat>) bgr_planes.get(2), channels, mask, r_hist, histSize, new MatOfFloat(256));
+
+        lastBlue = b_hist()
 
         outputMat = b_hist;
 
