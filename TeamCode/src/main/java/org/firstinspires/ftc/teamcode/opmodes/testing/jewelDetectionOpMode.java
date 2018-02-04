@@ -16,7 +16,7 @@ public class jewelDetectionOpMode extends LinearOpMode{
     public void runOpMode(){
         jewelDetectionOpenCV jewelVision = new jewelDetectionOpenCV();
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
-        jewelVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        jewelVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
 
         // start the vision system
         jewelVision.enable();
@@ -24,10 +24,21 @@ public class jewelDetectionOpMode extends LinearOpMode{
         waitForStart();
 
         while(opModeIsActive()){
-
-            if(!opModeIsActive()){
-                break;
+            switch(jewelVision.jewelOnLeft){
+                case RED:
+                    telemetry.addData("Jewel On Left", "Red");
+                    break;
+                case BLUE:
+                    telemetry.addData("Jewel On Left", "Blue");
+                    break;
+                case NONE:
+                    telemetry.addData("Jewel On Left", "None");
+                    break;
             }
+            if(isStopRequested()){
+                jewelVision.disable();
+            }
+            telemetry.update();
         }
         jewelVision.disable();
     }
