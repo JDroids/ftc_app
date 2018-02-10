@@ -1,4 +1,4 @@
-    package org.firstinspires.ftc.teamcode.resources;
+package org.firstinspires.ftc.teamcode.resources;
 
 import android.util.Log;
 import android.util.Size;
@@ -68,7 +68,7 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
     // This is called every camera frame.
 
     @Override
-    public Mat processFrame(Mat rgba, Mat gray) {
+    public Mat processFrame(Mat rgba, Mat gray){
 
         blue_plane.clear();
         red_plane.clear();
@@ -130,22 +130,28 @@ public class jewelDetectionOpenCV extends OpenCVPipeline {
         Log.d("Last Blue", Integer.toString(lastBlue));
         Log.d("Last Red", Integer.toString(lastRed));
 
-        //Maybe if the ranges are within ~1000 of each other call it none?
-
-        if(lastRed > lastBlue){
-            Log.d("JewelColor", "Red");
-            jewelOnLeft = JDColor.RED;
-        }
-        else if(lastBlue > lastRed){
-            Log.d("JewelColor", "Blue");
-            jewelOnLeft = JDColor.BLUE;
+        //1000 to little, 10000 to much
+        if(Math.abs(lastRed-lastBlue) > 3000){
+            if (lastRed > lastBlue) {
+                Log.d("JewelColor", "Red");
+                jewelOnLeft = JDColor.RED;
+            } else if (lastBlue > lastRed) {
+                Log.d("JewelColor", "Blue");
+                jewelOnLeft = JDColor.BLUE;
+            }
         }
         else{
             Log.d("JewelColor", "None");
             jewelOnLeft = JDColor.NONE;
         }
 
+        //To limit the frame rate - Probably the wrong way to do so
+        try {
+            Thread.sleep(100);
+        }
+        catch(InterruptedException e){
+            //This is a terrible practice
+        }
         return croppedImage;
-
     }
 }
