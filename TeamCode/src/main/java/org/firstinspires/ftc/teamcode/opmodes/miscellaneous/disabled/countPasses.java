@@ -23,7 +23,7 @@ public class countPasses extends LinearOpMode{
 
         waitForStart();
 
-        double distanceToWall = sideRangeSensor.cmUltrasonic();
+        double distanceToWall = rearRangeSensor.cmUltrasonic();
         sleep(100);
         double distanceToCryptoBoxWall = distanceToWall - 8;
 
@@ -32,10 +32,10 @@ public class countPasses extends LinearOpMode{
         backLeftDriveMotor.setPower(0.2);
         backRightDriveMotor.setPower(-0.2);
         while(opModeIsActive()){
-            if(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
+            if(rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
                 columnsPassed++;
 
-                while(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()){}
+                while(rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()){}
             }
             if(columnsPassed >= 2){
                 frontLeftDriveMotor.setPower(0);
@@ -48,7 +48,7 @@ public class countPasses extends LinearOpMode{
 
             telemetry.addData("Distance to Wall", distanceToWall);
             telemetry.addData("Distance to Crypto Box Wall", distanceToCryptoBoxWall);
-            telemetry.addData("Centimeters from Object", sideRangeSensor.cmUltrasonic());
+            telemetry.addData("Centimeters from Object", rearRangeSensor.cmUltrasonic());
             telemetry.addData("Columns Passed", columnsPassed);
             telemetry.update();
         }

@@ -296,7 +296,7 @@ public class functions{
     }
 
     static public void depositGlyph(LinearOpMode linearOpMode) throws InterruptedException{
-        moveForTime(0.3, 450, linearOpMode);
+        moveEncoders(3, 0.7, linearOpMode);
 
         linearOpMode.sleep(250);
 
@@ -304,11 +304,11 @@ public class functions{
 
         linearOpMode.sleep(250);
 
-        moveForTime(0.3, 650, linearOpMode);
+        moveEncoders(5, 0.7, linearOpMode);
 
         linearOpMode.sleep(250);
 
-        moveForTime(-0.3, 300, linearOpMode);
+        moveEncoders(-2, -0.3, linearOpMode);
 
     }
 
@@ -626,7 +626,7 @@ public class functions{
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        int ticks = (int) ((((Math.PI*4)/16) * 112) * inches)/4;
+        int ticks = (int) ((((Math.PI*4)/16) * 112) * inches)/4; //Convert the amount of inches to travel to ticks
 
         frontLeftDriveMotor.setTargetPosition(-ticks);
         frontRightDriveMotor.setTargetPosition(ticks);
@@ -695,6 +695,8 @@ public class functions{
 
         vuforia.close();
 
+        linearOpMode.telemetry.addData("Found vumark", vuMark);
+
         return vuMark;
 
     }
@@ -751,10 +753,10 @@ public class functions{
 
 
         while(linearOpMode.opModeIsActive()){
-            if (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
+            if (rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
                 columnsPassed++;
 
-                while (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && linearOpMode.opModeIsActive()){
+                while (rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && linearOpMode.opModeIsActive()){
                 }
             }
 
@@ -765,7 +767,7 @@ public class functions{
 
             linearOpMode.telemetry.addData("Distance to Wall", distanceToWall);
             linearOpMode.telemetry.addData("Distance to Crypto Box Wall", distanceToCryptoBoxWall);
-            linearOpMode.telemetry.addData("Centimeters from Object", sideRangeSensor.cmUltrasonic());
+            linearOpMode.telemetry.addData("Centimeters from Object", rearRangeSensor.cmUltrasonic());
             linearOpMode.telemetry.addData("Columns Passed", columnsPassed);
             linearOpMode.telemetry.update();
         }
@@ -777,9 +779,9 @@ public class functions{
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
 
-        double distance =  sideRangeSensor.cmUltrasonic();
+        double distance =  rearRangeSensor.cmUltrasonic();
         while ( (distance == 255 || distance == 0)  && linearOpMode.opModeIsActive() ){
-            distance = sideRangeSensor.cmUltrasonic();
+            distance = rearRangeSensor.cmUltrasonic();
         }
         return distance;
     }

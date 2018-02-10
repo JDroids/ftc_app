@@ -38,8 +38,8 @@ public class blueJudgeAuto extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-        double distanceToWall = readAndFilterRangeSensorValues(this);
 
+        double distanceToWall = readAndFilterRangeSensorValues(this);
 
         while(!isStarted()) {
             distanceToWall = readAndFilterRangeSensorValues(this);
@@ -47,9 +47,8 @@ public class blueJudgeAuto extends LinearOpMode{
             telemetry.update();
         }
 
-
-
         waitForStart();
+
         //Code to run after play is pressed
 
         //detect the VuMark
@@ -62,7 +61,7 @@ public class blueJudgeAuto extends LinearOpMode{
         //get the jewel
         lowerJewelArms(this);
         JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.BLUE, this);
+        knockJewel(jewelColor, JDColor.RED, this);
         raiseJewelArms(this);
 
         sleep(300);
@@ -76,26 +75,23 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveForTime(0.3, 1150, this);
+        moveEncoders(-36, -0.7, this);
+
+        sleep(100);
 
         turn(90, this);
 
         sleep(100);
 
-        moveForTime(0.3, 500, this);
-
         sleep(100);
 
-        distanceToWall = readAndFilterRangeSensorValues(this);
-
-        Log.d("JDRange", Double.toString(distanceToWall));
-
         //go to cryptobox
-        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
+        moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        turn(0, this);
+        turn(180, this);
 
         depositGlyph(this);
+
 
         //time to look for the second and third glyph
 

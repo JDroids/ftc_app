@@ -43,50 +43,45 @@ public class hardware{
     static public ColorSensor jewelColorSensor = null;
     static public DistanceSensor jewelDistanceSensor = null;
 
-    static public ModernRoboticsI2cRangeSensor sideRangeSensor = null;
     static public ModernRoboticsI2cRangeSensor rearRangeSensor = null;
+
     static public BNO055IMU imuSensor = null;
 
     static public void initHardwareMap(HardwareMap map){
         HardwareMap hMap = map;
 
 
-        try{
-            frontLeftDriveMotor = hMap.dcMotor.get("FrontLeft");
-            frontRightDriveMotor = hMap.dcMotor.get("FrontRight");
-            backLeftDriveMotor = hMap.dcMotor.get("BackLeft");
-            backRightDriveMotor = hMap.dcMotor.get("BackRight");
+        frontLeftDriveMotor = hMap.dcMotor.get("FrontLeft");
+        frontRightDriveMotor = hMap.dcMotor.get("FrontRight");
+        backLeftDriveMotor = hMap.dcMotor.get("BackLeft");
+        backRightDriveMotor = hMap.dcMotor.get("BackRight");
 
-            firstGlyphLift = hMap.dcMotor.get("MotorGlyphLift");
-            secondGlyphLift = hMap.dcMotor.get("MotorGlyphLift2");
+        firstGlyphLift = hMap.dcMotor.get("MotorGlyphLift");
+        secondGlyphLift = hMap.dcMotor.get("MotorGlyphLift2");
 
-            glyphGrabberTL = hMap.servo.get("glyphGrabberTL");
-            glyphGrabberTR = hMap.servo.get("glyphGrabberTR");
-            glyphGrabberBL = hMap.servo.get("glyphGrabberBL");
-            glyphGrabberBR = hMap.servo.get("glyphGrabberBR");
+        relicExtender = hMap.dcMotor.get("relicMotor");
 
-            relicExtender = hMap.dcMotor.get("relicMotor");
+        glyphGrabberTL = hMap.servo.get("glyphGrabberTL");
+        glyphGrabberTR = hMap.servo.get("glyphGrabberTR");
+        glyphGrabberBL = hMap.servo.get("glyphGrabberBL");
+        glyphGrabberBR = hMap.servo.get("glyphGrabberBR");
 
-            jewelKnocker = hMap.servo.get("servoJewelKnock");
-            jewelArm = hMap.servo.get("servoJewelArm");
+        jewelKnocker = hMap.servo.get("servoJewelKnock");
+        jewelArm = hMap.servo.get("servoJewelArm");
 
-            firstLiftSwitch = hMap.digitalChannel.get("FirstLiftSwitch");
-            secondLiftSwitch = hMap.digitalChannel.get("SecondLiftSwitch");
+        firstLiftSwitch = hMap.digitalChannel.get("FirstLiftSwitch");
+        secondLiftSwitch = hMap.digitalChannel.get("SecondLiftSwitch");
 
-            firstLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
-            secondLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
+        firstLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
+        secondLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
 
-            imuSensor = hMap.get(BNO055IMU.class, "imu");
+        imuSensor = hMap.get(BNO055IMU.class, "imu");
 
-            jewelColorSensor = hMap.colorSensor.get("color1");
+        jewelColorSensor = hMap.colorSensor.get("color1");
 
-            jewelDistanceSensor = hMap.get(DistanceSensor.class, "color1");
+        jewelDistanceSensor = hMap.get(DistanceSensor.class, "color1");
 
-            sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
+        rearRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
-        }
-        catch(IllegalArgumentException e){ //IllegalArgumentException is what hardwaremap.get() throws
-            throw new java.lang.RuntimeException("Hardware Init failed");
-        }
     }
 }
