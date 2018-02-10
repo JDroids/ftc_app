@@ -7,44 +7,49 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Hardware;
+
+import java.lang.reflect.Field;
 
 /**
  * Created by dansm on 12/13/2017.
  */
 
 public class hardware{
-    static public  DcMotor frontLeftDriveMotor = null;
-    static public  DcMotor frontRightDriveMotor = null;
-    static public  DcMotor backLeftDriveMotor = null;
-    static public  DcMotor backRightDriveMotor = null;
+    static public DcMotor frontLeftDriveMotor = null;
+    static public DcMotor frontRightDriveMotor = null;
+    static public DcMotor backLeftDriveMotor = null;
+    static public DcMotor backRightDriveMotor = null;
 
-    static public  DcMotor firstGlyphLift = null;
-    static public  DcMotor secondGlyphLift = null;
+    static public DcMotor firstGlyphLift = null;
+    static public DcMotor secondGlyphLift = null;
 
     static public DcMotor relicExtender = null;
 
-    static public  Servo glyphGrabberTL = null;
-    static public  Servo glyphGrabberTR = null;
-    static public  Servo glyphGrabberBL = null;
-    static public  Servo glyphGrabberBR = null;
+    static public Servo glyphGrabberTL = null;
+    static public Servo glyphGrabberTR = null;
+    static public Servo glyphGrabberBL = null;
+    static public Servo glyphGrabberBR = null;
 
-    static public  Servo jewelKnocker = null;
-    static public  Servo jewelArm = null;
+    static public Servo jewelKnocker = null;
+    static public Servo jewelArm = null;
 
-    static public  DigitalChannel firstLiftSwitch = null;
-    static public  DigitalChannel secondLiftSwitch = null;
+    static public DigitalChannel firstLiftSwitch = null;
+    static public DigitalChannel secondLiftSwitch = null;
 
-    static public  ColorSensor jewelColorSensor = null;
-    static public  DistanceSensor jewelDistanceSensor = null;
+    static public ColorSensor jewelColorSensor = null;
+    static public DistanceSensor jewelDistanceSensor = null;
 
-    static public  ModernRoboticsI2cRangeSensor sideRangeSensor = null;
-    static public  ModernRoboticsI2cRangeSensor rearRangeSensor = null;
-    static public  BNO055IMU imuSensor = null;
+    static public ModernRoboticsI2cRangeSensor sideRangeSensor = null;
+    static public ModernRoboticsI2cRangeSensor rearRangeSensor = null;
+    static public BNO055IMU imuSensor = null;
 
     static public void initHardwareMap(HardwareMap map){
         HardwareMap hMap = map;
+
 
         try{
             frontLeftDriveMotor = hMap.dcMotor.get("FrontLeft");
@@ -80,7 +85,7 @@ public class hardware{
             sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
 
         }
-        catch(Exception e){
+        catch(IllegalArgumentException e){ //IllegalArgumentException is what hardwaremap.get() throws
             throw new java.lang.RuntimeException("Hardware Init failed");
         }
     }

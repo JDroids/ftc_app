@@ -45,17 +45,17 @@ public class JDTeleopUsingTankDrive extends LinearOpMode{
             move(gamepad1LeftY, gamepad1RightY, gamepad1LeftX, gamepad1RightX);
 
             if(gamepad2.a){
-                closeGrabber(BOTH_GRABBERS);
+                closeGrabber(GRABBERS.BOTH_GRABBERS);
             }
             else if(gamepad2.b){
-                openGrabber(BOTH_GRABBERS);
+                openGrabber(GRABBERS.BOTH_GRABBERS);
             }
             else if(gamepad2.y){
-                openGrabberWide(BOTH_GRABBERS);
+                openGrabberWide(GRABBERS.BOTH_GRABBERS);
             }
 
-            firstLift(gamepad2, this);
-            secondLift(gamepad2, this);
+            controlFirstGlyphLift(gamepad2, this);
+            controlSecondGlyphLift(gamepad2, this);
         }
     }
 }

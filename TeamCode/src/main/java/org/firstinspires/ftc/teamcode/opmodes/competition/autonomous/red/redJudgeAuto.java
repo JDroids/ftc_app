@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTH_GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
@@ -38,10 +37,10 @@ public class redJudgeAuto extends LinearOpMode{
         imuSensor.initialize(parameters);
 
 
-        double distanceToWall = readAndFilterRangeSensor(this);
+        double distanceToWall = readAndFilterRangeSensorValues(this);
 
         while(!isStarted()) {
-            distanceToWall = readAndFilterRangeSensor(this);
+            distanceToWall = readAndFilterRangeSensorValues(this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
@@ -70,7 +69,7 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(500);
 
-        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
+        moveFirstLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         sleep(100);
 

@@ -27,34 +27,34 @@ public class JDTeleop extends LinearOpMode{
         waitForStart();
         //Code to run after play is pressed
 
-        int controlledGrabber = BOTH_GRABBERS;
+        GRABBERS controlledGrabbers = GRABBERS.BOTH_GRABBERS;
 
         initServos(TELEOP);
 
-        moveLiftForTime(0.7, 500, this);
+        moveFirstLiftForTime(0.7, 500, this);
         moveSecondLiftForTime(0.7, 500, this);
 
         while(opModeIsActive()) {
             moveArcade(gamepad1);
 
             if(gamepad2.dpad_up){
-                controlledGrabber = TOP_GRABBER;
+                controlledGrabbers = GRABBERS.TOP_GRABBER;
             }
             else if(gamepad2.dpad_down){
-                controlledGrabber = BOTTOM_GRABBER;
+                controlledGrabbers = GRABBERS.BOTTOM_GRABBER;
             }
             else if(gamepad2.dpad_left || gamepad2.dpad_right){
-                controlledGrabber = BOTH_GRABBERS;
+                controlledGrabbers = GRABBERS.BOTH_GRABBERS;
             }
 
             if (gamepad2.a) {
-                closeGrabber(controlledGrabber);
+                closeGrabber(controlledGrabbers);
             }
             else if (gamepad2.b){
-                openGrabber(controlledGrabber);
+                openGrabber(controlledGrabbers);
             }
             else if (gamepad2.y) {
-                openGrabberWide(controlledGrabber);
+                openGrabberWide(controlledGrabbers);
             }
 
             if(gamepad2.right_bumper){
@@ -67,8 +67,8 @@ public class JDTeleop extends LinearOpMode{
                 relicExtender.setPower(0);
             }
 
-            firstLift(gamepad2, this);
-            secondLift(gamepad2, this);
+            controlFirstGlyphLift(gamepad2, this);
+            controlSecondGlyphLift(gamepad2, this);
         }
     }
 }

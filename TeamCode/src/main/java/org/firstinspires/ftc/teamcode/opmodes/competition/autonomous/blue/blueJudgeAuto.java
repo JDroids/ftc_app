@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTH_GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
@@ -37,11 +38,11 @@ public class blueJudgeAuto extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-        double distanceToWall = readAndFilterRangeSensor(this);
+        double distanceToWall = readAndFilterRangeSensorValues(this);
 
 
         while(!isStarted()) {
-            distanceToWall = readAndFilterRangeSensor(this);
+            distanceToWall = readAndFilterRangeSensorValues(this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
@@ -71,7 +72,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(500);
 
-        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
+        moveFirstLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         sleep(100);
 
@@ -85,12 +86,12 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        distanceToWall = readAndFilterRangeSensor(this);
+        distanceToWall = readAndFilterRangeSensorValues(this);
 
         Log.d("JDRange", Double.toString(distanceToWall));
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
+        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
 
         turn(0, this);
 

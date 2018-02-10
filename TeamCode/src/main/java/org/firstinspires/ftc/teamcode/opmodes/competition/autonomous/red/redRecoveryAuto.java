@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
@@ -36,11 +37,11 @@ public class redRecoveryAuto extends LinearOpMode{
         imuSensor.initialize(parameters);
 
 
-        double distanceToWall = readAndFilterRangeSensor(this);
+        double distanceToWall = readAndFilterRangeSensorValues(this);
 
 
         while(!isStarted()) {
-            distanceToWall = readAndFilterRangeSensor(this);
+            distanceToWall = readAndFilterRangeSensorValues(this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
@@ -68,10 +69,10 @@ public class redRecoveryAuto extends LinearOpMode{
 
         sleep(500);
 
-        moveLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
+        moveFirstLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         //go to cryptobox
-        moveUntilCryptoWallv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
+        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
 
         turn(90, this);
 

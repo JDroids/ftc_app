@@ -33,9 +33,7 @@ public class constants{
     public enum JDColor {NONE, RED, BLUE};
     public enum FIELD_SIDE {RECOVERY_SIDE, JUDGE_SIDE};
 
-    static public final int BOTH_GRABBERS = 0;
-    static public final int BOTTOM_GRABBER = 1;
-    static public final int TOP_GRABBER = 2;
+    public enum GRABBERS {BOTH_GRABBERS, BOTTOM_GRABBER, TOP_GRABBER}
 
     static public final int RED = 0;
     static public final int BLUE = 1;

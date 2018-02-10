@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalize
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.TOP_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
@@ -37,8 +39,9 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 public class functions{
 
-    static public void moveDistanceUltrasonic(ModernRoboticsI2cRangeSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
-        double distance = readAndFilterRangeSensor(linearOpMode);
+
+    static public void moveUntilDistanceUltrasonic(ModernRoboticsI2cRangeSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
+        double distance = readAndFilterRangeSensorValues(linearOpMode);
 
         moveInAStraightLine(power);
         ElapsedTime mRuntime = new ElapsedTime();
@@ -47,13 +50,13 @@ public class functions{
 
         while(distance < targetDistance && linearOpMode.opModeIsActive()){
             Log.d("JDRangeRear", "Time: "+ Double.toString(mRuntime.milliseconds()) + "Distance: " + Double.toString(distance));
-            distance = readAndFilterRangeSensor(linearOpMode);
+            distance = readAndFilterRangeSensorValues(linearOpMode);
         }
 
-        stop();
+        stopDriveMotors();
     }
 
-    //scaling logic 2 to use 4 fixed speeds as opposed to varying speeds to avoid jerks while driving
+    //scaling logic to use 4 fixed speeds as opposed to varying speeds to avoid jerks while driving
     static public double scaleInputFixedSpeed(double dVal) throws InterruptedException{
         int sign;
 
@@ -80,9 +83,10 @@ public class functions{
         else{
             result = 0.75;
         }
-        return result*sign ;
+        return result*sign;
     }
 
+    //Simple function to well scaleInput
     static public double scaleInput(double dVal) throws InterruptedException{
         double result = Math.pow(dVal, 3);
         if (result > 0.7){
@@ -94,6 +98,7 @@ public class functions{
         return result;
     }
 
+    //Same as scaling logic above, just using powers of 2 instead of 3
     static public double scaleInputPowerOf2(double dVal){
         double sign = dVal/ Math.abs(dVal);
         double result = (Math.pow(dVal, 2)) * sign;
@@ -107,20 +112,25 @@ public class functions{
         return result;
     }
 
-    static public void setGrabber(double leftServoPosition, double rightServoPosition, int grabbers) throws InterruptedException{
-        if(grabbers == BOTH_GRABBERS){
-            glyphGrabberTL.setPosition(leftServoPosition);
-            glyphGrabberTR.setPosition(rightServoPosition);
-            glyphGrabberBL.setPosition(leftServoPosition);
-            glyphGrabberBR.setPosition(rightServoPosition);
-        }
-        else if(grabbers == BOTTOM_GRABBER){
-            glyphGrabberBL.setPosition(leftServoPosition);
-            glyphGrabberBR.setPosition(rightServoPosition);
-        }
-        else if(grabbers == TOP_GRABBER){
-            glyphGrabberTL.setPosition(leftServoPosition);
-            glyphGrabberTR.setPosition(rightServoPosition);
+    //Set the top, bottom, or both glyph grabber(s) to a position
+    static public void setGrabber(double leftServoPosition, double rightServoPosition, GRABBERS grabbers) throws InterruptedException{
+        switch(grabbers) {
+            case BOTH_GRABBERS:
+                glyphGrabberTL.setPosition(leftServoPosition);
+                glyphGrabberTR.setPosition(rightServoPosition);
+                glyphGrabberBL.setPosition(leftServoPosition);
+                glyphGrabberBR.setPosition(rightServoPosition);
+
+                break;
+
+            case BOTTOM_GRABBER:
+                glyphGrabberBL.setPosition(leftServoPosition);
+                glyphGrabberBR.setPosition(rightServoPosition);
+                break;
+            case TOP_GRABBER:
+                glyphGrabberTL.setPosition(leftServoPosition);
+                glyphGrabberTR.setPosition(rightServoPosition);
+                break;
         }
     }
 
@@ -158,41 +168,62 @@ public class functions{
         }
     }
 
-    static public void closeGrabber(int grabber) throws InterruptedException{
-        if (grabber == BOTH_GRABBERS){
-            setGrabber(TOP_SERVO_GRABBER_CLOSE_POSITION[0], TOP_SERVO_GRABBER_CLOSE_POSITION[1], TOP_GRABBER);
-            setGrabber(BOTTOM_SERVO_GRABBER_CLOSE_POSITION[0], BOTTOM_SERVO_GRABBER_CLOSE_POSITION[1], BOTTOM_GRABBER);
-        }else if ( grabber == TOP_GRABBER){
-            setGrabber(TOP_SERVO_GRABBER_CLOSE_POSITION[0], TOP_SERVO_GRABBER_CLOSE_POSITION[1], TOP_GRABBER);
+    static public void closeGrabber(GRABBERS grabbers) throws InterruptedException{
+        switch(grabbers){
+            case BOTH_GRABBERS:
+                setGrabber(TOP_SERVO_GRABBER_CLOSE_POSITION[0], TOP_SERVO_GRABBER_CLOSE_POSITION[1], TOP_GRABBER);
+                setGrabber(BOTTOM_SERVO_GRABBER_CLOSE_POSITION[0], BOTTOM_SERVO_GRABBER_CLOSE_POSITION[1], BOTTOM_GRABBER);
 
-        }else if (grabber == BOTTOM_GRABBER){
-            setGrabber(BOTTOM_SERVO_GRABBER_CLOSE_POSITION[0], BOTTOM_SERVO_GRABBER_CLOSE_POSITION[1], BOTTOM_GRABBER);
+                break;
+            case BOTTOM_GRABBER:
+                setGrabber(BOTTOM_SERVO_GRABBER_CLOSE_POSITION[0], BOTTOM_SERVO_GRABBER_CLOSE_POSITION[1], BOTTOM_GRABBER);
+
+                break;
+            case TOP_GRABBER:
+                setGrabber(TOP_SERVO_GRABBER_CLOSE_POSITION[0], TOP_SERVO_GRABBER_CLOSE_POSITION[1], TOP_GRABBER);
+
+                break;
         }
     }
 
-    static public void openGrabber(int grabber) throws InterruptedException{
-        if (grabber == BOTH_GRABBERS){
-            setGrabber(TOP_SERVO_GRABBER_OPEN_POSITION[0], TOP_SERVO_GRABBER_OPEN_POSITION[1], TOP_GRABBER);
-            setGrabber(BOTTOM_SERVO_GRABBER_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_OPEN_POSITION[1], BOTTOM_GRABBER);
-        }else if ( grabber == TOP_GRABBER){
-            setGrabber(TOP_SERVO_GRABBER_OPEN_POSITION[0], TOP_SERVO_GRABBER_OPEN_POSITION[1], TOP_GRABBER);
+    static public void openGrabber(GRABBERS grabbers) throws InterruptedException{
+        switch(grabbers){
+            case BOTH_GRABBERS:
+                setGrabber(TOP_SERVO_GRABBER_OPEN_POSITION[0], TOP_SERVO_GRABBER_OPEN_POSITION[1], TOP_GRABBER);
+                setGrabber(BOTTOM_SERVO_GRABBER_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_OPEN_POSITION[1], BOTTOM_GRABBER);
 
-        }else if (grabber == BOTTOM_GRABBER){
-            setGrabber(BOTTOM_SERVO_GRABBER_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_OPEN_POSITION[1], BOTTOM_GRABBER);
+                break;
+
+            case BOTTOM_GRABBER:
+                setGrabber(BOTTOM_SERVO_GRABBER_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_OPEN_POSITION[1], BOTTOM_GRABBER);
+
+                break;
+            case TOP_GRABBER:
+                setGrabber(TOP_SERVO_GRABBER_OPEN_POSITION[0], TOP_SERVO_GRABBER_OPEN_POSITION[1], TOP_GRABBER);
+
+                break;
         }
     }
 
-    static public void openGrabberWide(int grabber) throws InterruptedException{
-        if (grabber == BOTH_GRABBERS){
-            setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
-            setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
-        }else if ( grabber == TOP_GRABBER){
-            setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
+    static public void openGrabberWide(GRABBERS grabbers) throws InterruptedException{
+        switch(grabbers){
+            case BOTH_GRABBERS:
+                setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
+                setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
 
-        }else if (grabber == BOTTOM_GRABBER){
-            setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
+                break;
+
+            case BOTTOM_GRABBER:
+                setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
+
+                break;
+            case TOP_GRABBER:
+                setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
+
+                break;
         }
     }
+
 
     static public void moveInAStraightLine(double speed, boolean strafe){
         if(!strafe){
@@ -214,6 +245,7 @@ public class functions{
         moveInAStraightLine(speed, false);
     }
 
+    //Tank drive + strafing; Deprecated
     static public void move(double leftY, double rightY, double leftX, double rightX) throws InterruptedException{
         if(leftX >= STRAFING_LIMIT && rightX >= STRAFING_LIMIT || leftX <= -STRAFING_LIMIT && rightX <= -STRAFING_LIMIT){
             //To strafe either left or right
@@ -233,14 +265,14 @@ public class functions{
 
     }
 
-    static public void stop(){
+    static public void stopDriveMotors(){
         frontLeftDriveMotor.setPower(0);
         frontRightDriveMotor.setPower(0);
         backLeftDriveMotor.setPower(0);
         backRightDriveMotor.setPower(0);
     }
 
-    static public void moveLiftForTime(double speed, int milliseconds, LinearOpMode linearOpMode){
+    static public void moveFirstLiftForTime(double speed, int milliseconds, LinearOpMode linearOpMode){
         //Positive speed is up
 
         firstGlyphLift.setPower(-speed);
@@ -260,7 +292,7 @@ public class functions{
         moveInAStraightLine(power);
 
         linearOpMode.sleep(milliseconds);
-        stop();
+        stopDriveMotors();
     }
 
     static public void depositGlyph(LinearOpMode linearOpMode) throws InterruptedException{
@@ -283,7 +315,7 @@ public class functions{
     static public int firstLiftDirection = -1;
     static public int secondLiftDirection = -1;
 
-    static public void firstLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
+    static public void controlFirstGlyphLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
         if(!firstLiftSwitch.getState() && firstLiftDirection == UP){
             linearOpMode.telemetry.addData("First Lift", "Top Limit Reached - Move Down");
             linearOpMode.telemetry.update();
@@ -335,7 +367,7 @@ public class functions{
         }
     }
 
-    static public void secondLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
+    static public void controlSecondGlyphLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
         if(!secondLiftSwitch.getState() && secondLiftDirection == UP){
             linearOpMode.telemetry.addData("Second Lift", "Top Limit Reached - Move Down");
             linearOpMode.telemetry.update();
@@ -522,7 +554,7 @@ public class functions{
 
 
 
-        stop();
+        stopDriveMotors();
     }
 
 
@@ -618,7 +650,7 @@ public class functions{
             while(backLeftDriveMotor.getCurrentPosition() >= ticks && backRightDriveMotor.getCurrentPosition() >= ticks && linearOpMode.opModeIsActive()){}
         }
 
-        stop();
+        stopDriveMotors();
 
         frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -668,7 +700,7 @@ public class functions{
     }
 
 
-    static public void moveUntilCryptoWall(double distanceToWall, RelicRecoveryVuMark vuMark, int color, LinearOpMode linearOpMode){
+    static public void moveUntilCryptoWallUsingUltrasonic(double distanceToWall, RelicRecoveryVuMark vuMark, int color, LinearOpMode linearOpMode){//Deprecated
         int targetColumn;
 
         if(vuMark == RelicRecoveryVuMark.LEFT && color == RED){
@@ -727,7 +759,7 @@ public class functions{
             }
 
             if (columnsPassed >= targetColumn){
-                stop();
+                stopDriveMotors();
                 break;
             }
 
@@ -741,7 +773,7 @@ public class functions{
 
     //discard any accidental bad reading from the sensor
     //break out of the loop if unable to read good sensor data within 200ms
-    static public double readAndFilterRangeSensor(LinearOpMode linearOpMode){
+    static public double readAndFilterRangeSensorValues(LinearOpMode linearOpMode){
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
 
@@ -752,7 +784,162 @@ public class functions{
         return distance;
     }
 
-    static int targetColumn(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide)
+    static public void moveUntilCryptoWallUsingUltrasonicv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){ //Deprecated
+        int targetColumn = targetCryptoboxColumn(vuMark, allianceColor, fieldSide);
+        int cryptoWallMinVal = 5;
+
+        int columnsPassed = 0;
+        boolean firstTime=true;
+
+        double  distanceToCrypto = startDistance - cryptoWallMinVal;
+
+        double motorSpeedRed = 0.20;
+        double motorSpeedBlue = 0.20;
+
+        if(allianceColor == JDColor.RED) {
+            frontLeftDriveMotor.setPower(motorSpeedRed);
+            frontRightDriveMotor.setPower(-motorSpeedRed);
+            backLeftDriveMotor.setPower(motorSpeedRed);
+            backRightDriveMotor.setPower(-motorSpeedRed);
+        }
+        else if(allianceColor == JDColor.BLUE){
+            frontLeftDriveMotor.setPower(-motorSpeedBlue);
+            frontRightDriveMotor.setPower(motorSpeedBlue);
+            backLeftDriveMotor.setPower(-motorSpeedBlue);
+            backRightDriveMotor.setPower(motorSpeedBlue);
+        }
+
+        ElapsedTime mRuntime = new ElapsedTime();
+        mRuntime.reset();
+
+        String msg="";
+
+        double distance = readAndFilterRangeSensorValues(linearOpMode);
+
+        boolean firstTimeIncrementingColumnPassed = true;
+
+        while ( linearOpMode.opModeIsActive() ){
+
+            distance = readAndFilterRangeSensorValues(linearOpMode);
+
+            // move robot past each crypto column
+            //as soon as target column is seen break out of the loop and stopDriveMotors.
+            //sometimes the distance is less than the minimum distance of 5, so check if less than 5 or less than 4
+            while (  (distance <= distanceToCrypto || distance <= distanceToCrypto-1) && linearOpMode.opModeIsActive()){
+
+                msg = Double.toString(mRuntime.milliseconds()) + ": "
+                        + Double.toString(distance)
+                        + " Column: " + Integer.toString(columnsPassed)
+                        + " CryptoDistance: " + distanceToCrypto;
+                linearOpMode.telemetry.addData("range:", msg);
+                linearOpMode.telemetry.update();
+                Log.d("JDRange", msg);
+
+                //column increased only the first time when there is a change in distance
+
+                if(firstTime && !(targetColumn == 3 && firstTimeIncrementingColumnPassed)){
+                    columnsPassed++;
+                    firstTime = false;
+                    Log.d("JDRange", "Incremented columnsPassed");
+                }
+                else if(targetColumn == 3 && firstTimeIncrementingColumnPassed){
+                    Log.d("JDRange", "Sleep 100 Milliseconds");
+                    linearOpMode.sleep(100);
+                    firstTimeIncrementingColumnPassed = false;
+                }
+                else if(firstTime){
+                    columnsPassed++;
+                    firstTime = false;
+                    Log.d("JDRange", "1, 2 Incremented");
+                }
+
+
+                //target column is reached break out the while loop reading range sensor data
+                //if last column let it stopDriveMotors at the 4th column, else let it stopDriveMotors at the exact column
+                if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
+                    break;
+                }
+
+                distance = readAndFilterRangeSensorValues(linearOpMode);
+            }
+
+            //reset the first time for the next columns
+            if (!firstTime) {
+                firstTime = true;
+
+            }
+
+            //adjust the minimum distance based on the new reading as the robot might have drifted
+            distanceToCrypto = distance - cryptoWallMinVal;
+
+
+
+            //target column is reached or if estimate time elapsed, got to break and stopDriveMotors the robot
+            //if last column let it stopDriveMotors at the 4th column, else let it stopDriveMotors at the exact column
+            if(columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS ){
+                msg = Double.toString(mRuntime.milliseconds()) + ": "
+                        + Double.toString(distance)
+                        + " Column: " + Integer.toString(columnsPassed)
+                        + " CryptoDistance: " + distanceToCrypto;
+                linearOpMode.telemetry.addData("range:", msg);
+                linearOpMode.telemetry.update();
+                Log.d("JDRange", msg);
+                if(allianceColor == JDColor.RED) {
+                    if (targetColumn == 3) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 1200 MS");
+                        moveForTime(-motorSpeedRed, 1200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 1200 MS");
+                    } else if (targetColumn == 2) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
+                        moveForTime(-motorSpeedRed, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 200 MS");
+                    } else if (targetColumn == 1) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
+                        moveForTime(-motorSpeedRed, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved backwards for 200 MS");
+                    }
+
+                    break;
+                }
+                else if(allianceColor == JDColor.BLUE){
+                    if (targetColumn == 3) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 1200 MS");
+                        moveForTime(motorSpeedBlue, 1200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 1200 MS");
+                    } else if (targetColumn == 2) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
+                        moveForTime(motorSpeedBlue, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 200 MS");
+                    } else if (targetColumn == 1) {
+                        stopDriveMotors();
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
+                        moveForTime(motorSpeedBlue, 200, linearOpMode);
+                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved forwards for 200 MS");
+                    }
+
+                    break;
+                }
+            }
+
+            msg = Double.toString(mRuntime.milliseconds()) + ": "
+                    + Double.toString(distance)
+                    + " Column: " + Integer.toString(columnsPassed)
+                    + " CryptoDistance: " + distanceToCrypto;
+            linearOpMode.telemetry.addData("range:", msg);
+            linearOpMode.telemetry.update();
+            Log.d("JDRange", msg);
+        }
+
+        stopDriveMotors();
+
+    }
+
+    static private int targetCryptoboxColumn(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide)
     {
         int targetColumn = 1;
 
@@ -814,160 +1001,7 @@ public class functions{
 
     }
 
-    static public void moveUntilCryptoWallv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
-        int targetColumn = targetColumn(vuMark, allianceColor, fieldSide);
-        int cryptoWallMinVal = 5;
 
-        int columnsPassed = 0;
-        boolean firstTime=true;
-
-        double  distanceToCrypto = startDistance - cryptoWallMinVal;
-
-        double motorSpeedRed = 0.20;
-        double motorSpeedBlue = 0.20;
-
-        if(allianceColor == JDColor.RED) {
-            frontLeftDriveMotor.setPower(motorSpeedRed);
-            frontRightDriveMotor.setPower(-motorSpeedRed);
-            backLeftDriveMotor.setPower(motorSpeedRed);
-            backRightDriveMotor.setPower(-motorSpeedRed);
-        }
-        else if(allianceColor == JDColor.BLUE){
-            frontLeftDriveMotor.setPower(-motorSpeedBlue);
-            frontRightDriveMotor.setPower(motorSpeedBlue);
-            backLeftDriveMotor.setPower(-motorSpeedBlue);
-            backRightDriveMotor.setPower(motorSpeedBlue);
-        }
-
-        ElapsedTime mRuntime = new ElapsedTime();
-        mRuntime.reset();
-
-        String msg="";
-
-        double distance = readAndFilterRangeSensor(linearOpMode);
-
-        boolean firstTimeIncrementingColumnPassed = true;
-
-        while ( linearOpMode.opModeIsActive() ){
-
-            distance = readAndFilterRangeSensor(linearOpMode);
-
-            // move robot past each crypto column
-            //as soon as target column is seen break out of the loop and stop.
-            //sometimes the distance is less than the minimum distance of 5, so check if less than 5 or less than 4
-            while (  (distance <= distanceToCrypto || distance <= distanceToCrypto-1) && linearOpMode.opModeIsActive()){
-
-                msg = Double.toString(mRuntime.milliseconds()) + ": "
-                        + Double.toString(distance)
-                        + " Column: " + Integer.toString(columnsPassed)
-                        + " CryptoDistance: " + distanceToCrypto;
-                linearOpMode.telemetry.addData("range:", msg);
-                linearOpMode.telemetry.update();
-                Log.d("JDRange", msg);
-
-                //column increased only the first time when there is a change in distance
-
-                if(firstTime && !(targetColumn == 3 && firstTimeIncrementingColumnPassed)){
-                    columnsPassed++;
-                    firstTime = false;
-                    Log.d("JDRange", "Incremented columnsPassed");
-                }
-                else if(targetColumn == 3 && firstTimeIncrementingColumnPassed){
-                    Log.d("JDRange", "Sleep 100 Milliseconds");
-                    linearOpMode.sleep(100);
-                    firstTimeIncrementingColumnPassed = false;
-                }
-                else if(firstTime){
-                    columnsPassed++;
-                    firstTime = false;
-                    Log.d("JDRange", "1, 2 Incremented");
-                }
-
-
-                //target column is reached break out the while loop reading range sensor data
-                //if last column let it stop at the 4th column, else let it stop at the exact column
-                if (columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS){
-                    break;
-                }
-
-                distance = readAndFilterRangeSensor(linearOpMode);
-            }
-
-            //reset the first time for the next columns
-            if (!firstTime) {
-                firstTime = true;
-
-            }
-
-            //adjust the minimum distance based on the new reading as the robot might have drifted
-            distanceToCrypto = distance - cryptoWallMinVal;
-
-
-
-            //target column is reached or if estimate time elapsed, got to break and stop the robot
-            //if last column let it stop at the 4th column, else let it stop at the exact column
-            if(columnsPassed >= targetColumn || mRuntime.milliseconds() >= MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS ){
-                msg = Double.toString(mRuntime.milliseconds()) + ": "
-                        + Double.toString(distance)
-                        + " Column: " + Integer.toString(columnsPassed)
-                        + " CryptoDistance: " + distanceToCrypto;
-                linearOpMode.telemetry.addData("range:", msg);
-                linearOpMode.telemetry.update();
-                Log.d("JDRange", msg);
-                if(allianceColor == JDColor.RED) {
-                    if (targetColumn == 3) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 1200 MS");
-                        moveForTime(-motorSpeedRed, 1200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 1200 MS");
-                    } else if (targetColumn == 2) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
-                        moveForTime(-motorSpeedRed, 200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 200 MS");
-                    } else if (targetColumn == 1) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
-                        moveForTime(-motorSpeedRed, 200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved backwards for 200 MS");
-                    }
-
-                    break;
-                }
-                else if(allianceColor == JDColor.BLUE){
-                    if (targetColumn == 3) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 1200 MS");
-                        moveForTime(motorSpeedBlue, 1200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 1200 MS");
-                    } else if (targetColumn == 2) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
-                        moveForTime(motorSpeedBlue, 200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 200 MS");
-                    } else if (targetColumn == 1) {
-                        stop();
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
-                        moveForTime(motorSpeedBlue, 200, linearOpMode);
-                        Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved forwards for 200 MS");
-                    }
-
-                    break;
-                }
-            }
-
-            msg = Double.toString(mRuntime.milliseconds()) + ": "
-                    + Double.toString(distance)
-                    + " Column: " + Integer.toString(columnsPassed)
-                    + " CryptoDistance: " + distanceToCrypto;
-            linearOpMode.telemetry.addData("range:", msg);
-            linearOpMode.telemetry.update();
-            Log.d("JDRange", msg);
-        }
-
-        stop();
-
-    }
 
     //AVT Algorithm to filter range sensor values and return the sampled distance
     //calculate average value

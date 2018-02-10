@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
@@ -10,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 /**
  * Created by dansm on 1/27/2018.
  */
+@Disabled
 
 @Autonomous(name="moveEncoders")
 
