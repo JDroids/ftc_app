@@ -79,39 +79,36 @@ public class jewelDetectionOpMode extends LinearOpMode{
 
         int certainty = 0;
 
+        constants.JDColor jewelOnRight = detectJewelColor(this);
+
         //We assume we are on the blue side
-        
+
         //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
-        if(blueJewelsFound >= 4){
+        if(blueJewelsFound >= 4 && jewelOnRight == constants.JDColor.RED){
             certainty = blueJewelsFound * 20;
 
             telemetry.addData("Jewel On Left", "Blue");
             telemetry.addData("Certainty", certainty);
             Log.d("JewelOnLeft", "Blue");
             Log.d("Certainty", Integer.toString(certainty));
+
             knockJewel(constants.JDColor.RED, constants.JDColor.BLUE, this);
         }
-        else if(redJewelsFound >= 4){
+        else if(redJewelsFound >= 4 && jewelOnRight == constants.JDColor.BLUE){
             certainty = redJewelsFound * 20;
 
             telemetry.addData("Jewel On Left", "Red");
             telemetry.addData("Certainty", certainty);
             Log.d("JewelOnLeft", "Red");
             Log.d("Certainty", Integer.toString(certainty));
+
             knockJewel(constants.JDColor.BLUE, constants.JDColor.BLUE, this);
         }
         else{
             telemetry.addData("Jewel On Left", "Unclear");
             Log.d("JewelOnLeft", "Unknown");
 
-            constants.JDColor jewelOnRight = detectJewelColor(this);
-
-            if(blueJewelsFound == 3 && jewelOnRight == constants.JDColor.RED){
-                knockJewel(constants.JDColor.RED, constants.JDColor.BLUE, this);
-            }
-            else if(redJewelsFound == 3 && jewelOnRight == constants.JDColor.BLUE){
-                knockJewel(constants.JDColor.BLUE, constants.JDColor.BLUE, this);
-            }
+            knockJewel(jewelOnRight, constants.JDColor.BLUE, this);
         }
 
         telemetry.update();

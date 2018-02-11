@@ -995,7 +995,12 @@ public class functions{
                     distanceToTravel = 2;
             }
 
-            moveEncoders(distanceToTravel, -0.7, linearOpMode);
+            if(distanceToTravel < 0) {
+                moveEncoders(distanceToTravel, -0.7, linearOpMode);
+            }
+            else if(distanceToTravel > 0){
+                moveEncoders(distanceToTravel, -0.7, linearOpMode);
+            }
         }
 
 
