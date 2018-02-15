@@ -28,6 +28,8 @@ public class hardware{
     static public DcMotor secondGlyphLift = null;
 
     static public DcMotor relicExtender = null;
+    static public Servo relicRotationalServo;
+    static public Servo relicLinearServo;
 
     static public Servo glyphGrabberTL = null;
     static public Servo glyphGrabberTR = null;
@@ -60,6 +62,8 @@ public class hardware{
         secondGlyphLift = hMap.dcMotor.get("MotorGlyphLift2");
 
         relicExtender = hMap.dcMotor.get("relicMotor");
+        relicRotationalServo = hMap.servo.get("relicPivot");
+        relicLinearServo = hMap.servo.get("relicLinear");
 
         glyphGrabberTL = hMap.servo.get("glyphGrabberTL");
         glyphGrabberTR = hMap.servo.get("glyphGrabberTR");

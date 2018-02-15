@@ -37,6 +37,7 @@ public class JDTeleop extends LinearOpMode{
         while(opModeIsActive()) {
             moveArcade(gamepad1);
 
+            //To change which set of grabbers should be used
             if(gamepad2.dpad_up){
                 controlledGrabbers = GRABBERS.TOP_GRABBER;
             }
@@ -47,6 +48,7 @@ public class JDTeleop extends LinearOpMode{
                 controlledGrabbers = GRABBERS.BOTH_GRABBERS;
             }
 
+            //To open/close grabber
             if (gamepad2.a) {
                 closeGrabber(controlledGrabbers);
             }
@@ -57,14 +59,35 @@ public class JDTeleop extends LinearOpMode{
                 openGrabberWide(controlledGrabbers);
             }
 
+            //To extend/detract cascading rail
             if(gamepad2.right_bumper){
-                relicExtender.setPower(0.7);
+                relicExtender.setPower(0.5);
             }
             else if(gamepad2.left_bumper){
-                relicExtender.setPower(-0.7);
+                relicExtender.setPower(-0.3);
             }
             else{
                 relicExtender.setPower(0);
+            }
+
+            //To extend/detract the linear servo on the relic mechanism
+            if(gamepad1.right_bumper){
+                if(relicLinearServo.getPosition() < 0.7){
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.001);
+                }
+            }
+            else if(gamepad1.left_bumper){
+                if(relicLinearServo.getPosition() > 0.3){
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.001);
+                }
+            }
+
+            //To move the rotational servo on the relic mechanism
+            if(gamepad1.a){
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.001);
+            }
+            else if(gamepad1.b){
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.001);
             }
 
             controlFirstGlyphLift(gamepad2, this);
