@@ -1065,13 +1065,19 @@ public class functions{
     }
 
     static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, LinearOpMode linearOpMode){
-        moveInAStraightLine(power);
+
 
         if(power > 0){
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive()){}
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive())
+            {
+                moveInAStraightLine(power);
+            }
         }
         if(power < 0){
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive()){}
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive())
+            {
+                moveInAStraightLine(power);
+            }
         }
     }
 

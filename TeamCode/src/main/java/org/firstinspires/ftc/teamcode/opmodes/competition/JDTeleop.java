@@ -92,7 +92,8 @@ public class JDTeleop extends LinearOpMode{
 
             //To move the rotational servo on the relic mechanism
             if(gamepad1.y){
-                relicRotationalServo.setPosition(0.6);
+                //relicRotationalServo.setPosition(0.6);
+                relicRotationalServo.setPosition(0.45);
             }
             else if(gamepad1.a){
                 relicRotationalServo.setPosition(0.95);
