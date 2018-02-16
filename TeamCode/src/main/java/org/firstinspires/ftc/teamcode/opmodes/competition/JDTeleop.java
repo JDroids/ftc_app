@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
@@ -31,8 +32,10 @@ public class JDTeleop extends LinearOpMode{
 
         initServos(TELEOP);
 
-        moveFirstLiftForTime(0.7, 500, this);
-        moveSecondLiftForTime(0.7, 500, this);
+        double relicLinearServoPosition = relicLinearServo.getPosition();
+
+//        moveFirstLiftForTime(0.7, 500, this);
+//        moveSecondLiftForTime(0.7, 500, this);
 
         while(opModeIsActive()) {
             moveArcade(gamepad1);
@@ -71,27 +74,40 @@ public class JDTeleop extends LinearOpMode{
             }
 
             //To extend/detract the linear servo on the relic mechanism
+
             if(gamepad1.right_bumper){
-                if(relicLinearServo.getPosition() < 0.7){
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.001);
+
+                if (relicLinearServoPosition < 0.8 ) {
+                    relicLinearServoPosition = relicLinearServoPosition + 0.01;
+                    relicLinearServo.setPosition(relicLinearServoPosition);
                 }
             }
             else if(gamepad1.left_bumper){
-                if(relicLinearServo.getPosition() > 0.3){
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.001);
+
+                if(relicLinearServo.getPosition() > 0.52){
+                    relicLinearServoPosition = relicLinearServoPosition - 0.01;
+                    relicLinearServo.setPosition(relicLinearServoPosition );
                 }
             }
 
             //To move the rotational servo on the relic mechanism
-            if(gamepad1.a){
-                relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.001);
+            if(gamepad1.y){
+                relicRotationalServo.setPosition(0.6);
             }
-            else if(gamepad1.b){
-                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.001);
+            else if(gamepad1.a){
+                relicRotationalServo.setPosition(0.95);
+            }else if(gamepad1.b){
+                relicRotationalServo.setPosition(0.9);
+            }
+            else if(gamepad1.x){
+                relicRotationalServo.setPosition(0.98);
             }
 
             controlFirstGlyphLift(gamepad2, this);
             controlSecondGlyphLift(gamepad2, this);
+            telemetry.addData("relicLinearServo", relicLinearServoPosition);
+            telemetry.addData("relicLinearServo", relicLinearServo.getPosition());
+            telemetry.update();
         }
     }
 }
