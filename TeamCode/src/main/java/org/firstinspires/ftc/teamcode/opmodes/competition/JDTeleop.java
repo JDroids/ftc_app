@@ -64,10 +64,10 @@ public class JDTeleop extends LinearOpMode{
 
             //To extend/detract cascading rail
             if(gamepad2.right_bumper){
-                relicExtender.setPower(0.5);
+                relicExtender.setPower(0.3);
             }
             else if(gamepad2.left_bumper){
-                relicExtender.setPower(-0.3);
+                relicExtender.setPower(-0.5);
             }
             else{
                 relicExtender.setPower(0);
@@ -77,7 +77,7 @@ public class JDTeleop extends LinearOpMode{
 
             if(gamepad1.right_bumper){
 
-                if (relicLinearServoPosition < 0.8 ) {
+                if (relicLinearServoPosition < 1.0) {
                     relicLinearServoPosition = relicLinearServoPosition + 0.01;
                     relicLinearServo.setPosition(relicLinearServoPosition);
                 }

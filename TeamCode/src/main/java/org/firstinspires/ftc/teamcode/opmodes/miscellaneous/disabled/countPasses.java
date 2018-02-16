@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.resources.constants.*;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
@@ -23,7 +22,7 @@ public class countPasses extends LinearOpMode{
 
         waitForStart();
 
-        double distanceToWall = rearRangeSensor.cmUltrasonic();
+        double distanceToWall = sideRangeSensor.cmUltrasonic();
         sleep(100);
         double distanceToCryptoBoxWall = distanceToWall - 8;
 
@@ -32,10 +31,10 @@ public class countPasses extends LinearOpMode{
         backLeftDriveMotor.setPower(0.2);
         backRightDriveMotor.setPower(-0.2);
         while(opModeIsActive()){
-            if(rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
+            if(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
                 columnsPassed++;
 
-                while(rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()){}
+                while(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()){}
             }
             if(columnsPassed >= 2){
                 frontLeftDriveMotor.setPower(0);
@@ -48,7 +47,7 @@ public class countPasses extends LinearOpMode{
 
             telemetry.addData("Distance to Wall", distanceToWall);
             telemetry.addData("Distance to Crypto Box Wall", distanceToCryptoBoxWall);
-            telemetry.addData("Centimeters from Object", rearRangeSensor.cmUltrasonic());
+            telemetry.addData("Centimeters from Object", sideRangeSensor.cmUltrasonic());
             telemetry.addData("Columns Passed", columnsPassed);
             telemetry.update();
         }

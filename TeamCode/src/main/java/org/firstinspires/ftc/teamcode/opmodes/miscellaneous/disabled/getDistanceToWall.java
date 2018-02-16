@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
 
 /**
  * Created by dansm on 1/19/2018.
@@ -25,7 +26,7 @@ public class getDistanceToWall extends LinearOpMode{
 
         mRuntime.reset();
         while(opModeIsActive()){
-            distance = readAndFilterRangeSensorValues(this);
+            distance = readAndFilterRangeSensorValues(sideRangeSensor, this);
             Log.d("JDDistance", "Time: " + Double.toString(mRuntime.milliseconds()) + " Distance: " + Double.toString(distance));
             telemetry.addData("Distance To Wall", Double.toString(distance));
             telemetry.update();

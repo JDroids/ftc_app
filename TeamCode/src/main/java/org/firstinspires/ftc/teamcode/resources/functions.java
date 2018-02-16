@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -39,7 +40,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 public class functions{
 
-
+    /*
     static public void moveUntilDistanceUltrasonic(ModernRoboticsI2cRangeSensor ultrasonicSensor, double targetDistance, double power, LinearOpMode linearOpMode){
         double distance = readAndFilterRangeSensorValues(linearOpMode);
 
@@ -54,7 +55,7 @@ public class functions{
         }
 
         stopDriveMotors();
-    }
+    }*/
 
     //scaling logic to use 4 fixed speeds as opposed to varying speeds to avoid jerks while driving
     static public double scaleInputFixedSpeed(double dVal) throws InterruptedException{
@@ -135,9 +136,23 @@ public class functions{
     }
 
     static public void moveArcade(Gamepad gamepad) throws InterruptedException{
+        /*
         double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
         double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+
+        frontLeftDriveMotor.setPower(v1);
+        frontRightDriveMotor.setPower(-v2);
+        backLeftDriveMotor.setPower(v3);
+        backRightDriveMotor.setPower(-v4);*/
+
+        double r = Math.hypot(-gamepad.left_stick_x, gamepad.left_stick_y);
+        double robotAngle = Math.atan2(gamepad.left_stick_y, -gamepad.left_stick_x) - Math.PI / 4;
+        double rightX = -gamepad.right_stick_x;
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
@@ -755,10 +770,10 @@ public class functions{
 
 
         while(linearOpMode.opModeIsActive()){
-            if (rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
+            if (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
                 columnsPassed++;
 
-                while (rearRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && linearOpMode.opModeIsActive()){
+                while (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && linearOpMode.opModeIsActive()){
                 }
             }
 
@@ -769,7 +784,7 @@ public class functions{
 
             linearOpMode.telemetry.addData("Distance to Wall", distanceToWall);
             linearOpMode.telemetry.addData("Distance to Crypto Box Wall", distanceToCryptoBoxWall);
-            linearOpMode.telemetry.addData("Centimeters from Object", rearRangeSensor.cmUltrasonic());
+            linearOpMode.telemetry.addData("Centimeters from Object", sideRangeSensor.cmUltrasonic());
             linearOpMode.telemetry.addData("Columns Passed", columnsPassed);
             linearOpMode.telemetry.update();
         }
@@ -777,13 +792,13 @@ public class functions{
 
     //discard any accidental bad reading from the sensor
     //break out of the loop if unable to read good sensor data within 200ms
-    static public double readAndFilterRangeSensorValues(LinearOpMode linearOpMode){
+    static public double readAndFilterRangeSensorValues(ModernRoboticsI2cRangeSensor ultrasonicSensor, LinearOpMode linearOpMode){
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
 
-        double distance =  rearRangeSensor.cmUltrasonic();
+        double distance =  ultrasonicSensor.cmUltrasonic();
         while ( (distance == 255 || distance == 0)  && linearOpMode.opModeIsActive() ){
-            distance = rearRangeSensor.cmUltrasonic();
+            distance = ultrasonicSensor.cmUltrasonic();
         }
         return distance;
     }
@@ -818,13 +833,13 @@ public class functions{
 
         String msg="";
 
-        double distance = readAndFilterRangeSensorValues(linearOpMode);
+        double distance = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
 
         boolean firstTimeIncrementingColumnPassed = true;
 
         while ( linearOpMode.opModeIsActive() ){
 
-            distance = readAndFilterRangeSensorValues(linearOpMode);
+            distance = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
 
             // move robot past each crypto column
             //as soon as target column is seen break out of the loop and stopDriveMotors.
@@ -864,7 +879,7 @@ public class functions{
                     break;
                 }
 
-                distance = readAndFilterRangeSensorValues(linearOpMode);
+                distance = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
             }
 
             //reset the first time for the next columns
@@ -1048,5 +1063,18 @@ public class functions{
         //distance is average value of remaining data
         return newSum/newlength;
     }
+
+    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, LinearOpMode linearOpMode){
+        moveInAStraightLine(power);
+
+        if(power > 0){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive()){}
+        }
+        if(power < 0){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive()){}
+        }
+    }
+
+
 
 }

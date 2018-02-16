@@ -7,12 +7,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Hardware;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by dansm on 12/13/2017.
@@ -45,7 +41,12 @@ public class hardware{
     static public ColorSensor jewelColorSensor = null;
     static public DistanceSensor jewelDistanceSensor = null;
 
+    static public ModernRoboticsI2cRangeSensor sideRangeSensor = null;
+
+    static public ModernRoboticsI2cRangeSensor frontRangeSensor = null;
+
     static public ModernRoboticsI2cRangeSensor rearRangeSensor = null;
+
 
     static public BNO055IMU imuSensor = null;
 
@@ -85,7 +86,7 @@ public class hardware{
 
         jewelDistanceSensor = hMap.get(DistanceSensor.class, "color1");
 
-        rearRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
+        sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
     }
 }

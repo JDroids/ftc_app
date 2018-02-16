@@ -37,10 +37,10 @@ public class redJudgeAuto extends LinearOpMode{
         imuSensor.initialize(parameters);
 
 
-        double distanceToWall = readAndFilterRangeSensorValues(this);
+        double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
 
         while(!isStarted()) {
-            distanceToWall = readAndFilterRangeSensorValues(this);
+            distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
             telemetry.addData("Distance to wall", distanceToWall);
             telemetry.update();
         }
@@ -73,13 +73,11 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveEncoders(-36, -0.7, this);
+        moveEncoders(-36, -0.7, this); //To get off the balancing stone; inaccurate should be changed
 
         sleep(100);
 
         turn(90, this);
-
-        sleep(100);
 
         sleep(100);
 

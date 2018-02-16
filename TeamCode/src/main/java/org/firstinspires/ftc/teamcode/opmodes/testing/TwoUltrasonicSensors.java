@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import android.view.Display;
+
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,8 +17,16 @@ public class TwoUltrasonicSensors extends LinearOpMode{
 
 
     public void runOpMode(){
+        ModernRoboticsI2cRangeSensor range1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range1");
+        ModernRoboticsI2cRangeSensor range2 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range2");
 
         waitForStart();
+
+        while(opModeIsActive()){
+            telemetry.addData("Range 1", range1.cmUltrasonic());
+            telemetry.addData("Range 2", range2.cmUltrasonic());
+            telemetry.update();
+        }
 
     }
 }
