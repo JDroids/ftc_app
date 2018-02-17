@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
@@ -125,12 +126,14 @@ public class functions{
                 break;
 
             case BOTTOM_GRABBER:
-                glyphGrabberBL.setPosition(leftServoPosition);
-                glyphGrabberBR.setPosition(rightServoPosition);
-                break;
-            case TOP_GRABBER:
                 glyphGrabberTL.setPosition(leftServoPosition);
                 glyphGrabberTR.setPosition(rightServoPosition);
+
+                break;
+            case TOP_GRABBER:
+                glyphGrabberBL.setPosition(leftServoPosition);
+                glyphGrabberBR.setPosition(rightServoPosition);
+
                 break;
         }
     }
@@ -313,7 +316,7 @@ public class functions{
     }
 
     static public void depositGlyph(LinearOpMode linearOpMode) throws InterruptedException{
-        moveEncoders(3, 0.7, linearOpMode);
+        moveForTime(0.25, 500, linearOpMode);
 
         linearOpMode.sleep(250);
 
@@ -321,11 +324,11 @@ public class functions{
 
         linearOpMode.sleep(250);
 
-        moveEncoders(5, 0.7, linearOpMode);
+        moveForTime(0.25, 500, linearOpMode);
 
         linearOpMode.sleep(250);
 
-        moveEncoders(-2, -0.3, linearOpMode);
+        moveForTime(-0.25, 250, linearOpMode);
 
     }
 
@@ -526,7 +529,7 @@ public class functions{
     }
 
 
-    static public void turn(int degrees, LinearOpMode linearOpMode){
+    static public void turn(int degrees, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
         Orientation angles;
 
         angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
@@ -539,30 +542,32 @@ public class functions{
         linearOpMode.telemetry.update();
 
         if(degrees > 0){
-            frontLeftDriveMotor.setPower(0.3);
-            frontRightDriveMotor.setPower(0.3);
-            backLeftDriveMotor.setPower(0.3);
-            backRightDriveMotor.setPower(0.3);
+            frontLeftDriveMotor.setPower(0.4);
+            frontRightDriveMotor.setPower(0.4);
+            backLeftDriveMotor.setPower(0.4);
+            backRightDriveMotor.setPower(0.4);
 
-            while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive()){
+            while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 currentZ = angles.firstAngle;
 
+                linearOpMode.telemetry.addData("Average Motor Speed", (frontLeftDriveMotor.getPower() + frontRightDriveMotor.getPower() + backLeftDriveMotor.getPower() + backRightDriveMotor.getPower())/4);
                 linearOpMode.telemetry.addData("Current Z", currentZ);
                 linearOpMode.telemetry.addData("Original Z", originalZ);
                 linearOpMode.telemetry.update();
             }
         }
         else{
-            frontLeftDriveMotor.setPower(-0.3);
-            frontRightDriveMotor.setPower(-0.3);
-            backLeftDriveMotor.setPower(-0.3);
-            backRightDriveMotor.setPower(-0.3);
+            frontLeftDriveMotor.setPower(-0.4);
+            frontRightDriveMotor.setPower(-0.4);
+            backLeftDriveMotor.setPower(-0.4);
+            backRightDriveMotor.setPower(-0.4);
 
             while((!(currentZ <= degrees + 3) && (currentZ >= degrees - 3)) && linearOpMode.opModeIsActive()){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 currentZ = angles.firstAngle;
 
+                linearOpMode.telemetry.addData("Average Motor Speed", (frontLeftDriveMotor.getPower() + frontRightDriveMotor.getPower() + backLeftDriveMotor.getPower() + backRightDriveMotor.getPower())/4);
                 linearOpMode.telemetry.addData("Current Z", currentZ);
                 linearOpMode.telemetry.addData("Original Z", originalZ);
                 linearOpMode.telemetry.update();
@@ -573,6 +578,88 @@ public class functions{
 
         stopDriveMotors();
     }
+
+    static public void doAllJewelStuff(JDColor stoneColor, LinearOpMode linearOpMode) {
+        ArrayList<JDColor> listOfJewelColors = new ArrayList<constants.JDColor>();
+
+        jewelDetectionOpenCV jewelVision = new jewelDetectionOpenCV();
+        // can replace with ActivityViewDisplay.getInstance() for fullscreen
+        jewelVision.init(linearOpMode.hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
+
+        // start the vision system
+        jewelVision.enable();
+
+        ElapsedTime mRuntime = new ElapsedTime();
+
+        mRuntime.reset();
+
+
+        while (linearOpMode.opModeIsActive()) {
+            linearOpMode.telemetry.addData("Jewel On Left", jewelVision.jewelOnLeft);
+            linearOpMode.telemetry.addData("Time Elapsed", mRuntime.milliseconds());
+            linearOpMode.telemetry.update();
+
+            if (listOfJewelColors.size() < 5) {
+                if (jewelVision.jewelOnLeft != constants.JDColor.NONE) {
+                    listOfJewelColors.add(jewelVision.jewelOnLeft);
+                }
+            } else {
+                break;
+            }
+        }
+
+        jewelVision.disable();
+
+        int redJewelsFound = 0;
+        int blueJewelsFound = 0;
+
+        for (constants.JDColor color : listOfJewelColors) {
+            if (color == constants.JDColor.RED) {
+                redJewelsFound++;
+            } else {
+                blueJewelsFound++;
+            }
+        }
+
+        lowerJewelArms(linearOpMode);
+
+        int certainty = 0;
+
+        constants.JDColor jewelOnRight = detectJewelColor(linearOpMode);
+
+        //We assume we are on the blue side
+
+        //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
+        if (blueJewelsFound >= 4 && jewelOnRight == constants.JDColor.RED) {
+            certainty = blueJewelsFound * 20;
+
+            linearOpMode.telemetry.addData("Jewel On Left", "Blue");
+            linearOpMode.telemetry.addData("Certainty", certainty);
+            Log.d("JewelOnLeft", "Blue");
+            Log.d("Certainty", Integer.toString(certainty));
+
+            knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
+        } else if (redJewelsFound >= 4 && jewelOnRight == constants.JDColor.BLUE) {
+            certainty = redJewelsFound * 20;
+
+            linearOpMode.telemetry.addData("Jewel On Left", "Red");
+            linearOpMode.telemetry.addData("Certainty", certainty);
+            Log.d("JewelOnLeft", "Red");
+            Log.d("Certainty", Integer.toString(certainty));
+
+            knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
+        } else {
+            linearOpMode.telemetry.addData("Jewel On Left", "Unclear");
+            Log.d("JewelOnLeft", "Unknown");
+
+            knockJewel(jewelOnRight, stoneColor, linearOpMode);
+        }
+
+        linearOpMode.telemetry.update();
+
+        raiseJewelArms(linearOpMode);
+    }
+
 
 
     static public JDColor detectJewelColor(LinearOpMode linearOpMode){
@@ -632,7 +719,7 @@ public class functions{
         return jewelColorFound;
     }
 
-    static public void moveEncoders(int inches, double power, LinearOpMode linearOpMode){
+    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode){
         frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -643,7 +730,7 @@ public class functions{
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        int ticks = (int) ((((Math.PI*4)/16) * 112) * inches)/4; //Convert the amount of inches to travel to ticks
+        int ticks = (int) ((((((Math.PI*4)/16) * 112) * centimeters)/4) / 2.54); //Convert the amount of centimeters to travel to ticks
 
         frontLeftDriveMotor.setTargetPosition(-ticks);
         frontRightDriveMotor.setTargetPosition(ticks);
@@ -660,7 +747,10 @@ public class functions{
         backLeftDriveMotor.setPower(-power);
         backRightDriveMotor.setPower(power);
 
-        if(inches > 0){
+        ElapsedTime mRuntime = new ElapsedTime();
+        mRuntime.reset();
+
+        if(centimeters > 0){
             while(backLeftDriveMotor.getCurrentPosition() <= ticks && backRightDriveMotor.getCurrentPosition() <= ticks && linearOpMode.opModeIsActive()){}
         }
         else{
@@ -1000,23 +1090,23 @@ public class functions{
         if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
-                    distanceToTravel = -11;
+                    distanceToTravel = -28;
                     break;
                 case CENTER:
-                    distanceToTravel = -4;
+                    distanceToTravel = -10;
                     break;
                 case RIGHT:
-                    distanceToTravel = 2;
+                    distanceToTravel = -5;
                     break;
                 default:
-                    distanceToTravel = 2;
+                    distanceToTravel = -5;
             }
 
             if(distanceToTravel < 0) {
-                moveEncoders(distanceToTravel, -0.7, linearOpMode);
+                moveEncoders(distanceToTravel, -0.25, linearOpMode);
             }
             else if(distanceToTravel > 0){
-                moveEncoders(distanceToTravel, -0.7, linearOpMode);
+                moveEncoders(distanceToTravel, 0.25, linearOpMode);
             }
         }
 
@@ -1064,21 +1154,24 @@ public class functions{
         return newSum/newlength;
     }
 
-    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, LinearOpMode linearOpMode){
+    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
 
 
         if(power > 0){
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive())
-            {
-                moveInAStraightLine(power);
+            moveInAStraightLine(power);
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
+                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
+                linearOpMode.telemetry.update();
             }
         }
         if(power < 0){
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive())
-            {
-                moveInAStraightLine(power);
+            moveInAStraightLine(power);
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
+                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
+                linearOpMode.telemetry.update();
             }
         }
+        stopDriveMotors();
     }
 
 

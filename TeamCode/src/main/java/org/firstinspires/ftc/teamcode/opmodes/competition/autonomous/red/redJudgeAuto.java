@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -57,11 +58,7 @@ public class redJudgeAuto extends LinearOpMode{
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 
-        //get the jewel
-        lowerJewelArms(this);
-        JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.RED, this);
-        raiseJewelArms(this);
+        doAllJewelStuff(JDColor.RED, this);
 
         sleep(300);
 
@@ -76,28 +73,35 @@ public class redJudgeAuto extends LinearOpMode{
 
         //moveEncoders(-36, -0.7, this); //To get off the balancing stone; inaccurate should be changed
 
-        moveToDistanceUltrasonic(rearRangeSensor,38,-0.25,this);//this is in place of moveEncoders
+        ElapsedTime globalRuntime = new ElapsedTime();
+        globalRuntime.reset();
 
-        sleep(100);//you can also stop the robot to make everything a bit cleaner...
-
-        move(0,0,0,0);//stops to make the turn better
+        moveToDistanceUltrasonic(rearRangeSensor,53,-0.25,this, globalRuntime);//this is in place of moveEncoders
 
         sleep(200);//Matt added this sleep to allow robot to stop and make the position better
 
-        turn(90, this);
+        globalRuntime.reset();
+        turn(90, this, globalRuntime);
 
         sleep(100);
 
-        //go to cryptobox
+        globalRuntime.reset();
+
+        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, this, globalRuntime);
+
+        //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        turn(180, this);
+        stopDriveMotors();
+        sleep(100);
+
+        globalRuntime.reset();
+        turn(180, this, globalRuntime);
 
         depositGlyph(this);
 
 
         //time to look for the second and third glyph
-
 
     }
 }

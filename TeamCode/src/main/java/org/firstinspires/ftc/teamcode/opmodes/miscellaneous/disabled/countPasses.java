@@ -42,7 +42,7 @@ public class countPasses extends LinearOpMode{
                 backLeftDriveMotor.setPower(0);
                 backRightDriveMotor.setPower(0);
 
-                turn(90, this);
+                //turn(90, this);
             }
 
             telemetry.addData("Distance to Wall", distanceToWall);

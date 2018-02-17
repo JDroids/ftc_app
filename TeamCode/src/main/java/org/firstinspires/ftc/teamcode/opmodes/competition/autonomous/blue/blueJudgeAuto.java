@@ -79,7 +79,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        turn(90, this);
+        //turn(90, this);
 
         sleep(100);
 
@@ -88,7 +88,7 @@ public class blueJudgeAuto extends LinearOpMode{
         //go to cryptobox
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        turn(180, this);
+        //turn(180, this);
 
         depositGlyph(this);
 

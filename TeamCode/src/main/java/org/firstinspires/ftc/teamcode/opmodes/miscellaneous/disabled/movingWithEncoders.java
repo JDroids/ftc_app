@@ -24,7 +24,7 @@ public class movingWithEncoders extends LinearOpMode{
 
         waitForStart();
 
-        moveEncoders(-5, -0.7, this);
+        moveEncoders(-30, -0.25, this);
 
     }
 }

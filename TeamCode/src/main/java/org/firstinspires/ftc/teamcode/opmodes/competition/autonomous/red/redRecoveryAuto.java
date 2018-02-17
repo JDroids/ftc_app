@@ -74,7 +74,7 @@ public class redRecoveryAuto extends LinearOpMode{
         //go to cryptobox
         moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
 
-        turn(90, this);
+        //turn(90, this);
 
        depositGlyph(this);
 
