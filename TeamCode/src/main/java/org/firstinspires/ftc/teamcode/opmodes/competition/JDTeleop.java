@@ -32,13 +32,12 @@ public class JDTeleop extends LinearOpMode{
 
         initServos(TELEOP);
 
-        double relicLinearServoPosition = relicLinearServo.getPosition();
 
 //        moveFirstLiftForTime(0.7, 500, this);
 //        moveSecondLiftForTime(0.7, 500, this);
 
         while(opModeIsActive()) {
-            moveArcade(gamepad1);
+            moveArcade(gamepad1, this);
 
             //To change which set of grabbers should be used
             if(gamepad2.dpad_up){
@@ -64,10 +63,21 @@ public class JDTeleop extends LinearOpMode{
 
             //To extend/detract cascading rail
             if(gamepad2.right_bumper){
-                relicExtender.setPower(0.3);
+                if(gamepad2.x){
+                    relicExtender.setPower(0.5);
+                }
+                else {
+                    relicExtender.setPower(0.3);
+                }
             }
             else if(gamepad2.left_bumper){
-                relicExtender.setPower(-0.5);
+                if(gamepad2.x){
+                    relicExtender.setPower(-0.5);
+                }
+                else{
+                    relicExtender.setPower(-0.3);
+                }
+
             }
             else{
                 relicExtender.setPower(0);
@@ -77,37 +87,68 @@ public class JDTeleop extends LinearOpMode{
 
             if(gamepad1.right_bumper){
 
-                if (relicLinearServoPosition < 1.0) {
-                    relicLinearServoPosition = relicLinearServoPosition + 0.01;
-                    relicLinearServo.setPosition(relicLinearServoPosition);
+                if (relicLinearServo.getPosition() < 0.9) {
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
                 }
             }
             else if(gamepad1.left_bumper){
 
-                if(relicLinearServo.getPosition() > 0.52){
-                    relicLinearServoPosition = relicLinearServoPosition - 0.01;
-                    relicLinearServo.setPosition(relicLinearServoPosition );
+                if(relicLinearServo.getPosition() > 0.3){
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
                 }
             }
 
+
             //To move the rotational servo on the relic mechanism
             if(gamepad1.y){
-                //relicRotationalServo.setPosition(0.6);
-                relicRotationalServo.setPosition(0.45);
+                if(relicRotationalServo.getPosition() > 0.45) {
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);
+
+                }
+                else if(relicRotationalServo.getPosition() < 0.45) {
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.01);
+                }
             }
+
             else if(gamepad1.a){
-                relicRotationalServo.setPosition(0.95);
-            }else if(gamepad1.b){
-                relicRotationalServo.setPosition(0.9);
+                if(relicRotationalServo.getPosition() > 0.95){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);
+                }
+                else if(relicRotationalServo.getPosition() < 0.95){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.01);
+                }
+
             }
-            else if(gamepad1.x){
-                relicRotationalServo.setPosition(0.98);
+            else if(gamepad1.b){
+                if(relicRotationalServo.getPosition() > 0.9){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);
+                }
+                else if(relicRotationalServo.getPosition() < 0.9){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.01);
+                }
             }
+            /*else if(gamepad1.x){
+                if(relicRotationalServo.getPosition() > 0.98){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);
+                }
+                else if(relicRotationalServo.getPosition() < 0.98){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.01);
+                }
+            }*/
+
 
             controlFirstGlyphLift(gamepad2, this);
             controlSecondGlyphLift(gamepad2, this);
-            telemetry.addData("relicLinearServo", relicLinearServoPosition);
+
+
+            //A bunch of telemetry for nerds
             telemetry.addData("relicLinearServo", relicLinearServo.getPosition());
+            telemetry.addData("relicRotationalServo", relicRotationalServo.getPosition());
+            telemetry.addData("Front Left Motor Power", frontLeftDriveMotor.getPower());
+            telemetry.addData("Front Right Motor Power", frontRightDriveMotor.getPower());
+            telemetry.addData("Back Left Motor Power", backLeftDriveMotor.getPower());
+            telemetry.addData("Back Right Motor Power", backRightDriveMotor.getPower());
+
             telemetry.update();
         }
     }

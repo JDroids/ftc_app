@@ -138,9 +138,8 @@ public class functions{
         }
     }
 
-    static public void moveArcade(Gamepad gamepad) throws InterruptedException{
-        /*
-        double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+    static public void moveArcade(Gamepad gamepad, LinearOpMode linearOpMode) throws InterruptedException{
+        /*double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
         double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -165,6 +164,7 @@ public class functions{
         frontRightDriveMotor.setPower(-v2);
         backLeftDriveMotor.setPower(v3);
         backRightDriveMotor.setPower(-v4);
+
     }
 
     static public void setJewelPosition(double jewelKnockerPosition, double jewelArmPosition){
@@ -178,13 +178,13 @@ public class functions{
             setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicLinearServo.setPosition(0.6);
+            relicLinearServo.setPosition(0.3);
         }
         else {
             setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicLinearServo.setPosition(0.6);
+            relicLinearServo.setPosition(0.3);
         }
     }
 
@@ -530,6 +530,11 @@ public class functions{
 
 
     static public void turn(int degrees, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         Orientation angles;
 
         angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);

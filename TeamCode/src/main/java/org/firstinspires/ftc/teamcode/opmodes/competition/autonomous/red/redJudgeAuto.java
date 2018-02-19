@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -36,6 +37,8 @@ public class redJudgeAuto extends LinearOpMode{
         parameters.loggingTag          = "IMU";
 
         imuSensor.initialize(parameters);
+
+
 
 
         double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
@@ -92,7 +95,6 @@ public class redJudgeAuto extends LinearOpMode{
         //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        stopDriveMotors();
         sleep(100);
 
         globalRuntime.reset();
@@ -102,6 +104,7 @@ public class redJudgeAuto extends LinearOpMode{
 
 
         //time to look for the second and third glyph
+
 
     }
 }
