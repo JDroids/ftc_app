@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.blue;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -39,11 +39,15 @@ public class blueJudgeAuto extends LinearOpMode{
         imuSensor.initialize(parameters);
 
 
+
+
         double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
 
         while(!isStarted()) {
             distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
             telemetry.addData("Distance to wall", distanceToWall);
+            telemetry.addData("Rear Range: ", readAndFilterRangeSensorValues(rearRangeSensor, this));
+            telemetry.addData("Front Range: ", readAndFilterRangeSensorValues(frontRangeSensor, this));
             telemetry.update();
         }
 
@@ -58,11 +62,7 @@ public class blueJudgeAuto extends LinearOpMode{
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 
-        //get the jewel
-        lowerJewelArms(this);
-        JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.RED, this);
-        raiseJewelArms(this);
+        doAllJewelStuff(JDColor.BLUE, this);
 
         sleep(300);
 
@@ -75,25 +75,35 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        moveEncoders(-36, -0.7, this);
+        ElapsedTime globalRuntime = new ElapsedTime();
+        globalRuntime.reset();
+
+        moveToDistanceUltrasonic(frontRangeSensor,53,0.25,this, globalRuntime);//this is in place of moveEncoders
+
+        sleep(200);
+
+        globalRuntime.reset();
+        turn(-90, this, globalRuntime);
 
         sleep(100);
 
-        //turn(90, this);
+        globalRuntime.reset();
 
-        sleep(100);
+        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, this, globalRuntime);
 
-        sleep(100);
-
-        //go to cryptobox
+        //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
 
-        //turn(180, this);
+        sleep(100);
+
+        globalRuntime.reset();
+        turn(180, this, globalRuntime);
 
         depositGlyph(this);
 
 
         //time to look for the second and third glyph
+
 
     }
 }

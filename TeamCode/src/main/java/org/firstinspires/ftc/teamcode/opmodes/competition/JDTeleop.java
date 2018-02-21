@@ -67,7 +67,7 @@ public class JDTeleop extends LinearOpMode{
                     relicExtender.setPower(0.5);
                 }
                 else {
-                    relicExtender.setPower(0.3);
+                    relicExtender.setPower(0.1);
                 }
             }
             else if(gamepad2.left_bumper){
@@ -75,7 +75,7 @@ public class JDTeleop extends LinearOpMode{
                     relicExtender.setPower(-0.5);
                 }
                 else{
-                    relicExtender.setPower(-0.3);
+                    relicExtender.setPower(-0.1);
                 }
 
             }
@@ -85,13 +85,13 @@ public class JDTeleop extends LinearOpMode{
 
             //To extend/detract the linear servo on the relic mechanism
 
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper){ //To open
 
                 if (relicLinearServo.getPosition() < 0.9) {
                     relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
                 }
             }
-            else if(gamepad1.left_bumper){
+            else if(gamepad1.left_bumper){ //To close
 
                 if(relicLinearServo.getPosition() > 0.3){
                     relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
@@ -100,6 +100,20 @@ public class JDTeleop extends LinearOpMode{
 
 
             //To move the rotational servo on the relic mechanism
+            if(gamepad1.a && relicRotationalServo.getPosition() < 0.95){ //Go down
+                if(relicRotationalServo.getPosition() < 0.9 && gamepad1.x){ //stops at 0.9 if x PRESSED
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                }
+                else if(relicRotationalServo.getPosition() < 0.95){ //stops at 0.95 if x NOT pressed
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                }
+
+            }
+            else if(gamepad1.b && relicRotationalServo.getPosition() > 0.4){ //Go up, stops at 0.4
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+            }
+
+            /*
             if(gamepad1.y){
                 if(relicRotationalServo.getPosition() > 0.45) {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);
@@ -127,6 +141,7 @@ public class JDTeleop extends LinearOpMode{
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.01);
                 }
             }
+            */
             /*else if(gamepad1.x){
                 if(relicRotationalServo.getPosition() > 0.98){
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.01);

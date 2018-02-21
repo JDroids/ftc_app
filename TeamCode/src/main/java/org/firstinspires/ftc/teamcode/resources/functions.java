@@ -139,7 +139,7 @@ public class functions{
     }
 
     static public void moveArcade(Gamepad gamepad, LinearOpMode linearOpMode) throws InterruptedException{
-        /*double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+        double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
         double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -150,8 +150,9 @@ public class functions{
         frontLeftDriveMotor.setPower(v1);
         frontRightDriveMotor.setPower(-v2);
         backLeftDriveMotor.setPower(v3);
-        backRightDriveMotor.setPower(-v4);*/
+        backRightDriveMotor.setPower(-v4);
 
+        /*
         double r = Math.hypot(-gamepad.left_stick_x, gamepad.left_stick_y);
         double robotAngle = Math.atan2(gamepad.left_stick_y, -gamepad.left_stick_x) - Math.PI / 4;
         double rightX = -gamepad.right_stick_x;
@@ -163,7 +164,7 @@ public class functions{
         frontLeftDriveMotor.setPower(v1);
         frontRightDriveMotor.setPower(-v2);
         backLeftDriveMotor.setPower(v3);
-        backRightDriveMotor.setPower(-v4);
+        backRightDriveMotor.setPower(-v4);*/
 
     }
 
@@ -179,12 +180,14 @@ public class functions{
             setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
             relicLinearServo.setPosition(0.3);
+            relicRotationalServo.setPosition(1.0);
         }
         else {
             setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
             relicLinearServo.setPosition(0.3);
+            relicRotationalServo.setPosition(1.0);
         }
     }
 
@@ -324,11 +327,17 @@ public class functions{
 
         linearOpMode.sleep(250);
 
+        moveForTime(-0.25, 250, linearOpMode);
+
+        linearOpMode.sleep(250);
+
         moveForTime(0.25, 500, linearOpMode);
 
         linearOpMode.sleep(250);
 
         moveForTime(-0.25, 250, linearOpMode);
+
+        openGrabberWide(BOTTOM_GRABBER);
 
     }
 
@@ -423,7 +432,7 @@ public class functions{
                 secondLiftDirection = UP;
             }
             else if(gamepad2.right_stick_y > LIFT_TWITCH_THRESHOLD){
-                secondGlyphLift.setPower(gamepad2.right_stick_y/-2);  //50% going down
+                secondGlyphLift.setPower(gamepad2.right_stick_y/-1.5);  //66.6..% going down
                 secondLiftDirection = DOWN;
             }
             else{
@@ -529,7 +538,7 @@ public class functions{
     }
 
 
-    static public void turn(int degrees, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
+    static public void turn(int degrees, LinearOpMode linearOpMode, ElapsedTime globalRuntime){ //Positive degrees is counter-clockwise, negative degrees is clockwise
         frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -552,7 +561,7 @@ public class functions{
             backLeftDriveMotor.setPower(0.4);
             backRightDriveMotor.setPower(0.4);
 
-            while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
+            while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 currentZ = angles.firstAngle;
 
@@ -568,7 +577,7 @@ public class functions{
             backLeftDriveMotor.setPower(-0.4);
             backRightDriveMotor.setPower(-0.4);
 
-            while((!(currentZ <= degrees + 3) && (currentZ >= degrees - 3)) && linearOpMode.opModeIsActive()){
+            while((!(currentZ <= degrees + 3) && (currentZ >= degrees - 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 currentZ = angles.firstAngle;
 
@@ -635,7 +644,7 @@ public class functions{
         //We assume we are on the blue side
 
         //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
-        if (blueJewelsFound >= 4 && jewelOnRight == constants.JDColor.RED) {
+        if (blueJewelsFound >= 4 && jewelOnRight != JDColor.BLUE) {
             certainty = blueJewelsFound * 20;
 
             linearOpMode.telemetry.addData("Jewel On Left", "Blue");
@@ -644,7 +653,13 @@ public class functions{
             Log.d("Certainty", Integer.toString(certainty));
 
             knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
-        } else if (redJewelsFound >= 4 && jewelOnRight == constants.JDColor.BLUE) {
+        }
+        else if(jewelOnRight == JDColor.RED){
+            if(!(redJewelsFound >= 4)){
+                knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
+            }
+        }
+        else if (redJewelsFound >= 4 && jewelOnRight != JDColor.RED) {
             certainty = redJewelsFound * 20;
 
             linearOpMode.telemetry.addData("Jewel On Left", "Red");
@@ -653,7 +668,13 @@ public class functions{
             Log.d("Certainty", Integer.toString(certainty));
 
             knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
-        } else {
+        }
+        else if(jewelOnRight == JDColor.BLUE){
+            if(!(blueJewelsFound >= 4)){
+                knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
+            }
+        }
+        else {
             linearOpMode.telemetry.addData("Jewel On Left", "Unclear");
             Log.d("JewelOnLeft", "Unknown");
 
@@ -808,6 +829,8 @@ public class functions{
         vuforia.close();
 
         linearOpMode.telemetry.addData("Found vumark", vuMark);
+
+        Log.d("JDVumark", vuMark.toString());
 
         return vuMark;
 
@@ -1095,24 +1118,39 @@ public class functions{
         if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
-                    distanceToTravel = -28;
+                    distanceToTravel = -42;
                     break;
                 case CENTER:
-                    distanceToTravel = -10;
+                    distanceToTravel = -23;
                     break;
                 case RIGHT:
-                    distanceToTravel = -5;
+                    distanceToTravel = -9;
                     break;
                 default:
-                    distanceToTravel = -5;
+                    distanceToTravel = -9;
             }
+        }
+        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            switch(vuMark){
+                case LEFT:
+                    distanceToTravel = -42;
+                    break;
+                case CENTER:
+                    distanceToTravel = -23;
+                    break;
+                case RIGHT:
+                    distanceToTravel = -9;
+                    break;
+                default:
+                    distanceToTravel = -9;
+            }
+        }
 
-            if(distanceToTravel < 0) {
-                moveEncoders(distanceToTravel, -0.25, linearOpMode);
-            }
-            else if(distanceToTravel > 0){
-                moveEncoders(distanceToTravel, 0.25, linearOpMode);
-            }
+        if(distanceToTravel < 0) {
+            moveEncoders(distanceToTravel, -0.25, linearOpMode);
+        }
+        else if(distanceToTravel > 0){
+            moveEncoders(distanceToTravel, 0.25, linearOpMode);
         }
 
 
@@ -1164,14 +1202,16 @@ public class functions{
 
         if(power > 0){
             moveInAStraightLine(power);
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
                 linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
                 linearOpMode.telemetry.update();
+                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
             }
         }
         if(power < 0){
             moveInAStraightLine(power);
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= HOW_LONG_RED_JUDGE_AUTO_SHOULD_LAST){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
+                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
                 linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
                 linearOpMode.telemetry.update();
             }

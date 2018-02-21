@@ -46,7 +46,8 @@ public class redJudgeAuto extends LinearOpMode{
         while(!isStarted()) {
             distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
             telemetry.addData("Distance to wall", distanceToWall);
-            telemetry.addData("Rear Range: ", rearRangeSensor.cmUltrasonic());
+            telemetry.addData("Rear Range: ", readAndFilterRangeSensorValues(rearRangeSensor, this));
+            telemetry.addData("Front Range: ", readAndFilterRangeSensorValues(frontRangeSensor, this));
             telemetry.update();
         }
 
@@ -74,14 +75,12 @@ public class redJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        //moveEncoders(-36, -0.7, this); //To get off the balancing stone; inaccurate should be changed
-
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
         moveToDistanceUltrasonic(rearRangeSensor,53,-0.25,this, globalRuntime);//this is in place of moveEncoders
 
-        sleep(200);//Matt added this sleep to allow robot to stop and make the position better
+        sleep(200);
 
         globalRuntime.reset();
         turn(90, this, globalRuntime);
