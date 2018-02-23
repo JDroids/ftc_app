@@ -60,4 +60,6 @@ public class constants{
 
     static public final Scalar BRIGHT_LOWER_RED = new Scalar(166, 113, 140);
     static public final Scalar BRIGHT_UPPER_RED = new Scalar(180, 255, 255);
+    
+    public enum DIRECTION {MOVING_TOWARDS_OBJECT, MOVING_AWAY_FROM_OBJECT};
 }

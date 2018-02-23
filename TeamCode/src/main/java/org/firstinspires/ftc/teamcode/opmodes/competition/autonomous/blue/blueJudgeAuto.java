@@ -78,29 +78,45 @@ public class blueJudgeAuto extends LinearOpMode{
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(frontRangeSensor,53,0.25,this, globalRuntime);//this is in place of moveEncoders
+        moveToDistanceUltrasonic(frontRangeSensor,69,0.25, DIRECTION.MOVING_TOWARDS_OBJECT, 1200, this, globalRuntime);//this is in place of moveEncoders
 
         sleep(200);
 
         globalRuntime.reset();
-        turn(-90, this, globalRuntime);
+
+        if(readAndFilterRangeSensorValues(frontRangeSensor, this) > 62){
+            moveToDistanceUltrasonic(frontRangeSensor, 62, 0.2, DIRECTION.MOVING_TOWARDS_OBJECT, 300, this, globalRuntime);
+        }
+        else if(readAndFilterRangeSensorValues(frontRangeSensor, this) < 62){
+            moveToDistanceUltrasonic(frontRangeSensor, 62, -0.2, DIRECTION.MOVING_AWAY_FROM_OBJECT, 300, this, globalRuntime);
+        }
+
+        sleep(100);
+
+        turn(90, this, globalRuntime);
 
         sleep(100);
 
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, this, globalRuntime);
+        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, DIRECTION.MOVING_AWAY_FROM_OBJECT, 900, this, globalRuntime);
+
+        sleep(100);
+        
 
         //align with right crypto column
-        moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
+        moveToCryptoColumnEncoders(vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
 
         sleep(100);
 
         globalRuntime.reset();
-        turn(180, this, globalRuntime);
+        turn(0, this, globalRuntime); //"Input of 0 forces to counter-clockwise turn, this is because of my dumb code" - Daniel 2018
+
+        sleep(100);
 
         depositGlyph(this);
 
+        sleep(100);
 
         //time to look for the second and third glyph
 

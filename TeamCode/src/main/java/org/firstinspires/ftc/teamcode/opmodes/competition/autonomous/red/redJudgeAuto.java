@@ -78,7 +78,7 @@ public class redJudgeAuto extends LinearOpMode{
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(rearRangeSensor,53,-0.25,this, globalRuntime);//this is in place of moveEncoders
+        moveToDistanceUltrasonic(rearRangeSensor, 53, -0.25, DIRECTION.MOVING_TOWARDS_OBJECT, 1200, this, globalRuntime);//this is in place of moveEncoders
 
         sleep(200);
 
@@ -89,7 +89,7 @@ public class redJudgeAuto extends LinearOpMode{
 
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, this, globalRuntime);
+        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, DIRECTION.MOVING_AWAY_FROM_OBJECT, 900, this, globalRuntime);
 
         //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
@@ -98,6 +98,8 @@ public class redJudgeAuto extends LinearOpMode{
 
         globalRuntime.reset();
         turn(180, this, globalRuntime);
+
+        sleep(100);
 
         depositGlyph(this);
 

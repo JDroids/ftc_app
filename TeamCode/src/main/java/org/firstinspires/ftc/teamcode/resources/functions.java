@@ -556,10 +556,10 @@ public class functions{
         linearOpMode.telemetry.update();
 
         if(degrees > 0){
-            frontLeftDriveMotor.setPower(0.4);
-            frontRightDriveMotor.setPower(0.4);
-            backLeftDriveMotor.setPower(0.4);
-            backRightDriveMotor.setPower(0.4);
+            frontLeftDriveMotor.setPower(0.3);
+            frontRightDriveMotor.setPower(0.3);
+            backLeftDriveMotor.setPower(0.3);
+            backRightDriveMotor.setPower(0.3);
 
             while((!(currentZ >= degrees - 3) && (currentZ <= degrees + 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
@@ -1115,6 +1115,8 @@ public class functions{
     static public void moveToCryptoColumnEncoders(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){
         int distanceToTravel = 0; //It should always be set to something other than 0, this is just so the compiler doesn't yell at me
 
+        //Defaults to smallest value as that is closest column so > chance of success
+
         if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
@@ -1133,13 +1135,13 @@ public class functions{
         else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
-                    distanceToTravel = -42;
+                    distanceToTravel = -9;
                     break;
                 case CENTER:
                     distanceToTravel = -23;
                     break;
                 case RIGHT:
-                    distanceToTravel = -9;
+                    distanceToTravel = -25;
                     break;
                 default:
                     distanceToTravel = -9;
@@ -1197,25 +1199,27 @@ public class functions{
         return newSum/newlength;
     }
 
-    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
+    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, DIRECTION direction, int timeLimit, LinearOpMode linearOpMode, ElapsedTime globalRuntime){
 
+        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
 
-        if(power > 0){
+        if(direction == DIRECTION.MOVING_TOWARDS_OBJECT){
             moveInAStraightLine(power);
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit){
                 linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
                 linearOpMode.telemetry.update();
                 Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
             }
         }
-        if(power < 0){
+        if(direction == DIRECTION.MOVING_AWAY_FROM_OBJECT){
             moveInAStraightLine(power);
-            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
+            while(readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit){
                 Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
                 linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
                 linearOpMode.telemetry.update();
             }
         }
+        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
         stopDriveMotors();
     }
 
