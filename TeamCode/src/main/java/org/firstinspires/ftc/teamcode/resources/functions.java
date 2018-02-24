@@ -1123,7 +1123,7 @@ public class functions{
                     distanceToTravel = -42;
                     break;
                 case CENTER:
-                    distanceToTravel = -23;
+                    distanceToTravel = -9;
                     break;
                 case RIGHT:
                     distanceToTravel = -9;
@@ -1135,16 +1135,16 @@ public class functions{
         else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
-                    distanceToTravel = -9;
+                    distanceToTravel = 6;
                     break;
                 case CENTER:
-                    distanceToTravel = -23;
+                    distanceToTravel = -6;
                     break;
                 case RIGHT:
-                    distanceToTravel = -25;
+                    distanceToTravel = -20;
                     break;
                 default:
-                    distanceToTravel = -9;
+                    distanceToTravel = 6;
             }
         }
 

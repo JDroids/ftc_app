@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
@@ -29,18 +35,6 @@ public class blueJudgeAuto extends LinearOpMode{
 
         initServos(AUTONOMOUS);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-
-        imuSensor.initialize(parameters);
-
-
-
-
         double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
 
         while(!isStarted()) {
@@ -52,6 +46,18 @@ public class blueJudgeAuto extends LinearOpMode{
         }
 
         waitForStart();
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+
+        imuSensor.initialize(parameters);
+
+        Orientation angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+        Log.d("JDZValue", Double.toString(angles.secondAngle));
 
         //Code to run after play is pressed
 
@@ -78,22 +84,27 @@ public class blueJudgeAuto extends LinearOpMode{
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(frontRangeSensor,69,0.25, DIRECTION.MOVING_TOWARDS_OBJECT, 1200, this, globalRuntime);//this is in place of moveEncoders
+        moveForTime(0.25 ,800, this);
+
+        angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+        Log.d("JDZValue", Double.toString(angles.secondAngle));
 
         sleep(200);
 
         globalRuntime.reset();
 
-        if(readAndFilterRangeSensorValues(frontRangeSensor, this) > 62){
-            moveToDistanceUltrasonic(frontRangeSensor, 62, 0.2, DIRECTION.MOVING_TOWARDS_OBJECT, 300, this, globalRuntime);
+        int distanceToGetTo = 60;
+
+        if(readAndFilterRangeSensorValues(frontRangeSensor, this) > distanceToGetTo){
+            moveToDistanceUltrasonic(frontRangeSensor, distanceToGetTo, 0.2, DIRECTION.MOVING_TOWARDS_OBJECT, 900, this, globalRuntime);
         }
-        else if(readAndFilterRangeSensorValues(frontRangeSensor, this) < 62){
-            moveToDistanceUltrasonic(frontRangeSensor, 62, -0.2, DIRECTION.MOVING_AWAY_FROM_OBJECT, 300, this, globalRuntime);
+        else if(readAndFilterRangeSensorValues(frontRangeSensor, this) < distanceToGetTo){
+            moveToDistanceUltrasonic(frontRangeSensor, distanceToGetTo, -0.2, DIRECTION.MOVING_AWAY_FROM_OBJECT, 900, this, globalRuntime);
         }
 
         sleep(100);
 
-        turn(90, this, globalRuntime);
+        turn(88, this, globalRuntime);
 
         sleep(100);
 
@@ -102,7 +113,7 @@ public class blueJudgeAuto extends LinearOpMode{
         moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, DIRECTION.MOVING_AWAY_FROM_OBJECT, 900, this, globalRuntime);
 
         sleep(100);
-        
+
 
         //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.BLUE, FIELD_SIDE.JUDGE_SIDE, this);
@@ -111,6 +122,10 @@ public class blueJudgeAuto extends LinearOpMode{
 
         globalRuntime.reset();
         turn(0, this, globalRuntime); //"Input of 0 forces to counter-clockwise turn, this is because of my dumb code" - Daniel 2018
+
+        sleep(100);
+
+        turn(-1, this, globalRuntime); //
 
         sleep(100);
 
