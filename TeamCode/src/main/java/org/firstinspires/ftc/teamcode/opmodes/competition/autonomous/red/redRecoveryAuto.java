@@ -72,7 +72,7 @@ public class redRecoveryAuto extends LinearOpMode{
         moveFirstLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
         //go to cryptobox
-        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
+        //moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
 
         //turn(90, this);
 

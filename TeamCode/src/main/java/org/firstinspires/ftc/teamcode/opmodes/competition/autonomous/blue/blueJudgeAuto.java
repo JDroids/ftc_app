@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
+package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.blue;
 
 import android.util.Log;
 

@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,7 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
  * Created by dansm on 2/11/2018.
  */
 
-@Autonomous(name="Back Up To Wall")
+@Disabled
+
+//@Autonomous(name="Back Up To Wall")
 
 public class backUpStopAtWallWithIMU extends LinearOpMode{
     @Override

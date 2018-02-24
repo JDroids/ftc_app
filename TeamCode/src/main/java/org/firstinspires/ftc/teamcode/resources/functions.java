@@ -921,7 +921,7 @@ public class functions{
         return distance;
     }
 
-    static public void moveUntilCryptoWallUsingUltrasonicv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode){ //Deprecated
+    static public void moveUntilCryptoWallUsingUltrasonicv2(double startDistance, RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode, ElapsedTime globalRuntime){ //Deprecated
         int targetColumn = targetCryptoboxColumn(vuMark, allianceColor, fieldSide);
         int cryptoWallMinVal = 5;
 
@@ -955,7 +955,7 @@ public class functions{
 
         boolean firstTimeIncrementingColumnPassed = true;
 
-        while ( linearOpMode.opModeIsActive() ){
+        while ( linearOpMode.opModeIsActive() && globalRuntime.milliseconds() < 2000){
 
             distance = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
 
@@ -1032,12 +1032,12 @@ public class functions{
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
                         moveForTime(-motorSpeedRed, 200, linearOpMode);
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved backwards for 200 MS");
-                    } else if (targetColumn == 1) {
+                    } /*else if (targetColumn == 1) {
                         stopDriveMotors();
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving backwards for 200 MS");
                         moveForTime(-motorSpeedRed, 200, linearOpMode);
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved backwards for 200 MS");
-                    }
+                    }*/
 
                     break;
                 }
@@ -1052,12 +1052,12 @@ public class functions{
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
                         moveForTime(motorSpeedBlue, 200, linearOpMode);
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moved forwards for 200 MS");
-                    } else if (targetColumn == 1) {
+                    } /*else if (targetColumn == 1) {
                         stopDriveMotors();
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ": Moving forwards for 200 MS");
                         moveForTime(motorSpeedBlue, 200, linearOpMode);
                         Log.d("JDRange", Double.toString(mRuntime.milliseconds()) + ":Moved forwards for 200 MS");
-                    }
+                    }*/
 
                     break;
                 }
@@ -1133,6 +1133,22 @@ public class functions{
             }
         }
         else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
+            switch(vuMark){
+                case LEFT:
+                    distanceToTravel = 6;
+                    break;
+                case CENTER:
+                    distanceToTravel = -6;
+                    break;
+                case RIGHT:
+                    distanceToTravel = -20;
+                    break;
+                default:
+                    distanceToTravel = 6;
+            }
+        }
+
+        else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             switch(vuMark){
                 case LEFT:
                     distanceToTravel = 6;
