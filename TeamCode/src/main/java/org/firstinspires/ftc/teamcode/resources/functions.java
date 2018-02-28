@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -182,7 +181,7 @@ public class functions{
             relicLinearServo.setPosition(0.3);
             relicRotationalServo.setPosition(1.0);
         }
-        else {
+        else{
             setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
@@ -331,7 +330,7 @@ public class functions{
 
         linearOpMode.sleep(250);
 
-        moveForTime(0.25, 500, linearOpMode);
+        moveForTime(0.25, 1000, linearOpMode);
 
         linearOpMode.sleep(250);
 
@@ -344,6 +343,9 @@ public class functions{
     static public int firstLiftDirection = -1;
     static public int secondLiftDirection = -1;
 
+    static ElapsedTime elapsedTimeForFirstGlyphLift = new ElapsedTime();
+    static boolean sleepActive = false;
+
     static public void controlFirstGlyphLift(Gamepad gamepad2, LinearOpMode linearOpMode) throws InterruptedException{
         if(!firstLiftSwitch.getState() && firstLiftDirection == UP){
             linearOpMode.telemetry.addData("First Lift", "Top Limit Reached - Move Down");
@@ -351,9 +353,9 @@ public class functions{
 
             if (gamepad2.left_stick_y > LIFT_TWITCH_THRESHOLD){
                 //Move down at a slow speed as gravity is pulling it down
-                firstGlyphLift.setPower(0.4);
+                firstGlyphLift.setPower(0.6);
                 //allows sensor to move away from the magnet
-                linearOpMode.sleep(450);
+                linearOpMode.sleep(350);
                 firstLiftDirection = DOWN;
             }
             else{
@@ -367,9 +369,9 @@ public class functions{
             linearOpMode.telemetry.update();
 
             if(gamepad2.left_stick_y < -LIFT_TWITCH_THRESHOLD){
-                firstGlyphLift.setPower(-0.8);
+                firstGlyphLift.setPower(-0.9);
                 //allows sensor to move away from the magnet
-                linearOpMode.sleep(600);
+                linearOpMode.sleep(450);
                 firstLiftDirection = UP;
             }
             else {
@@ -402,8 +404,8 @@ public class functions{
             linearOpMode.telemetry.update();
 
             if (gamepad2.right_stick_y > LIFT_TWITCH_THRESHOLD){
-                secondGlyphLift.setPower(-0.3);
-                linearOpMode.sleep(500);
+                secondGlyphLift.setPower(-0.6);
+                linearOpMode.sleep(350);
                 secondLiftDirection = DOWN;
             }
             else{
@@ -416,8 +418,8 @@ public class functions{
             linearOpMode.telemetry.update();
 
             if(gamepad2.right_stick_y < -LIFT_TWITCH_THRESHOLD){
-                secondGlyphLift.setPower(0.5);
-                linearOpMode.sleep(500);
+                secondGlyphLift.setPower(0.8);
+                linearOpMode.sleep(350);
                 secondLiftDirection = UP;
             }
             else{
@@ -428,7 +430,7 @@ public class functions{
         else{
 
             if(gamepad2.right_stick_y < -LIFT_TWITCH_THRESHOLD){
-                secondGlyphLift.setPower(gamepad2.right_stick_y/-1.3);  //76% going up 
+                secondGlyphLift.setPower(gamepad2.right_stick_y/-1.3);  //76% going up
                 secondLiftDirection = UP;
             }
             else if(gamepad2.right_stick_y > LIFT_TWITCH_THRESHOLD){
@@ -572,10 +574,10 @@ public class functions{
             }
         }
         else{
-            frontLeftDriveMotor.setPower(-0.4);
-            frontRightDriveMotor.setPower(-0.4);
-            backLeftDriveMotor.setPower(-0.4);
-            backRightDriveMotor.setPower(-0.4);
+            frontLeftDriveMotor.setPower(-0.3);
+            frontRightDriveMotor.setPower(-0.3);
+            backLeftDriveMotor.setPower(-0.3);
+            backRightDriveMotor.setPower(-0.3);
 
             while((!(currentZ <= degrees + 3) && (currentZ >= degrees - 3)) && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= 3000){
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
@@ -596,17 +598,18 @@ public class functions{
     static public void doAllJewelStuff(JDColor stoneColor, LinearOpMode linearOpMode) {
         ArrayList<JDColor> listOfJewelColors = new ArrayList<constants.JDColor>();
 
-        jewelDetectionOpenCV jewelVision = new jewelDetectionOpenCV();
+        JewelDetectionOpenCV jewelVision = new JewelDetectionOpenCV();
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         jewelVision.init(linearOpMode.hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
 
         // start the vision system
         jewelVision.enable();
 
+        linearOpMode.sleep(100);
+
         ElapsedTime mRuntime = new ElapsedTime();
 
         mRuntime.reset();
-
 
         while (linearOpMode.opModeIsActive()) {
             linearOpMode.telemetry.addData("Jewel On Left", jewelVision.jewelOnLeft);
@@ -618,6 +621,10 @@ public class functions{
                     listOfJewelColors.add(jewelVision.jewelOnLeft);
                 }
             } else {
+                break;
+            }
+
+            if(mRuntime.milliseconds() > 3000){
                 break;
             }
         }
@@ -785,10 +792,10 @@ public class functions{
 
         stopDriveMotors();
 
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     static public RelicRecoveryVuMark getVumark(LinearOpMode linearOpMode, HardwareMap hMap){
@@ -1116,7 +1123,6 @@ public class functions{
         int distanceToTravel = 0; //It should always be set to something other than 0, this is just so the compiler doesn't yell at me
 
         //Defaults to smallest value as that is closest column so > chance of success
-
         if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE){
             switch(vuMark){
                 case LEFT:
@@ -1126,10 +1132,10 @@ public class functions{
                     distanceToTravel = -9;
                     break;
                 case RIGHT:
-                    distanceToTravel = -9;
+                    distanceToTravel = 3;
                     break;
                 default:
-                    distanceToTravel = -9;
+                    distanceToTravel = 3;
             }
         }
         else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE){
@@ -1148,21 +1154,38 @@ public class functions{
             }
         }
 
+        else if(allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            switch(vuMark){
+                case LEFT:
+                    distanceToTravel = -16;
+                    break;
+                case CENTER:
+                    distanceToTravel = -4;
+                    break;
+                case RIGHT:
+                    distanceToTravel = 4;
+                    break;
+                default:
+                    distanceToTravel = 4;
+            }
+        }
+
         else if(allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE){
             switch(vuMark){
                 case LEFT:
-                    distanceToTravel = 6;
+                    distanceToTravel = -4;
                     break;
                 case CENTER:
-                    distanceToTravel = -6;
+                    distanceToTravel = 4;
                     break;
                 case RIGHT:
-                    distanceToTravel = -20;
+                    distanceToTravel = 16;
                     break;
                 default:
-                    distanceToTravel = 6;
+                    distanceToTravel = -4;
             }
         }
+
 
         if(distanceToTravel < 0) {
             moveEncoders(distanceToTravel, -0.25, linearOpMode);

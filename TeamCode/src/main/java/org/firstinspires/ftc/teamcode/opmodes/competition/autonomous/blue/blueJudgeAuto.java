@@ -84,7 +84,7 @@ public class blueJudgeAuto extends LinearOpMode{
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveForTime(0.25 ,800, this);
+        moveForTime(0.25 ,1200, this);
 
         angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
         Log.d("JDZValue", Double.toString(angles.secondAngle));
@@ -93,7 +93,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         globalRuntime.reset();
 
-        int distanceToGetTo = 60;
+        int distanceToGetTo = 35;
 
         if(readAndFilterRangeSensorValues(frontRangeSensor, this) > distanceToGetTo){
             moveToDistanceUltrasonic(frontRangeSensor, distanceToGetTo, 0.2, DIRECTION.MOVING_TOWARDS_OBJECT, 900, this, globalRuntime);

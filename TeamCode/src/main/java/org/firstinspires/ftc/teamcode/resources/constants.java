@@ -18,10 +18,10 @@ public class constants{
     static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.6};
     static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};
 
-    static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{0.85, 0.35};
-    static public final double[] TOP_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.4, 0.9};
-    static public final double[] TOP_SERVO_GRABBER_OPEN_POSITION = new double[]{0.5, 0.6};
-    static public final double[] TOP_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.6, 0.55  };
+    static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{1.0, 0.35};
+    static public final double[] TOP_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 0.9};
+    static public final double[] TOP_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.7};
+    static public final double[] TOP_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.4, 0.6};
 
     static public final double JEWEL_KNOCKER_INIT_POSITION = 0;
     static public final double JEWEL_ARM_INIT_POSITION = 0.9;

@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
   
- import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
@@ -8,12 +9,15 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.R;
 
 /**
  * Created by kevin on 12/17/17.
  */
 
- public class PotentialVuforia extends LinearOpMode {
+@Disabled
+
+public class PotentialVuforia extends LinearOpMode {
    @Override
     public void runOpMode() throws InterruptedException {
        VuforiaLocalizer.Parameters para = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
