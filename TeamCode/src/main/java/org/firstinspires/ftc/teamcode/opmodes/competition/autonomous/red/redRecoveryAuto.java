@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTH_GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
@@ -25,7 +27,20 @@ public class redRecoveryAuto extends LinearOpMode{
 
         initHardwareMap(hardwareMap);
 
-        initServos(false);
+        initServos(AUTONOMOUS);
+
+        double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
+
+        while(!isStarted()) {
+            distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
+            telemetry.addData("Distance to wall", distanceToWall);
+            telemetry.addData("Rear Range: ", readAndFilterRangeSensorValues(rearRangeSensor, this));
+            telemetry.addData("Front Range: ", readAndFilterRangeSensorValues(frontRangeSensor, this));
+            telemetry.update();
+        }
+
+        waitForStart();
+        //Code to run after play is pressed
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -36,19 +51,6 @@ public class redRecoveryAuto extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-
-        double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
-
-
-        while(!isStarted()) {
-            distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
-            telemetry.addData("Distance to wall", distanceToWall);
-            telemetry.update();
-        }
-
-        waitForStart();
-        //Code to run after play is pressed
-
         //detect the VuMark
         telemetry.addData("Vumark:", "Initializing");
         telemetry.update();
@@ -56,27 +58,45 @@ public class redRecoveryAuto extends LinearOpMode{
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 
-        //get the jewel
-        lowerJewelArms(this);
-        JDColor jewelColor = detectJewelColor(this );
-        knockJewel(jewelColor, JDColor.RED, this);
-        raiseJewelArms(this);
+        doAllJewelStuff(JDColor.RED, this);
 
         sleep(300);
 
         //grab the block
-        closeGrabber(BOTTOM_GRABBER);
+        closeGrabber(BOTH_GRABBERS);
 
         sleep(500);
 
         moveFirstLiftForTime(GLYPH_LIFT_AUTO_SPEED, 1500, this);
 
+        sleep(100);
+
+        moveForTime(-0.2, 250, this);
+
+        sleep(400);
+
+        ElapsedTime globalRuntime = new ElapsedTime();
+        globalRuntime.reset();
+
         //go to cryptobox
-        //moveUntilCryptoWallUsingUltrasonicv2(distanceToWall,vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE , this);
+        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall, RelicRecoveryVuMark.RIGHT, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE, this, globalRuntime);
+        //^ "This force goes to the first wall, this is a complete hack sry <3" -Daniel
 
-        //turn(90, this);
+        sleep(400);
 
-       depositGlyph(this);
+        globalRuntime.reset();
+
+        moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE, this);
+
+        sleep(100);
+
+        globalRuntime.reset();
+
+        turn(90, this, globalRuntime);
+
+        sleep(100);
+
+        depositGlyph(this);
 
 
         //time to look for the second and third glyph

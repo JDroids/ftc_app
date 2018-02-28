@@ -59,10 +59,21 @@ public class hardware{
         backLeftDriveMotor = hMap.dcMotor.get("BackLeft");
         backRightDriveMotor = hMap.dcMotor.get("BackRight");
 
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         firstGlyphLift = hMap.dcMotor.get("MotorGlyphLift");
         secondGlyphLift = hMap.dcMotor.get("MotorGlyphLift2");
 
+        firstGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        secondGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         relicExtender = hMap.dcMotor.get("relicMotor");
+
+        relicExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         relicRotationalServo = hMap.servo.get("relicPivot");
         relicLinearServo = hMap.servo.get("relicLinear");
 

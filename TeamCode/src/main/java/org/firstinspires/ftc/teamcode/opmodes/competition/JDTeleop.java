@@ -85,35 +85,51 @@ public class JDTeleop extends LinearOpMode{
                 relicExtender.setPower(0);
             }
 
-            //To extend/detract the linear servo on the relic mechanism
-
-            if(gamepad1.right_bumper){ //To open
-
-                if (relicLinearServo.getPosition() < 0.9) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
-                }
-            }
-            else if(gamepad1.left_bumper){ //To close
-
-                if(relicLinearServo.getPosition() > 0.3){
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
-                }
-            }
-
-
-            //To move the rotational servo on the relic mechanism
-            if(gamepad1.a && relicRotationalServo.getPosition() < 0.95){ //Go down
-                if(relicRotationalServo.getPosition() < 0.9 && gamepad1.x){ //stops at 0.9 if x PRESSED
+            if(gamepad1.y){ //To collect relic
+                if(relicRotationalServo.getPosition() < 0.775){
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
                 }
-                else if(relicRotationalServo.getPosition() < 0.95){ //stops at 0.95 if x NOT pressed
-                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                else if(relicRotationalServo.getPosition() > 0.775){
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
                 }
 
+                if(relicLinearServo.getPosition() < 0.3) {
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.008);
+                }
+                else if(relicLinearServo.getPosition() > 0.3){
+                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.008);
+                }
             }
-            else if(gamepad1.b && relicRotationalServo.getPosition() > 0.4){ //Go up, stops at 0.4
-                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+
+            else {
+                //To extend/detract the linear servo on the relic mechanism
+
+                if(gamepad1.right_bumper){ //To open
+
+                    if (relicLinearServo.getPosition() < 0.9) {
+                        relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
+                    }
+                } else if (gamepad1.left_bumper) { //To close
+
+                    if (relicLinearServo.getPosition() > 0.3) {
+                        relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
+                    }
+                }
+
+
+                //To move the rotational servo on the relic mechanism
+                if (gamepad1.a && relicRotationalServo.getPosition() < 0.95) { //Go down, stops at 0.95
+                    if (relicRotationalServo.getPosition() < 0.9 && gamepad1.x) { //stops at 0.9 if x PRESSED
+                        relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                    } else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
+                        relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                    }
+
+                } else if (gamepad1.b && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+                }
             }
+
 
             /*
             if(gamepad1.y){

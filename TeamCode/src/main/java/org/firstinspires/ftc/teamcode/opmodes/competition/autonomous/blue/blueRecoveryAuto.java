@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTH_GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
@@ -62,7 +63,7 @@ public class blueRecoveryAuto extends LinearOpMode{
         sleep(300);
 
         //grab the block
-        closeGrabber(BOTTOM_GRABBER);
+        closeGrabber(BOTH_GRABBERS);
 
         sleep(500);
 
@@ -73,11 +74,15 @@ public class blueRecoveryAuto extends LinearOpMode{
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
+        moveForTime(0.2, 600, this);
+
+        sleep(400);
+
         //go to cryptobox
         moveUntilCryptoWallUsingUltrasonicv2(distanceToWall, RelicRecoveryVuMark.LEFT, JDColor.BLUE, FIELD_SIDE.RECOVERY_SIDE, this, globalRuntime);
         //^ "This force goes to the first wall, this is a complete hack sry <3" -Daniel
 
-        sleep(100);
+        sleep(400);
 
         globalRuntime.reset();
 

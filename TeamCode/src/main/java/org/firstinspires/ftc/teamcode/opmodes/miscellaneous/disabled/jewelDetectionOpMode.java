@@ -2,19 +2,16 @@ package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import android.util.Log;
 
-import com.disnodeteam.dogecv.ActivityViewDisplay;
 import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.resources.constants;
-import org.firstinspires.ftc.teamcode.resources.jewelDetectionOpenCV;
+import org.firstinspires.ftc.teamcode.resources.JewelDetectionOpenCV;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.*;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
@@ -34,7 +31,7 @@ public class jewelDetectionOpMode extends LinearOpMode{
 
         ArrayList<constants.JDColor> listOfJewelColors = new ArrayList<constants.JDColor>();
 
-        jewelDetectionOpenCV jewelVision = new jewelDetectionOpenCV();
+        JewelDetectionOpenCV jewelVision = new JewelDetectionOpenCV();
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         jewelVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
 
