@@ -7,30 +7,38 @@ import org.firstinspires.ftc.teamcode.resources.external.PidUdpReceiver;
  */
 
 public class PID {
-    static public double kp;
-    static public double ki;
-    static public double kd;
+    private double kp;
+    private double ki;
+    private double kd;
 
-    static public double kpFromUdp;
-    static public double kiFromUdp;
-    static public double kdFromUdp;
+    private double kpFromUdp;
+    private double kiFromUdp;
+    private double kdFromUdp;
 
-    static private double now;
-    static private double lastTime = 0;
-    static private double timeChange;
+    private double now;
+    private double lastTime = 0;
+    private double timeChange;
 
-    static private double previousError;
+    private double previousError;
 
-    static private double error;
-    static private double errSum = 0;
-    static private double dErr = 0;
+    private double error;
+    private double errSum = 0;
+    private double dErr = 0;
 
-    static private double output;
+    private double output;
 
-    static private PidUdpReceiver pidUdpReceiver;
+    public PidUdpReceiver pidUdpReceiver;
 
-    public static double calculateOutput(double target, double currentValue, boolean pidTuning){
+    public void setCoeffecients(double Kp, double Ki, double Kd){
+        kp = Kp;
+        ki = Ki;
+        kd = Kd;
+    }
+
+    public double calculateOutput(double target, double currentValue, boolean pidTuning){
         if(pidTuning){
+            updateCoefficients();
+
             //How long since we calculated
             now = System.currentTimeMillis();
             timeChange = (double) (now - lastTime);
@@ -68,26 +76,27 @@ public class PID {
         }
     }
 
-    public static double calculateOutput(double target, double currentValue){
+    public double calculateOutput(double target, double currentValue){
         return calculateOutput(target, currentValue, false);
     }
 
-    public static void updateCoefficients(){
-        initializeUdpRecevier();
+    private boolean firstTime = true;
 
+    public void updateCoefficients(){
+        if(firstTime) {
+            initializeUdpRecevier();
+            firstTime = false;
+        }
         kpFromUdp = pidUdpReceiver.getP();
         kiFromUdp = pidUdpReceiver.getI();
         kdFromUdp = pidUdpReceiver.getD();
     }
 
-    static private boolean firstTime;
 
-    public static void initializeUdpRecevier(){
+    public void initializeUdpRecevier(){
         if(firstTime){
             pidUdpReceiver = new PidUdpReceiver();
             pidUdpReceiver.beginListening();
-
-            firstTime = false;
         }
     }
 }

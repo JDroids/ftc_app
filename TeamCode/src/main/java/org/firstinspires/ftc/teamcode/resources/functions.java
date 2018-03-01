@@ -1263,5 +1263,38 @@ public class functions{
     }
 
 
+    static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp){
+        PID pidClass = new PID();
 
+        Orientation angles;
+
+        angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
+        pidClass.setCoeffecients(0.03, 0.01, 0.01);
+
+        double motorSpeed;
+
+        while(angles.firstAngle > degrees - 0.1 && angles.firstAngle < degrees + 0.1) {
+            if(gettingCoeffecientsThroughUdp) {
+                motorSpeed = pidClass.calculateOutput(degrees, angles.firstAngle, true);
+            }
+            else{
+                motorSpeed = pidClass.calculateOutput(degrees, angles.firstAngle);
+            }
+
+            frontLeftDriveMotor.setPower(motorSpeed);
+            frontRightDriveMotor.setPower(motorSpeed);
+            backLeftDriveMotor.setPower(motorSpeed);
+            backRightDriveMotor.setPower(motorSpeed);
+
+            angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+        }
+        if(gettingCoeffecientsThroughUdp) {
+            pidClass.pidUdpReceiver.shutdown();
+        }
+    }
+
+    static public void turnPID(double degrees){
+        turnPID(degrees, false);
+    }
 }
