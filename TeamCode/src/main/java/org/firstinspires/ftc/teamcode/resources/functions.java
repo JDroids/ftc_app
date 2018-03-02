@@ -1270,11 +1270,15 @@ public class functions{
 
         angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
-        pidClass.setCoeffecients(0.03, 0.01, 0.01);
+        pidClass.setCoeffecients(0.015, 0.0, 0.002);
 
         double motorSpeed;
 
-        while(angles.firstAngle > degrees - 0.1 && angles.firstAngle < degrees + 0.1) {
+        double allowableError = 0.3;
+
+        while(!(angles.firstAngle > degrees - allowableError && angles.firstAngle < degrees + allowableError)){
+            angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
             if(gettingCoeffecientsThroughUdp) {
                 motorSpeed = pidClass.calculateOutput(degrees, angles.firstAngle, true);
             }
@@ -1289,9 +1293,12 @@ public class functions{
 
             angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
         }
-        if(gettingCoeffecientsThroughUdp) {
+        if(gettingCoeffecientsThroughUdp){
+            Log.d("JDPID", "Shutting down Udp receiver");
             pidClass.pidUdpReceiver.shutdown();
         }
+
+        stopDriveMotors();
     }
 
     static public void turnPID(double degrees){

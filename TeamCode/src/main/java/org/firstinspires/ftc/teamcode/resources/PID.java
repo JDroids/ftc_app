@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.resources;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.resources.external.PidUdpReceiver;
 
 /**
@@ -44,15 +46,19 @@ public class PID {
             timeChange = (double) (now - lastTime);
 
             //Computes error working variable
-            error = target - currentValue;
-            errSum += (error * timeChange);
-            dErr = (error - previousError) / timeChange;
+            error = target - currentValue;               //P
+            errSum += (error * timeChange);              //I
+            dErr = (error - previousError) / timeChange; //D
 
             output = (kpFromUdp * error) + (kiFromUdp * errSum) + (kdFromUdp * dErr);
 
             //Remember some stuff for next loop
             previousError = error;
             lastTime = System.currentTimeMillis();
+
+            Log.d("JDPID", "CurrentVal: " + Double.toString(currentValue));
+            Log.d("JDPID", "Output: " + Double.toString(output));
+
 
             return output;
         }

@@ -13,7 +13,7 @@ import org.opencv.core.Scalar;
 public class constants{
     //{Left servo pos, right servo pos}
     static public final double STRAFING_LIMIT = 0.1;
-    static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.65, 0.36};
+    static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.6, 0.36};
     static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 1.0};
     static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.6};
     static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};

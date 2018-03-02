@@ -67,9 +67,6 @@ public class hardware{
         firstGlyphLift = hMap.dcMotor.get("MotorGlyphLift");
         secondGlyphLift = hMap.dcMotor.get("MotorGlyphLift2");
 
-        firstGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        secondGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         relicExtender = hMap.dcMotor.get("relicMotor");
 
         relicExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

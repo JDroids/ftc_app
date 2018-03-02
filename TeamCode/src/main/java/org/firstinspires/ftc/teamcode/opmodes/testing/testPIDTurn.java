@@ -14,8 +14,10 @@ import static org.firstinspires.ftc.teamcode.resources.functions.*;
 
 public class testPIDTurn extends LinearOpMode{
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException{
         initHardwareMap(hardwareMap);
+
+        initServos(false);
 
         waitForStart();
 
