@@ -140,6 +140,7 @@ public class functions{
     static public void moveArcade(Gamepad gamepad, LinearOpMode linearOpMode) throws InterruptedException{
         double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
         double robotAngle = Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - Math.PI / 4;
+
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
@@ -150,11 +151,17 @@ public class functions{
         frontRightDriveMotor.setPower(-v2);
         backLeftDriveMotor.setPower(v3);
         backRightDriveMotor.setPower(-v4);
+    }
 
-        /*
-        double r = Math.hypot(-gamepad.left_stick_x, gamepad.left_stick_y);
-        double robotAngle = Math.atan2(gamepad.left_stick_y, -gamepad.left_stick_x) - Math.PI / 4;
-        double rightX = -gamepad.right_stick_x;
+    static public void moveArcadeFOD(Gamepad gamepad, FIELD_SIDE fieldSide, LinearOpMode linearOpMode) throws InterruptedException{
+        double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+
+        Orientation angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.RADIANS);
+
+        //Note to self - first angle may have to be negative
+        double robotAngle = (Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) + angles.firstAngle) - Math.PI / 4;
+        double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
+
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
@@ -163,8 +170,7 @@ public class functions{
         frontLeftDriveMotor.setPower(v1);
         frontRightDriveMotor.setPower(-v2);
         backLeftDriveMotor.setPower(v3);
-        backRightDriveMotor.setPower(-v4);*/
-
+        backRightDriveMotor.setPower(-v4);
     }
 
     static public void setJewelPosition(double jewelKnockerPosition, double jewelArmPosition){
