@@ -1,43 +1,50 @@
-package org.firstinspires.ftc.teamcode.opmodes.competition;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
-import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import org.firstinspires.ftc.teamcode.resources.constants;
 
+import static org.firstinspires.ftc.teamcode.resources.constants.TELEOP;
+import static org.firstinspires.ftc.teamcode.resources.functions.closeGrabber;
+import static org.firstinspires.ftc.teamcode.resources.functions.controlFirstGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.functions.controlSecondGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveArcade;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveSecondLiftForTime;
+import static org.firstinspires.ftc.teamcode.resources.functions.openGrabber;
+import static org.firstinspires.ftc.teamcode.resources.functions.openGrabberWide;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicLinearServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
 
 /**
- * Created by dansm on 12/7/2017.
+ * Created by dansm on 3/2/2018.
  */
 
-@TeleOp(name="JDTeleOp")
-
-public class JDTeleop extends LinearOpMode{
-
-    @Override
-
-    public void runOpMode() throws InterruptedException{
+public class JDTeleopFOD extends LinearOpMode {
+    public void runOpMode() throws InterruptedException {
         //Code to run after init is pressed
 
         initHardwareMap(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
         waitForStart();
         //Code to run after play is pressed
 
-        GRABBERS controlledGrabbers = GRABBERS.BOTH_GRABBERS;
+        constants.GRABBERS controlledGrabbers = constants.GRABBERS.BOTH_GRABBERS;
 
         initServos(TELEOP);
 
@@ -45,73 +52,61 @@ public class JDTeleop extends LinearOpMode{
         moveFirstLiftForTime(0.7, 500, this);
         moveSecondLiftForTime(0.7, 500, this);
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             moveArcade(gamepad1, this);
 
             //To change which set of grabbers should be used
-            if(gamepad2.dpad_up){
-                controlledGrabbers = GRABBERS.TOP_GRABBER;
-            }
-            else if(gamepad2.dpad_down){
-                controlledGrabbers = GRABBERS.BOTTOM_GRABBER;
-            }
-            else if(gamepad2.dpad_left || gamepad2.dpad_right){
-                controlledGrabbers = GRABBERS.BOTH_GRABBERS;
+            if (gamepad2.dpad_up) {
+                controlledGrabbers = constants.GRABBERS.TOP_GRABBER;
+            } else if (gamepad2.dpad_down) {
+                controlledGrabbers = constants.GRABBERS.BOTTOM_GRABBER;
+            } else if (gamepad2.dpad_left || gamepad2.dpad_right) {
+                controlledGrabbers = constants.GRABBERS.BOTH_GRABBERS;
             }
 
             //To open/close grabber
             if (gamepad2.a) {
                 closeGrabber(controlledGrabbers);
-            }
-            else if (gamepad2.b){
+            } else if (gamepad2.b) {
                 openGrabber(controlledGrabbers);
-            }
-            else if (gamepad2.y) {
+            } else if (gamepad2.y) {
                 openGrabberWide(controlledGrabbers);
             }
 
             //To extend/detract cascading rail
-            if(gamepad2.right_bumper){
-                if(gamepad2.x){
+            if (gamepad2.right_bumper) {
+                if (gamepad2.x) {
                     relicExtender.setPower(0.5);
-                }
-                else {
+                } else {
                     relicExtender.setPower(0.1);
                 }
-            }
-            else if(gamepad2.left_bumper){
-                if(gamepad2.x){
+            } else if (gamepad2.left_bumper) {
+                if (gamepad2.x) {
                     relicExtender.setPower(-0.5);
-                }
-                else{
+                } else {
                     relicExtender.setPower(-0.1);
                 }
 
-            }
-            else{
+            } else {
                 relicExtender.setPower(0);
             }
 
-            if(gamepad1.y){ //To collect relic
-                if(relicRotationalServo.getPosition() < 0.775){
+            if (gamepad1.y) { //To collect relic
+                if (relicRotationalServo.getPosition() < 0.775) {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                }
-                else if(relicRotationalServo.getPosition() > 0.775){
+                } else if (relicRotationalServo.getPosition() > 0.775) {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
                 }
 
-                if(relicLinearServo.getPosition() < 0.3) {
+                if (relicLinearServo.getPosition() < 0.3) {
                     relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.008);
-                }
-                else if(relicLinearServo.getPosition() > 0.3){
+                } else if (relicLinearServo.getPosition() > 0.3) {
                     relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.008);
                 }
-            }
-
-            else {
+            } else {
                 //To extend/detract the linear servo on the relic mechanism
 
-                if(gamepad1.right_bumper){ //To open
+                if (gamepad1.right_bumper) { //To open
 
                     if (relicLinearServo.getPosition() < 0.9) {
                         relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);

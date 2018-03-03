@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
@@ -10,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.*;
 /**
  * Created by dansm on 2/28/2018.
  */
+@Disabled
 @Autonomous(name="Test Pid Turn")
 
 public class testPIDTurn extends LinearOpMode{

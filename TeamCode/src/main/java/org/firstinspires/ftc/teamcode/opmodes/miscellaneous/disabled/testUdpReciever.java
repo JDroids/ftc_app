@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,7 +12,7 @@ import java.text.DecimalFormat;
 /**
  * Created by dansm on 2/28/2018.
  */
-
+@Disabled
 @TeleOp(name="Udp Reciever Test")
 
 public class testUdpReciever extends LinearOpMode{
