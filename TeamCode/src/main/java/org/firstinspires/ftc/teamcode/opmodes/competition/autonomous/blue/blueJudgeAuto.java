@@ -121,9 +121,6 @@ public class blueJudgeAuto extends LinearOpMode{
         sleep(100);
 
         globalRuntime.reset();
-        turn(0, this, globalRuntime); //"Input of 0 forces to counter-clockwise turn, this is because of my dumb code" - Daniel 2018
-
-        sleep(100);
 
         turnPID(0);
 
