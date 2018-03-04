@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.*;
 /**
  * Created by dansm on 2/28/2018.
  */
+
 @Disabled
 @Autonomous(name="Test Pid Turn")
 
@@ -32,6 +33,6 @@ public class testPIDTurn extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-        turnPID(90, true);
+        turnPID(90);
     }
 }

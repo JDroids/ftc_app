@@ -92,7 +92,7 @@ public class blueRecoveryAuto extends LinearOpMode{
 
         globalRuntime.reset();
 
-        turn(90, this, globalRuntime);
+        turnPID(90);
 
         sleep(100);
 

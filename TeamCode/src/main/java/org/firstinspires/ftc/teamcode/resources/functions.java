@@ -153,13 +153,28 @@ public class functions{
         backRightDriveMotor.setPower(-v4);
     }
 
-    static public void moveArcadeFOD(Gamepad gamepad, FIELD_SIDE fieldSide, LinearOpMode linearOpMode) throws InterruptedException{
+    static public void moveArcadeFOD(Gamepad gamepad, FIELD_SIDE fieldSide, JDColor jdColor, LinearOpMode linearOpMode) throws InterruptedException{
         double r = Math.hypot(scaleInputFixedSpeed(-gamepad.left_stick_x), scaleInputFixedSpeed(gamepad.left_stick_y));
+
+        double offset = 0;
+
+        if(jdColor == JDColor.NONE){
+            offset = 0;
+        }
+        else if(fieldSide == FIELD_SIDE.RECOVERY_SIDE){
+            offset = Math.PI;
+        }
+        else if(fieldSide == FIELD_SIDE.JUDGE_SIDE && jdColor == JDColor.BLUE){
+            offset = -(Math.PI/2);
+        }
+        else if(fieldSide == FIELD_SIDE.JUDGE_SIDE && jdColor == JDColor.RED){
+            offset = Math.PI/2;
+        }
 
         Orientation angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.RADIANS);
 
         //Note to self - first angle may have to be negative
-        double robotAngle = (Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) + angles.firstAngle) - Math.PI / 4;
+        double robotAngle = (offset + (Math.atan2(scaleInputFixedSpeed(gamepad.left_stick_y), scaleInputFixedSpeed(-gamepad.left_stick_x)) - angles.firstAngle)) - Math.PI / 4;
         double rightX = scaleInputFixedSpeed(-gamepad.right_stick_x);
 
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -1269,6 +1284,7 @@ public class functions{
     }
 
 
+
     static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp){
         PID pidClass = new PID();
 
@@ -1309,5 +1325,50 @@ public class functions{
 
     static public void turnPID(double degrees){
         turnPID(degrees, false);
+    }
+
+
+
+    static public void moveToDistanceUltrasonicPID(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, LinearOpMode linearOpMode, boolean gettingCoeffecientsThroughUdp){
+        PID pidClass = new PID();
+
+        //pidClass.setCoeffecients();
+
+        double distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
+
+        double motorSpeed;
+
+        while(distance != centimeters && linearOpMode.opModeIsActive()){
+            distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
+
+            if(gettingCoeffecientsThroughUdp){
+                motorSpeed = pidClass.calculateOutput(centimeters, distance, true);
+            }
+            else{
+                motorSpeed = pidClass.calculateOutput(centimeters, distance);
+            }
+
+            moveInAStraightLine(-motorSpeed);
+
+            linearOpMode.telemetry.addData("Distance", distance);
+
+            linearOpMode.telemetry.addData("Front Left Encoder", frontLeftDriveMotor.getCurrentPosition());
+            linearOpMode.telemetry.addData("Front Right Encoder", frontRightDriveMotor.getCurrentPosition());
+            linearOpMode.telemetry.addData("Back Left Encoder", backLeftDriveMotor.getCurrentPosition());
+            linearOpMode.telemetry.addData("Back Right Encoder", backRightDriveMotor.getCurrentPosition());
+
+            linearOpMode.telemetry.update();
+        }
+
+        if(gettingCoeffecientsThroughUdp){
+            Log.d("JDPID", "Shutting down Udp receiver");
+            pidClass.pidUdpReceiver.shutdown();
+        }
+
+        stopDriveMotors();
+    }
+
+    static public void moveToDistanceUltrasonicPID(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, LinearOpMode linearOpMode){
+        moveToDistanceUltrasonicPID(rangeSensor, centimeters, linearOpMode, false);
     }
 }

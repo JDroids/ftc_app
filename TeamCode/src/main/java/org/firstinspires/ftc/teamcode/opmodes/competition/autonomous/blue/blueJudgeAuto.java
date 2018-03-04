@@ -104,7 +104,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        turn(88, this, globalRuntime);
+        turnPID(90);
 
         sleep(100);
 
@@ -125,7 +125,7 @@ public class blueJudgeAuto extends LinearOpMode{
 
         sleep(100);
 
-        turn(-1, this, globalRuntime); //
+        turnPID(0);
 
         sleep(100);
 
