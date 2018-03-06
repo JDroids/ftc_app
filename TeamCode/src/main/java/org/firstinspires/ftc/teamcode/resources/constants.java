@@ -1,7 +1,5 @@
-
 package org.firstinspires.ftc.teamcode.resources;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
 /**
@@ -10,12 +8,12 @@ import org.opencv.core.Scalar;
 
 //A file to hold all constants
 
-public class constants{
+public class constants {
     //{Left servo pos, right servo pos}
     static public final double STRAFING_LIMIT = 0.1;
     static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.6, 0.36};
-    static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 1.0};
-    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.6};
+    static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 0.75};
+    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.65};
     static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};
 
     static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{1.0, 0.35};
@@ -31,8 +29,13 @@ public class constants{
     static public final int UP = 1;
     static public final int DOWN = -1;
 
-    public enum JDColor {NONE, RED, BLUE};
-    public enum FIELD_SIDE {RECOVERY_SIDE, JUDGE_SIDE};
+    public enum JDColor {NONE, RED, BLUE}
+
+    ;
+
+    public enum FIELD_SIDE {RECOVERY_SIDE, JUDGE_SIDE}
+
+    ;
 
     public enum GRABBERS {BOTH_GRABBERS, BOTTOM_GRABBER, TOP_GRABBER}
 
@@ -60,6 +63,8 @@ public class constants{
 
     static public final Scalar BRIGHT_LOWER_RED = new Scalar(166, 113, 140);
     static public final Scalar BRIGHT_UPPER_RED = new Scalar(180, 255, 255);
-    
-    public enum DIRECTION {MOVING_TOWARDS_OBJECT, MOVING_AWAY_FROM_OBJECT};
+
+    public enum DIRECTION {MOVING_TOWARDS_OBJECT, MOVING_AWAY_FROM_OBJECT}
+
+    ;
 }

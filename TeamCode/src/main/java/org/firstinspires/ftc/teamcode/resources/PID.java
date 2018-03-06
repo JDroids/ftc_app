@@ -31,14 +31,14 @@ public class PID {
 
     public PidUdpReceiver pidUdpReceiver;
 
-    public void setCoeffecients(double Kp, double Ki, double Kd){
+    public void setCoeffecients(double Kp, double Ki, double Kd) {
         kp = Kp;
         ki = Ki;
         kd = Kd;
     }
 
-    public double calculateOutput(double target, double currentValue, boolean pidTuning){
-        if(pidTuning){
+    public double calculateOutput(double target, double currentValue, boolean pidTuning) {
+        if (pidTuning) {
             updateCoefficients();
 
             //How long since we calculated
@@ -61,8 +61,7 @@ public class PID {
 
 
             return output;
-        }
-        else {
+        } else {
             //How long since we calculated
             now = System.currentTimeMillis();
             timeChange = (double) (now - lastTime);
@@ -82,14 +81,14 @@ public class PID {
         }
     }
 
-    public double calculateOutput(double target, double currentValue){
+    public double calculateOutput(double target, double currentValue) {
         return calculateOutput(target, currentValue, false);
     }
 
     private boolean firstTime = true;
 
-    public void updateCoefficients(){
-        if(firstTime) {
+    public void updateCoefficients() {
+        if (firstTime) {
             initializeUdpRecevier();
             firstTime = false;
         }
@@ -99,8 +98,8 @@ public class PID {
     }
 
 
-    public void initializeUdpRecevier(){
-        if(firstTime){
+    public void initializeUdpRecevier() {
+        if (firstTime) {
             pidUdpReceiver = new PidUdpReceiver();
             pidUdpReceiver.beginListening();
         }

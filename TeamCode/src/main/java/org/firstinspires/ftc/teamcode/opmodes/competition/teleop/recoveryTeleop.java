@@ -8,8 +8,7 @@ import org.firstinspires.ftc.teamcode.resources.constants;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.TELEOP;
 import static org.firstinspires.ftc.teamcode.resources.functions.closeGrabber;
-import static org.firstinspires.ftc.teamcode.resources.functions.controlFirstGlyphLift;
-import static org.firstinspires.ftc.teamcode.resources.functions.controlSecondGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.functions.controlGlyphLifts;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveArcadeFOD;
 import static org.firstinspires.ftc.teamcode.resources.functions.openGrabber;
@@ -28,9 +27,9 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalS
  * Created by dansm on 3/3/2018.
  */
 
-@TeleOp(name="RecoveryTeleop")
+@TeleOp(name = "RecoveryTeleop")
 
-public class recoveryTeleop extends LinearOpMode{
+public class recoveryTeleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //Code to run after init is pressed
 
@@ -136,8 +135,7 @@ public class recoveryTeleop extends LinearOpMode{
                 }
             }
 
-            controlFirstGlyphLift(gamepad2, this);
-            controlSecondGlyphLift(gamepad2, this);
+            controlGlyphLifts(gamepad2, this);
 
 
             //A bunch of telemetry for nerds

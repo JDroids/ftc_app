@@ -8,13 +8,9 @@ import org.firstinspires.ftc.teamcode.resources.constants;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.TELEOP;
 import static org.firstinspires.ftc.teamcode.resources.functions.closeGrabber;
-import static org.firstinspires.ftc.teamcode.resources.functions.controlFirstGlyphLift;
-import static org.firstinspires.ftc.teamcode.resources.functions.controlSecondGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.functions.controlGlyphLifts;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveArcade;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveArcadeFOD;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveSecondLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.openGrabber;
 import static org.firstinspires.ftc.teamcode.resources.functions.openGrabberWide;
 import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
@@ -31,7 +27,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalS
  * Created by dansm on 3/2/2018.
  */
 
-@TeleOp(name="BLUEJudgeTeleop")
+@TeleOp(name = "BLUEJudgeTeleop")
 
 public class blueJudgeTeleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
@@ -139,8 +135,7 @@ public class blueJudgeTeleop extends LinearOpMode {
                 }
             }
 
-            controlFirstGlyphLift(gamepad2, this);
-            controlSecondGlyphLift(gamepad2, this);
+            controlGlyphLifts(gamepad2, this);
 
 
             //A bunch of telemetry for nerds

@@ -4,18 +4,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
+import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
 
 /**
  * Created by dansm on 12/15/2017.
  */
 @Disabled
-@TeleOp(name="Count Passes")
+@TeleOp(name = "Count Passes")
 
-public class countPasses extends LinearOpMode{
+public class countPasses extends LinearOpMode {
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         int columnsPassed = 0;
 
         initHardwareMap(hardwareMap);
@@ -30,13 +34,14 @@ public class countPasses extends LinearOpMode{
         frontRightDriveMotor.setPower(-0.2);
         backLeftDriveMotor.setPower(0.2);
         backRightDriveMotor.setPower(-0.2);
-        while(opModeIsActive()){
-            if(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall){
+        while (opModeIsActive()) {
+            if (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall) {
                 columnsPassed++;
 
-                while(sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()){}
+                while (sideRangeSensor.cmUltrasonic() <= distanceToCryptoBoxWall && opModeIsActive()) {
+                }
             }
-            if(columnsPassed >= 2){
+            if (columnsPassed >= 2) {
                 frontLeftDriveMotor.setPower(0);
                 frontRightDriveMotor.setPower(0);
                 backLeftDriveMotor.setPower(0);

@@ -13,21 +13,21 @@ import java.text.DecimalFormat;
  * Created by dansm on 2/28/2018.
  */
 @Disabled
-@TeleOp(name="Udp Reciever Test")
+@TeleOp(name = "Udp Reciever Test")
 
-public class testUdpReciever extends LinearOpMode{
+public class testUdpReciever extends LinearOpMode {
     private double p, i, d;
     private PidUdpReceiver pidUdpReceiver;
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         pidUdpReceiver = new PidUdpReceiver();
         pidUdpReceiver.beginListening();
 
         telemetry.setMsTransmissionInterval(50);
         waitForStart();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             updateCoefficients();
 
             telemetry.addData("P", formatVal(p));

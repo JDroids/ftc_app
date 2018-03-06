@@ -13,8 +13,8 @@ import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
  * Created by dansm on 2/10/2018.
  */
 
-@Autonomous(name="VisionTest")
-public class visionTest extends LinearOpMode{
+@Autonomous(name = "VisionTest")
+public class visionTest extends LinearOpMode {
     @Override
 
     public void runOpMode() {

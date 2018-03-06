@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Disabled
 
-@Autonomous(name="JDAutoJava")
+@Autonomous(name = "JDAutoJava")
 
-public class JDAuto extends LinearOpMode{
+public class JDAuto extends LinearOpMode {
 
     //Add IMU Parameters
 
@@ -63,17 +63,19 @@ public class JDAuto extends LinearOpMode{
         int jewelColorFound = -100;
         int stoneFound = -100; // these two lines are for compiling purposes only
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
 
             waitForStart();
 
 
-
-            if(jewelColorFound == 0){}
+            if (jewelColorFound == 0) {
+            }
             //do nothing
-            if(jewelColorFound == stoneFound){}
+            if (jewelColorFound == stoneFound) {
+            }
             //knock opposite
-            if(jewelColorFound != stoneFound){}
+            if (jewelColorFound != stoneFound) {
+            }
             //knock same
 
 

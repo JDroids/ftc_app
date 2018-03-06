@@ -4,9 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.resources.constants.*;
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS;
+import static org.firstinspires.ftc.teamcode.resources.functions.closeGrabber;
+import static org.firstinspires.ftc.teamcode.resources.functions.controlGlyphLifts;
+import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
+import static org.firstinspires.ftc.teamcode.resources.functions.move;
+import static org.firstinspires.ftc.teamcode.resources.functions.openGrabber;
+import static org.firstinspires.ftc.teamcode.resources.functions.openGrabberWide;
+import static org.firstinspires.ftc.teamcode.resources.functions.scaleInputFixedSpeed;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 
 
 /**
@@ -15,12 +21,12 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
 @Disabled
-@TeleOp(name="JDTeleOpTankDrive")
+@TeleOp(name = "JDTeleOpTankDrive")
 
-public class JDTeleopUsingTankDrive extends LinearOpMode{
+public class JDTeleopUsingTankDrive extends LinearOpMode {
     @Override
 
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         //Code to run after init is pressed
         boolean hardwareMapState;
 
@@ -36,7 +42,7 @@ public class JDTeleopUsingTankDrive extends LinearOpMode{
 
         initServos(true);
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             gamepad1LeftY = scaleInputFixedSpeed(gamepad1.left_stick_y);
             gamepad1RightY = scaleInputFixedSpeed(gamepad1.right_stick_y);
             gamepad1LeftX = scaleInputFixedSpeed(gamepad1.left_stick_x);
@@ -44,18 +50,16 @@ public class JDTeleopUsingTankDrive extends LinearOpMode{
 
             move(gamepad1LeftY, gamepad1RightY, gamepad1LeftX, gamepad1RightX);
 
-            if(gamepad2.a){
+            if (gamepad2.a) {
                 closeGrabber(GRABBERS.BOTH_GRABBERS);
-            }
-            else if(gamepad2.b){
+            } else if (gamepad2.b) {
                 openGrabber(GRABBERS.BOTH_GRABBERS);
-            }
-            else if(gamepad2.y){
+            } else if (gamepad2.y) {
                 openGrabberWide(GRABBERS.BOTH_GRABBERS);
             }
 
-            controlFirstGlyphLift(gamepad2, this);
-            controlSecondGlyphLift(gamepad2, this);
+            controlGlyphLifts(gamepad2, this);
+            //controlSecondGlyphLift(gamepad2, this);
         }
     }
 }

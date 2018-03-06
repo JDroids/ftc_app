@@ -4,21 +4,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveEncoders;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 
 /**
  * Created by dansm on 1/27/2018.
  */
 @Disabled
 
-@Autonomous(name="moveEncoders")
+@Autonomous(name = "moveEncoders")
 
-public class movingWithEncoders extends LinearOpMode{
+public class movingWithEncoders extends LinearOpMode {
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
 
         initHardwareMap(hardwareMap);
 

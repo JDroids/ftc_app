@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.resources;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -14,7 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by dansm on 12/13/2017.
  */
 
-public class hardware{
+public class hardware {
     static public DcMotor frontLeftDriveMotor = null;
     static public DcMotor frontRightDriveMotor = null;
     static public DcMotor backLeftDriveMotor = null;
@@ -35,8 +34,10 @@ public class hardware{
     static public Servo jewelKnocker = null;
     static public Servo jewelArm = null;
 
-    static public DigitalChannel firstLiftSwitch = null;
-    static public DigitalChannel secondLiftSwitch = null;
+    static public DigitalChannel firstLiftTopSwitch = null;
+    static public DigitalChannel firstLiftBottomSwitch = null;
+    static public DigitalChannel secondLiftTopSwitch = null;
+    static public DigitalChannel secondLiftBottomSwitch = null;
 
     static public ColorSensor jewelColorSensor = null;
     static public DistanceSensor jewelDistanceSensor = null;
@@ -50,7 +51,7 @@ public class hardware{
 
     static public BNO055IMU imuSensor = null;
 
-    static public void initHardwareMap(HardwareMap map){
+    static public void initHardwareMap(HardwareMap map) {
         HardwareMap hMap = map;
 
 
@@ -82,11 +83,17 @@ public class hardware{
         jewelKnocker = hMap.servo.get("servoJewelKnock");
         jewelArm = hMap.servo.get("servoJewelArm");
 
-        firstLiftSwitch = hMap.digitalChannel.get("FirstLiftSwitch");
-        secondLiftSwitch = hMap.digitalChannel.get("SecondLiftSwitch");
+        firstLiftTopSwitch = hMap.digitalChannel.get("FirstLiftSwitchUpper");
+        firstLiftBottomSwitch = hMap.digitalChannel.get("FirstLiftSwitchLower");
 
-        firstLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
-        secondLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
+        secondLiftTopSwitch = hMap.digitalChannel.get("SecondLiftSwitchUpper");
+        secondLiftBottomSwitch = hMap.digitalChannel.get("SecondLiftSwitchLower");
+
+        firstLiftTopSwitch.setMode(DigitalChannel.Mode.INPUT);
+        firstLiftBottomSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        secondLiftTopSwitch.setMode(DigitalChannel.Mode.INPUT);
+        secondLiftBottomSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         imuSensor = hMap.get(BNO055IMU.class, "imu");
 
@@ -96,7 +103,7 @@ public class hardware{
 
         sideRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
         frontRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "frontRange");
-        rearRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class,"rearRange");
+        rearRangeSensor = hMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
     }
 }

@@ -6,17 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.resources.constants.*;
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.JDColor;
+import static org.firstinspires.ftc.teamcode.resources.functions.initDogeCVForCryptobox;
 
 /**
  * Created by dansm on 12/17/2017.
  */
 @Disabled
-@TeleOp(name="DogeCV Red Crypto Detection")
+@TeleOp(name = "DogeCV Red Crypto Detection")
 
-public class detectCryptobox extends LinearOpMode{
+public class detectCryptobox extends LinearOpMode {
     @Override
 
     public void runOpMode() throws InterruptedException {

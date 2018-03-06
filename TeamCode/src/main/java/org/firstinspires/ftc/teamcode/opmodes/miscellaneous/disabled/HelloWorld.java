@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "Hello World")
 @Disabled
 
-public class HelloWorld extends LinearOpMode{
+public class HelloWorld extends LinearOpMode {
     @Override
 
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         telemetry.addData("Message", "Hello Nerd!");
         telemetry.addData("Message", "Hello World!");
         telemetry.update();
@@ -23,11 +23,11 @@ public class HelloWorld extends LinearOpMode{
         //Code to run after init is pressed
         waitForStart();
         int i = 0;
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("Approximate Amount of Seconds Passed:", i);
             telemetry.update();
             Thread.sleep(1000);
-            i+=1;
+            i += 1;
         }
         //Code to run after play is pressed
     }

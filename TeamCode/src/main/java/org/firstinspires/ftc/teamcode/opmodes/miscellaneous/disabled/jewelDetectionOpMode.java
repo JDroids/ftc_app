@@ -8,24 +8,27 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.resources.constants;
 import org.firstinspires.ftc.teamcode.resources.JewelDetectionOpenCV;
+import org.firstinspires.ftc.teamcode.resources.constants;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.detectJewelColor;
+import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
+import static org.firstinspires.ftc.teamcode.resources.functions.knockJewel;
+import static org.firstinspires.ftc.teamcode.resources.functions.lowerJewelArms;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 
 /**
  * Created by dansm on 1/21/2018.
  */
 @Disabled
-@Autonomous(name="Jewel Detection Custom")
+@Autonomous(name = "Jewel Detection Custom")
 
-public class jewelDetectionOpMode extends LinearOpMode{
+public class jewelDetectionOpMode extends LinearOpMode {
     @Override
 
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         initHardwareMap(hardwareMap);
         initServos(constants.AUTONOMOUS);
 
@@ -44,17 +47,16 @@ public class jewelDetectionOpMode extends LinearOpMode{
         mRuntime.reset();
 
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("Jewel On Left", jewelVision.jewelOnLeft);
             telemetry.addData("Time Elapsed", mRuntime.milliseconds());
             telemetry.update();
 
-            if(listOfJewelColors.size() < 5){
-                if(jewelVision.jewelOnLeft != constants.JDColor.NONE) {
+            if (listOfJewelColors.size() < 5) {
+                if (jewelVision.jewelOnLeft != constants.JDColor.NONE) {
                     listOfJewelColors.add(jewelVision.jewelOnLeft);
                 }
-            }
-            else{
+            } else {
                 break;
             }
         }
@@ -64,11 +66,10 @@ public class jewelDetectionOpMode extends LinearOpMode{
         int redJewelsFound = 0;
         int blueJewelsFound = 0;
 
-        for(constants.JDColor color : listOfJewelColors){
-            if(color == constants.JDColor.RED){
+        for (constants.JDColor color : listOfJewelColors) {
+            if (color == constants.JDColor.RED) {
                 redJewelsFound++;
-            }
-            else{
+            } else {
                 blueJewelsFound++;
             }
         }
@@ -82,7 +83,7 @@ public class jewelDetectionOpMode extends LinearOpMode{
         //We assume we are on the blue side
 
         //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
-        if(blueJewelsFound >= 4 && jewelOnRight == constants.JDColor.RED){
+        if (blueJewelsFound >= 4 && jewelOnRight == constants.JDColor.RED) {
             certainty = blueJewelsFound * 20;
 
             telemetry.addData("Jewel On Left", "Blue");
@@ -91,8 +92,7 @@ public class jewelDetectionOpMode extends LinearOpMode{
             Log.d("Certainty", Integer.toString(certainty));
 
             knockJewel(constants.JDColor.RED, constants.JDColor.BLUE, this);
-        }
-        else if(redJewelsFound >= 4 && jewelOnRight == constants.JDColor.BLUE){
+        } else if (redJewelsFound >= 4 && jewelOnRight == constants.JDColor.BLUE) {
             certainty = redJewelsFound * 20;
 
             telemetry.addData("Jewel On Left", "Red");
@@ -101,8 +101,7 @@ public class jewelDetectionOpMode extends LinearOpMode{
             Log.d("Certainty", Integer.toString(certainty));
 
             knockJewel(constants.JDColor.BLUE, constants.JDColor.BLUE, this);
-        }
-        else{
+        } else {
             telemetry.addData("Jewel On Left", "Unclear");
             Log.d("JewelOnLeft", "Unknown");
 

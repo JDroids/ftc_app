@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.resources;
 
 import android.util.Log;
-import android.util.Size;
 
-import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.OpenCVPipeline;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -14,7 +11,6 @@ import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -66,7 +62,7 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
     // This is called every camera frame.
 
     @Override
-    public Mat processFrame(Mat rgba, Mat gray){
+    public Mat processFrame(Mat rgba, Mat gray) {
 
         blue_plane.clear();
         red_plane.clear();
@@ -74,13 +70,11 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
         bgr_planes.clear();
 
 
-
-
         croppedImage = rgba; //Get rid of this
 
 
         //Cropping code; causes phone to black screen and close app (needs to be commented to be able to figure out where to crop using below code)
-        if(firstTimeThroughLoop) {
+        if (firstTimeThroughLoop) {
             rectCrop = new Rect(20, 240, 105, 240);
             firstTimeThroughLoop = false;
         }
@@ -114,14 +108,13 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
         redData = r_hist.get(r_hist.width() - 1, 0);
 
 
-
         lastBlue = (int) blueData[blueData.length - 1];
         lastRed = (int) redData[redData.length - 1];
 
-        if(b_hist == null){
+        if (b_hist == null) {
             Log.d("NullWatch", "b_hist is null");
         }
-        if(blueData == null){
+        if (blueData == null) {
             Log.d("NullWatch", "blueData is null");
         }
 
@@ -129,7 +122,7 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
         Log.d("Last Red", Integer.toString(lastRed));
 
         //1000 to little, 10000 to much
-        if(Math.abs(lastRed-lastBlue) > 3000){
+        if (Math.abs(lastRed - lastBlue) > 3000) {
             if (lastRed > lastBlue) {
                 Log.d("JewelColor", "Red");
                 jewelOnLeft = JDColor.RED;
@@ -137,8 +130,7 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
                 Log.d("JewelColor", "Blue");
                 jewelOnLeft = JDColor.BLUE;
             }
-        }
-        else{
+        } else {
             Log.d("JewelColor", "None");
             jewelOnLeft = JDColor.NONE;
         }
@@ -146,8 +138,7 @@ public class JewelDetectionOpenCV extends OpenCVPipeline {
         //To limit the frame rate - Probably the wrong way to do so
         try {
             Thread.sleep(100);
-        }
-        catch(InterruptedException e){
+        } catch (InterruptedException e) {
             //This is a terrible practice
         }
         return croppedImage;
