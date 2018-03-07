@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.opmodes.competition.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.miscellaneous.disabled;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -26,6 +27,8 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalS
 /**
  * Created by dansm on 12/7/2017.
  */
+
+@Disabled
 
 @TeleOp(name = "JDTeleOp")
 

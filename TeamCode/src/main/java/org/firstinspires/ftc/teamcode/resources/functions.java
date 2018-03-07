@@ -657,7 +657,7 @@ public class functions {
         mRuntime.reset();
 
         //read color for about 2 seconds
-        while (jewelColorFound == JDColor.NONE && mRuntime.time() < 2) {
+        while (jewelColorFound == JDColor.NONE && mRuntime.milliseconds() < 5) {
 
             // hsvValues is an array that will hold the hue, saturation, and value information.
             float hsvValues[] = {0F, 0F, 0F};
@@ -749,38 +749,39 @@ public class functions {
         backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    static public RelicRecoveryVuMark getVumark(LinearOpMode linearOpMode, HardwareMap hMap) {
-        ClosableVuforiaLocalizer vuforia;
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
+    static public ClosableVuforiaLocalizer initVuforia(HardwareMap hMap){
 
         int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = " AZcIMlr/////AAAAGe1W/L9P20hXupxJsIH5bIMDl46JPwjrX2kI+L6+tigIG9bhthzvrEWVBni6g4Jkvs76N/hIT0bFun78pnNDqkG3ZP24XLj45VHA2rYKp8UDww/vfy8xrtvHxedihdX1A2vMWg8Ub8tLjBMgEAqcAYYUMwPRQfI61KQmXvAJBV79XtQughxCh/fbrtoux6WV6HHs8OydP7kPUaUU3f0z5ZOF/TUvcqFFotqnLg/KwXMxxrouRyDGCIbpbP7cYabiR7ShIGvrYoRKtbpwxS3WLSjjTd7ynvoidYipWZ60e6t+wUCzdXahS8g0veYuTQ+vwBqljhtLUWnCUjbJh2jocjxV9kLGgqlPFCmLHZyurYkX";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
 
-        vuforia = new ClosableVuforiaLocalizer(parameters);
+        ClosableVuforiaLocalizer vuforia = new ClosableVuforiaLocalizer(parameters);
+
+        return vuforia;
+    }
+
+    static public RelicRecoveryVuMark getVumark(ClosableVuforiaLocalizer vuforia, LinearOpMode linearOpMode) {
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
+
+        //timer based fail safe logic
+        ElapsedTime mRuntime = new ElapsedTime();
 
         VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); //For debug purposes
-        //Works here
-        //runningOpMode.addTelemetry("VuMark Detection State", "Starting", true);
 
         relicTrackables.activate();
-        //timer based fail safe logic
-        long startTime = System.nanoTime();
-        long elapsedTime = 0;
 
         //try to read the vumark until we find a valid vumark or for 3 seconds
-        while (vuMark == RelicRecoveryVuMark.UNKNOWN && elapsedTime <= 3000 && linearOpMode.opModeIsActive()) {
+        while (vuMark == RelicRecoveryVuMark.UNKNOWN && mRuntime.milliseconds() <= 3000 && linearOpMode.opModeIsActive()) {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                 linearOpMode.telemetry.addData("Vumark Found", vuMark.toString());
                 linearOpMode.telemetry.update();
                 break;
             }
-            elapsedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-            linearOpMode.telemetry.addData("Elapsed Time to find VuMark:", Long.toString(elapsedTime));
+            linearOpMode.telemetry.addData("Elapsed Time to find VuMark:", Double.toString(mRuntime.milliseconds()));
             linearOpMode.telemetry.update();
         }
 

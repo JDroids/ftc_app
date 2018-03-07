@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.resources.JewelDetectionOpenCV;
+import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
+import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 
 /**
  * Created by dansm on 2/10/2018.
@@ -38,7 +40,9 @@ public class visionTest extends LinearOpMode {
 
         waitForStart();
 
-        getVumark(this, hardwareMap);
+        ClosableVuforiaLocalizer vuforia = initVuforia(hardwareMap);
+
+        getVumark(vuforia, this);
 
     }
 

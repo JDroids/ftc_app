@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.AUTONOMOUS;
 import static org.firstinspires.ftc.teamcode.resources.constants.DIRECTION;
@@ -18,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.depositGlyph;
 import static org.firstinspires.ftc.teamcode.resources.functions.doAllJewelStuff;
 import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
+import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonic;
@@ -45,15 +47,7 @@ public class redJudgeAuto extends LinearOpMode {
 
         initServos(AUTONOMOUS);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-
-        imuSensor.initialize(parameters);
-
+        ClosableVuforiaLocalizer vuforia = initVuforia(hardwareMap);
 
         double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
 
@@ -66,13 +60,21 @@ public class redJudgeAuto extends LinearOpMode {
         }
 
         waitForStart();
-
         //Code to run after play is pressed
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        imuSensor.initialize(parameters);
 
         //detect the VuMark
         telemetry.addData("Vumark:", "Initializing");
         telemetry.update();
-        RelicRecoveryVuMark vuMark = getVumark(this, hardwareMap);
+        RelicRecoveryVuMark vuMark = getVumark(vuforia, this);
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 

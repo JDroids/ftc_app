@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.AUTONOMOUS;
 import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
@@ -17,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.depositGlyph;
 import static org.firstinspires.ftc.teamcode.resources.functions.doAllJewelStuff;
 import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
+import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
@@ -45,6 +47,8 @@ public class redRecoveryAuto extends LinearOpMode {
 
         initServos(AUTONOMOUS);
 
+        ClosableVuforiaLocalizer vuforia = initVuforia(hardwareMap);
+
         double distanceToWall = readAndFilterRangeSensorValues(sideRangeSensor, this);
 
         while (!isStarted()) {
@@ -70,7 +74,7 @@ public class redRecoveryAuto extends LinearOpMode {
         //detect the VuMark
         telemetry.addData("Vumark:", "Initializing");
         telemetry.update();
-        RelicRecoveryVuMark vuMark = getVumark(this, hardwareMap);
+        RelicRecoveryVuMark vuMark = getVumark(vuforia, this);
         telemetry.addData("Vumark:", vuMark.toString());
         telemetry.update();
 
