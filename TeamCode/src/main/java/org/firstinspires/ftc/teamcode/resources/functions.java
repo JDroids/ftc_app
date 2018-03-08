@@ -26,49 +26,8 @@ import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalize
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static org.firstinspires.ftc.teamcode.resources.constants.BLUE;
-import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_CLOSE_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_INIT_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_OPEN_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.DIRECTION;
-import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
-import static org.firstinspires.ftc.teamcode.resources.constants.FRONT_FACING_CAMERA;
-import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS;
-import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
-import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.TOP_GRABBER;
-import static org.firstinspires.ftc.teamcode.resources.constants.JDColor;
-import static org.firstinspires.ftc.teamcode.resources.constants.JEWEL_ARM_INIT_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.JEWEL_KNOCKER_INIT_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS;
-import static org.firstinspires.ftc.teamcode.resources.constants.MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS;
-import static org.firstinspires.ftc.teamcode.resources.constants.RED;
-import static org.firstinspires.ftc.teamcode.resources.constants.STRAFING_LIMIT;
-import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_CLOSE_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_INIT_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_OPEN_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_WIDE_OPEN_POSITION;
-import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.backRightDriveMotor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.firstGlyphLift;
-import static org.firstinspires.ftc.teamcode.resources.hardware.firstLiftBottomSwitch;
-import static org.firstinspires.ftc.teamcode.resources.hardware.firstLiftTopSwitch;
-import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMotor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberBL;
-import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberBR;
-import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberTL;
-import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberTR;
-import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.jewelArm;
-import static org.firstinspires.ftc.teamcode.resources.hardware.jewelColorSensor;
-import static org.firstinspires.ftc.teamcode.resources.hardware.jewelKnocker;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicLinearServo;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
-import static org.firstinspires.ftc.teamcode.resources.hardware.secondGlyphLift;
-import static org.firstinspires.ftc.teamcode.resources.hardware.secondLiftBottomSwitch;
-import static org.firstinspires.ftc.teamcode.resources.hardware.secondLiftTopSwitch;
-import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
+import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
 /**
@@ -713,7 +672,7 @@ public class functions {
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        int ticks = (int) ((((((Math.PI * 4) / 16) * 112) * centimeters) / 4) / 2.54); //Convert the amount of centimeters to travel to ticks
+        int ticks = convertFromCMToTicks(centimeters);
 
         frontLeftDriveMotor.setTargetPosition(-ticks);
         frontRightDriveMotor.setTargetPosition(ticks);
@@ -1272,5 +1231,59 @@ public class functions {
 
     static public void moveToDistanceUltrasonicPID(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, LinearOpMode linearOpMode) {
         moveToDistanceUltrasonicPID(rangeSensor, centimeters, linearOpMode, false);
+    }
+
+    static public double convertFromTicksToCM(int ticks){
+        return (2.54 * ticks) / (7 * Math.PI);  //Convert the amount of ticks to centimeters
+    }
+
+    static public int convertFromCMToTicks(double cm){
+        return (int) ((((((Math.PI * 4) / 16) * 112) * cm) / 4) / 2.54); //Convert the amount of centimeters to ticks
+    }
+
+    static public void moveWithMotionProfiling(double centimeters, String csvFile, LinearOpMode linearOpMode){
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double centimetersTraveled = 0;
+
+        MotionProfiling motionProfilingClass = new MotionProfiling();
+
+        motionProfilingClass.setCoeffecients(, 0.001); //Kv should be ~ 1/max velocity
+        if (motionProfilingClass.readMotionProfileFile("")) {
+            while (linearOpMode.opModeIsActive()) {
+                centimetersTraveled = convertFromTicksToCM(((backLeftDriveMotor.getCurrentPosition() + backRightDriveMotor.getCurrentPosition()) / 2));
+
+                if(centimetersTraveled > centimeters - 0.1 && centimetersTraveled < centimeters + 0.1){
+                    break;
+                }
+
+                moveInAStraightLine(motionProfilingClass.calculatePower(centimeters, centimetersTraveled));
+
+
+            }
+            stopDriveMotors();
+        }
+        else{
+            moveEncoders((int) centimeters, 0.3, linearOpMode);
+        }
+
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 }

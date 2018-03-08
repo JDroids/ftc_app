@@ -11,15 +11,15 @@ import org.opencv.core.Scalar;
 public class constants {
     //{Left servo pos, right servo pos}
     static public final double STRAFING_LIMIT = 0.1;
-    static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.6, 0.36};
-    static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 0.75};
-    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.65};
-    static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.5};
+    static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{0.75, 0.15};
+    static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.4, 0.3};
+    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.55, 0.25};
+    static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.65, 0.2};
 
-    static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{1.0, 0.35};
-    static public final double[] TOP_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.0, 0.9};
-    static public final double[] TOP_SERVO_GRABBER_OPEN_POSITION = new double[]{0.3, 0.7};
-    static public final double[] TOP_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.4, 0.6};
+    static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{0.7, 0.5};
+    static public final double[] TOP_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.25, 1};
+    static public final double[] TOP_SERVO_GRABBER_OPEN_POSITION = new double[]{0.35, 0.7};
+    static public final double[] TOP_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.5, 0.65};
 
     static public final double JEWEL_KNOCKER_INIT_POSITION = 0;
     static public final double JEWEL_ARM_INIT_POSITION = 0.9;
@@ -31,11 +31,7 @@ public class constants {
 
     public enum JDColor {NONE, RED, BLUE}
 
-    ;
-
     public enum FIELD_SIDE {RECOVERY_SIDE, JUDGE_SIDE}
-
-    ;
 
     public enum GRABBERS {BOTH_GRABBERS, BOTTOM_GRABBER, TOP_GRABBER}
 
