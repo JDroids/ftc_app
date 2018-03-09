@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.TOP_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.hardware.*;
 
 
@@ -1261,8 +1263,14 @@ public class functions {
 
         MotionProfiling motionProfilingClass = new MotionProfiling();
 
-        motionProfilingClass.setCoeffecients(, 0.001); //Kv should be ~ 1/max velocity
-        if (motionProfilingClass.readMotionProfileFile("")) {
+        motionProfilingClass.setCoeffecients(0.1, 0.07); //Kv should be ~ 1/max velocity
+
+        boolean isFileThere = motionProfilingClass.readMotionProfileFile(csvFile);
+
+        Log.d("JDMotion", Boolean.toString(isFileThere));
+
+        if (isFileThere) {
+            Log.d("JDMotion", "File was read");
             while (linearOpMode.opModeIsActive()) {
                 centimetersTraveled = convertFromTicksToCM(((backLeftDriveMotor.getCurrentPosition() + backRightDriveMotor.getCurrentPosition()) / 2));
 
@@ -1277,6 +1285,7 @@ public class functions {
             stopDriveMotors();
         }
         else{
+            Log.d("JDMotion", "File was not read");
             moveEncoders((int) centimeters, 0.3, linearOpMode);
         }
 

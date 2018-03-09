@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.resources;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -61,23 +63,31 @@ public class MotionProfiling {
         String cvsSplitBy = ",";
 
         try {
-
             br = new BufferedReader(new FileReader(csvFile));
+
+            Log.d("JDFile", "Passed creation of br");
+
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
                 String[] lineValue = line.split(cvsSplitBy);
+
+                Log.d("JDFile", "Retrieved Values: " + lineValue[0]);
 
                 timeList.add(Double.parseDouble(lineValue[0]));
                 velocityList.add(Double.parseDouble(lineValue[1]));
                 positionList.add(Double.parseDouble(lineValue[2]));
             }
 
-        } catch (FileNotFoundException e) {
+            Log.d("JDFile", "Passed while loop");
+        }
+        catch (FileNotFoundException e) {
             return false;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return false;
-        } finally {
+        }
+        finally {
             if (br != null) {
                 try {
                     br.close();
@@ -85,7 +95,13 @@ public class MotionProfiling {
                     e.printStackTrace();
                 }
             }
-            return false;
+
+            if(!timeList.isEmpty()){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     }
 }
