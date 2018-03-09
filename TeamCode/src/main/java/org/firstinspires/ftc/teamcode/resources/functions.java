@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -1126,31 +1127,6 @@ public class functions {
         return newSum / newlength;
     }
 
-    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, DIRECTION direction, int timeLimit, LinearOpMode linearOpMode, ElapsedTime globalRuntime) {
-
-        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
-
-        if (direction == DIRECTION.MOVING_TOWARDS_OBJECT) {
-            moveInAStraightLine(power);
-            while (readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit) {
-                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
-                linearOpMode.telemetry.update();
-                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
-            }
-        }
-        if (direction == DIRECTION.MOVING_AWAY_FROM_OBJECT) {
-            moveInAStraightLine(power);
-            while (readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit) {
-                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
-                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
-                linearOpMode.telemetry.update();
-            }
-        }
-        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
-        stopDriveMotors();
-    }
-
-
     static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp) {
         PID pidClass = new PID();
 
@@ -1188,6 +1164,31 @@ public class functions {
         stopDriveMotors();
     }
 
+
+    static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, DIRECTION direction, int timeLimit, LinearOpMode linearOpMode, ElapsedTime globalRuntime) {
+
+        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
+
+        if (direction == DIRECTION.MOVING_TOWARDS_OBJECT) {
+            moveInAStraightLine(power);
+            while (readAndFilterRangeSensorValues(rangeSensor, linearOpMode) > centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit) {
+                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
+                linearOpMode.telemetry.update();
+                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
+            }
+        }
+        if (direction == DIRECTION.MOVING_AWAY_FROM_OBJECT) {
+            moveInAStraightLine(power);
+            while (readAndFilterRangeSensorValues(rangeSensor, linearOpMode) < centimeters && linearOpMode.opModeIsActive() && globalRuntime.milliseconds() <= timeLimit) {
+                Log.d("JDDistance", Double.toString(readAndFilterRangeSensorValues(rangeSensor, linearOpMode)));
+                linearOpMode.telemetry.addData("Distance", rangeSensor.cmUltrasonic());
+                linearOpMode.telemetry.update();
+            }
+        }
+        Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
+        stopDriveMotors();
+    }
+
     static public void turnPID(double degrees) {
         turnPID(degrees, false);
     }
@@ -1196,14 +1197,24 @@ public class functions {
     static public void moveToDistanceUltrasonicPID(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, LinearOpMode linearOpMode, boolean gettingCoeffecientsThroughUdp) {
         PID pidClass = new PID();
 
-        pidClass.setCoeffecients(0.01, 0, 0.002);
+        pidClass.setCoeffecients(0.015, 0, 0.002);
 
         double distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
 
         double motorSpeed;
 
+        Acceleration acceleration;
+
         while (!(distance > centimeters - 1 && distance < centimeters + 1) && linearOpMode.opModeIsActive()) {
             distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
+
+            /*
+            acceleration = imuSensor.getAcceleration();
+
+            Log.d("JDAccel", "Current X Accel: " + Double.toString(acceleration.xAccel));
+            Log.d("JDAccel", "Current Y Accel: " + Double.toString(acceleration.yAccel));
+            Log.d("JDAccel", "Current Z Accel: " + Double.toString(acceleration.zAccel));
+            */
 
             if (gettingCoeffecientsThroughUdp) {
                 motorSpeed = pidClass.calculateOutput(centimeters, distance, true);
@@ -1211,7 +1222,14 @@ public class functions {
                 motorSpeed = pidClass.calculateOutput(centimeters, distance);
             }
 
-            moveInAStraightLine(-motorSpeed);
+            if(rangeSensor == frontRangeSensor){
+                moveInAStraightLine(-motorSpeed);
+            }
+            else if(rangeSensor == rearRangeSensor){
+                moveInAStraightLine(motorSpeed);
+            }
+
+
 
             linearOpMode.telemetry.addData("Distance", distance);
 
@@ -1236,7 +1254,7 @@ public class functions {
     }
 
     static public double convertFromTicksToCM(int ticks){
-        return (2.54 * ticks) / (7 * Math.PI);  //Convert the amount of ticks to centimeters
+        return ticks * (Math.pow((int) ((((((Math.PI * 4) / 16) * 112)) / 4) / 2.54), -1));  //Convert the amount of ticks to centimeters
     }
 
     static public int convertFromCMToTicks(double cm){
@@ -1244,11 +1262,6 @@ public class functions {
     }
 
     static public void moveWithMotionProfiling(double centimeters, String csvFile, LinearOpMode linearOpMode){
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1263,36 +1276,39 @@ public class functions {
 
         MotionProfiling motionProfilingClass = new MotionProfiling();
 
-        motionProfilingClass.setCoeffecients(0.1, 0.07); //Kv should be ~ 1/max velocity
+        motionProfilingClass.setCoeffecients(0.01, 0, 0);
 
         boolean isFileThere = motionProfilingClass.readMotionProfileFile(csvFile);
+
+        double velocityToTravel;
 
         Log.d("JDMotion", Boolean.toString(isFileThere));
 
         if (isFileThere) {
             Log.d("JDMotion", "File was read");
             while (linearOpMode.opModeIsActive()) {
-                centimetersTraveled = convertFromTicksToCM(((backLeftDriveMotor.getCurrentPosition() + backRightDriveMotor.getCurrentPosition()) / 2));
+                centimetersTraveled = convertFromTicksToCM((int) (0.6 * (((Math.abs(backLeftDriveMotor.getCurrentPosition()) + Math.abs(backRightDriveMotor.getCurrentPosition())) / 2))));
 
-                if(centimetersTraveled > centimeters - 0.1 && centimetersTraveled < centimeters + 0.1){
+                Log.d("JDMotion", "Centimeters Traveled: " + Double.toString(centimetersTraveled));
+
+                velocityToTravel = motionProfilingClass.calculatePower(centimeters, centimetersTraveled);
+
+                if(velocityToTravel < 0.1 && velocityToTravel > -0.1){
                     break;
                 }
 
-                moveInAStraightLine(motionProfilingClass.calculatePower(centimeters, centimetersTraveled));
+                moveInAStraightLine(velocityToTravel);
 
 
             }
-            stopDriveMotors();
         }
         else{
             Log.d("JDMotion", "File was not read");
             moveEncoders((int) centimeters, 0.3, linearOpMode);
         }
 
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        stopDriveMotors();
 
+        linearOpMode.sleep(400);
     }
 }

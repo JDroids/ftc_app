@@ -23,7 +23,9 @@ import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonic;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
+import static org.firstinspires.ftc.teamcode.resources.functions.turn;
 import static org.firstinspires.ftc.teamcode.resources.functions.turnPID;
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontRangeSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
@@ -94,18 +96,39 @@ public class redJudgeAuto extends LinearOpMode {
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(rearRangeSensor, 53, -0.25, DIRECTION.MOVING_TOWARDS_OBJECT, 1200, this, globalRuntime);//this is in place of moveEncoders
+        moveToDistanceUltrasonicPID(rearRangeSensor, 40, this);//this is in place of moveEncoders
 
         sleep(200);
 
         globalRuntime.reset();
+
+        switch (vuMark){
+            case LEFT:
+                turnPID(125);
+
+                break;
+            case CENTER:
+                turnPID(155);
+
+                break;
+            case RIGHT:
+                turnPID(175);
+
+                break;
+            case UNKNOWN:
+                turnPID(125);
+
+                break;
+        }
+
+        /*
         turnPID(90);
 
         sleep(100);
 
         globalRuntime.reset();
 
-        moveToDistanceUltrasonic(frontRangeSensor, 62, -0.25, DIRECTION.MOVING_AWAY_FROM_OBJECT, 900, this, globalRuntime);
+        moveToDistanceUltrasonicPID(frontRangeSensor, 62, this);
 
         //align with right crypto column
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.JUDGE_SIDE, this);
@@ -119,7 +142,7 @@ public class redJudgeAuto extends LinearOpMode {
 
         depositGlyph(this);
 
-
+        */
         //time to look for the second and third glyph
 
 

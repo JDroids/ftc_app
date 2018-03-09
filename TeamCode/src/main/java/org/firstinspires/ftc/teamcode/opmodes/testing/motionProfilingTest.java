@@ -42,6 +42,6 @@ public class motionProfilingTest extends LinearOpMode{
         }
         */
 
-        moveWithMotionProfiling(120, "/sdcard/move120CM.csv", this);
+        moveWithMotionProfiling(30, "/sdcard/CSVFiles/30.0.csv", this);
     }
 }
