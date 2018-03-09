@@ -96,7 +96,7 @@ public class getToCorrectOrientation extends LinearOpMode {
             }
 
             //To extend/detract cascading rail
-            if (gamepad2.right_bumper) {
+            if (gamepad2.right_bumper){
                 if (gamepad2.x) {
                     relicExtender.setPower(0.5);
                 } else {
