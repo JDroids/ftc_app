@@ -67,6 +67,12 @@ public class blueJudgeAuto extends LinearOpMode {
 
         waitForStart();
 
+        if(!opModeIsActive()){ //Enables positioning and then stopping program
+            vuforia.close();
+            return;
+        }
+        //Code to run after play is pressed
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -75,11 +81,6 @@ public class blueJudgeAuto extends LinearOpMode {
         parameters.loggingTag = "IMU";
 
         imuSensor.initialize(parameters);
-
-        Orientation angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-        Log.d("JDZValue", Double.toString(angles.secondAngle));
-
-        //Code to run after play is pressed
 
         //detect the VuMark
         telemetry.addData("Vumark:", "Initializing");
@@ -104,16 +105,7 @@ public class blueJudgeAuto extends LinearOpMode {
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveForTime(0.25, 1200, this);
-
-        angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-        Log.d("JDZValue", Double.toString(angles.secondAngle));
-
-        sleep(200);
-
-        globalRuntime.reset();
-
-        moveToDistanceUltrasonicPID(frontRangeSensor, 40, this);
+        moveToDistanceUltrasonicPID(frontRangeSensor, 41, this);
 
         sleep(100);
 
@@ -123,7 +115,7 @@ public class blueJudgeAuto extends LinearOpMode {
 
         globalRuntime.reset();
 
-        moveToDistanceUltrasonicPID(frontRangeSensor, 54, this);
+        moveToDistanceUltrasonicPID(frontRangeSensor, 62, this);
 
         sleep(100);
 

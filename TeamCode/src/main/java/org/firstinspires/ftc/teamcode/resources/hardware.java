@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.resources;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -24,7 +25,7 @@ public class hardware {
 
     static public DcMotor relicExtender = null;
     static public Servo relicRotationalServo;
-    static public Servo relicLinearServo;
+    static public CRServo relicExtensionServo;
 
     static public Servo glyphGrabberTL = null;
     static public Servo glyphGrabberTR = null;
@@ -73,7 +74,7 @@ public class hardware {
         relicExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         relicRotationalServo = hMap.servo.get("relicPivot");
-        relicLinearServo = hMap.servo.get("relicLinear");
+        relicExtensionServo = hMap.crservo.get("relicLinear");
 
         glyphGrabberTL = hMap.servo.get("glyphGrabberTL");
         glyphGrabberTR = hMap.servo.get("glyphGrabberTR");

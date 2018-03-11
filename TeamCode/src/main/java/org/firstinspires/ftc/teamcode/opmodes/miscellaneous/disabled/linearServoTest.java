@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicLinearServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 
 /**
  * Created by dansm on 2/23/2018.
@@ -23,22 +23,22 @@ public class linearServoTest extends LinearOpMode {
         waitForStart();
 
         initServos(true);
-
+        /*
         while (opModeIsActive()) {
             if (gamepad1.right_bumper) { //To open
-                if (relicLinearServo.getPosition() < 0.9) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
+                if (relicExtensionServo.getPosition() < 0.9) {
+                    relicExtensionServo.setPosition(relicExtensionServo.getPosition() + 0.01);
                 }
             } else if (gamepad1.left_bumper) { //To close
-                if (relicLinearServo.getPosition() > 0.3) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
+                if (relicExtensionServo.getPosition() > 0.3) {
+                    relicExtensionServo.setPosition(relicExtensionServo.getPosition() - 0.01);
                 }
             } else if (gamepad1.a) {
-                relicLinearServo.setPosition(0.5);
+                relicExtensionServo.setPosition(0.5);
             } else if (gamepad1.b) {
-                relicLinearServo.setPosition(0.8);
+                relicExtensionServo.setPosition(0.8);
             }
-        }
+        }*/
 
     }
 }

@@ -47,10 +47,6 @@ public class MotionProfiling {
 
         currentRoundedTime = ((currentTime + 5) / 10) * 10; //Rounds to closest 10 milliseconds
 
-        if(currentRoundedTime == 0){
-            currentRoundedTime = 10; //This is a hack because my python script starts at 10 ms instead of 0 ms
-        }
-
         if(currentRoundedTime > timeList.get(timeList.size() - 1)){
             currentRoundedTime = timeList.get(timeList.size() - 1);
             velocityToTravel = 0;

@@ -20,7 +20,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveM
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicLinearServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
 
 
@@ -100,30 +100,30 @@ public class JDTeleop extends LinearOpMode {
                 relicExtender.setPower(0);
             }
 
-            if (gamepad1.y) { //To collect relic
+            /*if (gamepad1.y) { //To collect relic
                 if (relicRotationalServo.getPosition() < 0.775) {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
                 } else if (relicRotationalServo.getPosition() > 0.775) {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
                 }
 
-                if (relicLinearServo.getPosition() < 0.3) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.008);
-                } else if (relicLinearServo.getPosition() > 0.3) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.008);
+                if (relicExtensionServo.getPosition() < 0.3) {
+                    relicExtensionServo.setPosition(relicExtensionServo.getPosition() + 0.008);
+                } else if (relicExtensionServo.getPosition() > 0.3) {
+                    relicExtensionServo.setPosition(relicExtensionServo.getPosition() - 0.008);
                 }
             } else {
                 //To extend/detract the linear servo on the relic mechanism
 
                 if (gamepad1.right_bumper) { //To open
 
-                    if (relicLinearServo.getPosition() < 0.9) {
-                        relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
+                    if (relicExtensionServo.getPosition() < 0.9) {
+                        relicExtensionServo.setPosition(relicExtensionServo.getPosition() + 0.01);
                     }
                 } else if (gamepad1.left_bumper) { //To close
 
-                    if (relicLinearServo.getPosition() > 0.3) {
-                        relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
+                    if (relicExtensionServo.getPosition() > 0.3) {
+                        relicExtensionServo.setPosition(relicExtensionServo.getPosition() - 0.01);
                     }
                 }
 
@@ -140,12 +140,11 @@ public class JDTeleop extends LinearOpMode {
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
                 }
             }
-
+            */
             controlGlyphLifts(gamepad2, this);
 
 
             //A bunch of telemetry for nerds
-            telemetry.addData("relicLinearServo", relicLinearServo.getPosition());
             telemetry.addData("relicRotationalServo", relicRotationalServo.getPosition());
             telemetry.addData("Front Left Motor Power", frontLeftDriveMotor.getPower());
             telemetry.addData("Front Right Motor Power", frontRightDriveMotor.getPower());

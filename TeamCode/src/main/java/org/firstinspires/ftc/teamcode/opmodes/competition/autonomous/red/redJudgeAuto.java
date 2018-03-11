@@ -22,7 +22,6 @@ import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonic;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
 import static org.firstinspires.ftc.teamcode.resources.functions.turn;
@@ -62,6 +61,11 @@ public class redJudgeAuto extends LinearOpMode {
         }
 
         waitForStart();
+
+        if(!opModeIsActive()){ //Enables positioning and then stopping program
+            vuforia.close();
+            return;
+        }
         //Code to run after play is pressed
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -96,32 +100,12 @@ public class redJudgeAuto extends LinearOpMode {
         ElapsedTime globalRuntime = new ElapsedTime();
         globalRuntime.reset();
 
-        moveToDistanceUltrasonicPID(rearRangeSensor, 40, this);//this is in place of moveEncoders
+        moveToDistanceUltrasonicPID(rearRangeSensor, 35, this);//this is in place of moveEncoders
 
         sleep(200);
 
         globalRuntime.reset();
 
-        switch (vuMark){
-            case LEFT:
-                turnPID(125);
-
-                break;
-            case CENTER:
-                turnPID(155);
-
-                break;
-            case RIGHT:
-                turnPID(175);
-
-                break;
-            case UNKNOWN:
-                turnPID(125);
-
-                break;
-        }
-
-        /*
         turnPID(90);
 
         sleep(100);
@@ -142,7 +126,6 @@ public class redJudgeAuto extends LinearOpMode {
 
         depositGlyph(this);
 
-        */
         //time to look for the second and third glyph
 
 
