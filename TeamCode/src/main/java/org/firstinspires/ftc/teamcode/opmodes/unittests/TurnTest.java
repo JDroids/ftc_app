@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.*;
  * Created by dansm on 3/10/2018.
  */
 
+@Disabled
 @Autonomous(name="Turn Test")
 
 public class TurnTest extends LinearOpMode{

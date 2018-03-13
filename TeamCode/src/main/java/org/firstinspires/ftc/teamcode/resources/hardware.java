@@ -25,7 +25,7 @@ public class hardware {
 
     static public DcMotor relicExtender = null;
     static public Servo relicRotationalServo;
-    static public CRServo relicExtensionServo;
+    static public Servo relicExtensionServo;
 
     static public Servo glyphGrabberTL = null;
     static public Servo glyphGrabberTR = null;
@@ -74,7 +74,7 @@ public class hardware {
         relicExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         relicRotationalServo = hMap.servo.get("relicPivot");
-        relicExtensionServo = hMap.crservo.get("relicLinear");
+        relicExtensionServo = hMap.servo.get("relicLinear");
 
         glyphGrabberTL = hMap.servo.get("glyphGrabberTL");
         glyphGrabberTR = hMap.servo.get("glyphGrabberTR");

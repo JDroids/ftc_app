@@ -190,13 +190,13 @@ public class functions {
             setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicExtensionServo.setPower(0);
+            relicExtensionServo.setPosition(1);
             relicRotationalServo.setPosition(1.0);
         } else {
             setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicExtensionServo.setPower(0);
+            relicExtensionServo.setPosition(1);
             relicRotationalServo.setPosition(1.0);
         }
     }
@@ -366,9 +366,9 @@ public class functions {
         }
 
         if (secondLiftTopSwitch.getState() && -gamepad.right_stick_y < -MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            secondGlyphLift.setPower(1);
-        } else if (secondLiftBottomSwitch.getState() && -gamepad.right_stick_y > MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
             secondGlyphLift.setPower(-1);
+        } else if (secondLiftBottomSwitch.getState() && -gamepad.right_stick_y > MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
+            secondGlyphLift.setPower(1);
         } else {
             secondGlyphLift.setPower(0);
         }
@@ -1434,38 +1434,53 @@ public class functions {
         double closePosition = 0.9;
         double openPosition = 0.0;
 
-        if (gamepad1.y) { //To collect relic
+        if (gamepad1.b) { //To collect relic
+            relicExtensionServo.setPosition(1);
+
             if (relicRotationalServo.getPosition() < 0.775) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-            } else if (relicRotationalServo.getPosition() > 0.775) {
+            }
+            else if (relicRotationalServo.getPosition() > 0.775) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
 
             //relicExtensionServo.setPosition(openPosition);
 
-        } else {
-            //To extend/detract the extension servo on the relic mechanism
-
-            if (gamepad1.dpad_down) { //To open
-
-                relicExtensionServo.setPower(0.5);
-
-            } else if (gamepad1.dpad_up) { //To close
-                relicExtensionServo.setPower(-0.5);
+        }
+        else if (gamepad1.x){
+            if (relicRotationalServo.getPosition() < 0.93) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+            }
+            else if (relicRotationalServo.getPosition() > 0.93) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
 
+            relicExtensionServo.setPosition(0);
+        }
+        else {
+            //To extend/detract the extension servo on the relic mechanism
 
             //To move the rotational servo on the relic mechanism
             if (gamepad1.a && relicRotationalServo.getPosition() < 0.95) { //Go down, stops at 0.95
                 if (relicRotationalServo.getPosition() < 0.9 && gamepad1.x) { //stops at 0.9 if x PRESSED
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                } else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
+                }
+                else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
                 }
 
-            } else if (gamepad1.b && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
+            }
+            else if (gamepad1.y && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
         }
+
+        if (gamepad1.dpad_down) { //To open
+            relicExtensionServo.setPosition(0);
+        }
+        else if (gamepad1.dpad_up) { //To close
+            relicExtensionServo.setPosition(1);
+        }
+
     }
 }
