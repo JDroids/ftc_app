@@ -7,24 +7,26 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
 import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.*;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
@@ -188,13 +190,13 @@ public class functions {
             setGrabber(TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[0], TOP_SERVO_GRABBER_WIDE_OPEN_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[0], BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicLinearServo.setPosition(0.3);
+            relicExtensionServo.setPosition(1);
             relicRotationalServo.setPosition(1.0);
         } else {
             setGrabber(TOP_SERVO_GRABBER_INIT_POSITION[0], TOP_SERVO_GRABBER_INIT_POSITION[1], TOP_GRABBER);
             setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
             setJewelPosition(JEWEL_KNOCKER_INIT_POSITION, JEWEL_ARM_INIT_POSITION);
-            relicLinearServo.setPosition(0.3);
+            relicExtensionServo.setPosition(1);
             relicRotationalServo.setPosition(1.0);
         }
     }
@@ -328,7 +330,8 @@ public class functions {
 
         linearOpMode.sleep(250);
 
-        openGrabberWide(BOTTOM_GRABBER);
+        openGrabberWide(TOP_GRABBER);
+        setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
 
         linearOpMode.sleep(250);
 
@@ -342,7 +345,8 @@ public class functions {
 
         moveForTime(-0.25, 250, linearOpMode);
 
-        openGrabberWide(BOTTOM_GRABBER);
+        openGrabberWide(TOP_GRABBER);
+        setGrabber(BOTTOM_SERVO_GRABBER_INIT_POSITION[0], BOTTOM_SERVO_GRABBER_INIT_POSITION[1], BOTTOM_GRABBER);
 
     }
 
@@ -354,17 +358,17 @@ public class functions {
 
     static public void controlGlyphLifts(Gamepad gamepad, LinearOpMode linearOpMode) throws InterruptedException {
         if (firstLiftTopSwitch.getState() && gamepad.left_stick_y < -MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            firstGlyphLift.setPower(gamepad.left_stick_y);
+            firstGlyphLift.setPower(-1);
         } else if (firstLiftBottomSwitch.getState() && gamepad.left_stick_y > MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            firstGlyphLift.setPower(gamepad.left_stick_y);
+            firstGlyphLift.setPower(1);
         } else {
             firstGlyphLift.setPower(0);
         }
 
         if (secondLiftTopSwitch.getState() && -gamepad.right_stick_y < -MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            secondGlyphLift.setPower(-gamepad.right_stick_y);
+            secondGlyphLift.setPower(-1);
         } else if (secondLiftBottomSwitch.getState() && -gamepad.right_stick_y > MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            secondGlyphLift.setPower(-gamepad.right_stick_y);
+            secondGlyphLift.setPower(1);
         } else {
             secondGlyphLift.setPower(0);
         }
@@ -450,13 +454,15 @@ public class functions {
 
 
     static public void kickOpposite(LinearOpMode linearOpMode) {
-        jewelKnocker.setPosition(0);
-        linearOpMode.sleep(1500);
+        while(jewelKnocker.getPosition() != 0 && linearOpMode.opModeIsActive()){
+            jewelKnocker.setPosition(jewelKnocker.getPosition() - 0.002);
+        }
     }
 
     static public void kickSame(LinearOpMode linearOpMode) {
-        jewelKnocker.setPosition(1);
-        linearOpMode.sleep(1500);
+        while(jewelKnocker.getPosition() != 1 && linearOpMode.opModeIsActive()){
+            jewelKnocker.setPosition(jewelKnocker.getPosition() + 0.002);
+        }
     }
 
 
@@ -867,7 +873,7 @@ public class functions {
 
         boolean firstTimeIncrementingColumnPassed = true;
 
-        while (linearOpMode.opModeIsActive() && globalRuntime.milliseconds() < 2000) {
+        while (linearOpMode.opModeIsActive() && mRuntime.milliseconds() < 2000) {
 
             distance = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
 
@@ -1016,6 +1022,37 @@ public class functions {
         return targetColumn;
     }
 
+    static public void moveToFirstCryptoColumn(DIRECTION direction, LinearOpMode linearOpMode){
+
+        ElapsedTime mRuntime = new ElapsedTime();
+        mRuntime.reset();
+
+        //go to cryptobox
+
+        double motorSpeed = 0.2;
+
+
+        double currentReading = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
+        double lastReading = currentReading;
+
+        if(direction == DIRECTION.FORWARDS) {
+            moveInAStraightLine(motorSpeed);
+        }
+        else if(direction == DIRECTION.BACKWARDS){
+            moveInAStraightLine(-motorSpeed);
+        }
+
+        while(currentReading >= lastReading - 3.5 && linearOpMode.opModeIsActive() && mRuntime.milliseconds() <= 3000){
+            lastReading = currentReading;
+
+            currentReading = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
+        }
+
+        stopDriveMotors();
+
+        linearOpMode.sleep(500);
+    }
+
     static public void moveToCryptoColumnEncoders(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode) {
         int distanceToTravel = 0; //It should always be set to something other than 0, this is just so the compiler doesn't yell at me
 
@@ -1023,44 +1060,44 @@ public class functions {
         if (allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -42;
+                    distanceToTravel = -48;
                     break;
                 case CENTER:
-                    distanceToTravel = -9;
+                    distanceToTravel = -16;
                     break;
                 case RIGHT:
-                    distanceToTravel = 3;
+                    distanceToTravel = 5;
                     break;
                 default:
-                    distanceToTravel = 3;
+                    distanceToTravel = 5;
             }
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -3;
+                    distanceToTravel = 10;
                     break;
                 case CENTER:
-                    distanceToTravel = -6;
+                    distanceToTravel = -16;
                     break;
                 case RIGHT:
-                    distanceToTravel = -20;
+                    distanceToTravel = -42;
                     break;
                 default:
-                    distanceToTravel = -3;
+                    distanceToTravel = 10;
             }
         } else if (allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -16;
+                    distanceToTravel = -40;
                     break;
                 case CENTER:
-                    distanceToTravel = -4;
+                    distanceToTravel = -10;
                     break;
                 case RIGHT:
-                    distanceToTravel = 4;
+                    distanceToTravel = 14;
                     break;
                 default:
-                    distanceToTravel = 4;
+                    distanceToTravel = 14;
             }
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
@@ -1080,9 +1117,10 @@ public class functions {
 
 
         if (distanceToTravel < 0) {
-            moveEncoders(distanceToTravel, -0.25, linearOpMode);
-        } else if (distanceToTravel > 0) {
-            moveEncoders(distanceToTravel, 0.25, linearOpMode);
+            moveEncoders(distanceToTravel, -1, linearOpMode);
+        }
+        else if (distanceToTravel > 0) {
+            moveEncoders(distanceToTravel, 1, linearOpMode);
         }
 
 
@@ -1126,6 +1164,89 @@ public class functions {
         return newSum / newlength;
     }
 
+
+    static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp) {
+        PID pidClass = new PID();
+
+        Orientation angles;
+
+        angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
+        pidClass.setCoeffecients(0.015, 0.0, 0.002);
+
+        double motorSpeed;
+
+        double allowableError = 0.7;
+
+        double currentDeg = angles.firstAngle;
+
+        if ((degrees <= 180 && degrees >= 175) || (degrees >= -180 && degrees <= -175)) {
+            Log.d("JDSanityCheck", "Passed if statement");
+            if (degrees <= -175) {
+                Log.d("JDSanityCheck", "this shouldn't happen");
+                degrees = 180 - Math.abs(degrees);
+                degrees += 180;
+
+            }
+
+            while (!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) {
+                //Log.d("JDSanityCheck", "Passed while loop");
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
+                currentDeg = angles.firstAngle;
+
+                Log.d("JDSanityCheck", "Current Degrees Before Math: " + currentDeg);
+
+                if (currentDeg < 0) {
+                    currentDeg = 180 - Math.abs(currentDeg);
+                    currentDeg += 180;
+                }
+
+                Log.d("JDSanityCheck", "Current Degrees After Math: " + currentDeg);
+
+                if (gettingCoeffecientsThroughUdp) {
+                    motorSpeed = pidClass.calculateOutput(degrees, currentDeg, true);
+                } else {
+                    motorSpeed = pidClass.calculateOutput(degrees, currentDeg);
+                }
+
+                frontLeftDriveMotor.setPower(motorSpeed);
+                frontRightDriveMotor.setPower(motorSpeed);
+                backLeftDriveMotor.setPower(motorSpeed);
+                backRightDriveMotor.setPower(motorSpeed);
+
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+            }
+        }
+        else {
+            while (!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) {
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
+                currentDeg = angles.firstAngle;
+
+                if (gettingCoeffecientsThroughUdp) {
+                    motorSpeed = pidClass.calculateOutput(degrees, currentDeg, true);
+                } else {
+                    motorSpeed = pidClass.calculateOutput(degrees, currentDeg);
+                }
+
+                frontLeftDriveMotor.setPower(motorSpeed);
+                frontRightDriveMotor.setPower(motorSpeed);
+                backLeftDriveMotor.setPower(motorSpeed);
+                backRightDriveMotor.setPower(motorSpeed);
+
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);}
+
+        }
+        if (gettingCoeffecientsThroughUdp) {
+            Log.d("JDPID", "Shutting down Udp receiver");
+            pidClass.pidUdpReceiver.shutdown();
+        }
+
+        stopDriveMotors();
+    }
+
+    /*
     static public void moveToDistanceUltrasonic(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, double power, DIRECTION direction, int timeLimit, LinearOpMode linearOpMode, ElapsedTime globalRuntime) {
 
         Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
@@ -1148,45 +1269,7 @@ public class functions {
         }
         Log.d("JDTime", Double.toString(globalRuntime.milliseconds()));
         stopDriveMotors();
-    }
-
-
-    static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp) {
-        PID pidClass = new PID();
-
-        Orientation angles;
-
-        angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-
-        pidClass.setCoeffecients(0.015, 0.0, 0.002);
-
-        double motorSpeed;
-
-        double allowableError = 0.3;
-
-        while (!(angles.firstAngle > degrees - allowableError && angles.firstAngle < degrees + allowableError)) {
-            angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-
-            if (gettingCoeffecientsThroughUdp) {
-                motorSpeed = pidClass.calculateOutput(degrees, angles.firstAngle, true);
-            } else {
-                motorSpeed = pidClass.calculateOutput(degrees, angles.firstAngle);
-            }
-
-            frontLeftDriveMotor.setPower(motorSpeed);
-            frontRightDriveMotor.setPower(motorSpeed);
-            backLeftDriveMotor.setPower(motorSpeed);
-            backRightDriveMotor.setPower(motorSpeed);
-
-            angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-        }
-        if (gettingCoeffecientsThroughUdp) {
-            Log.d("JDPID", "Shutting down Udp receiver");
-            pidClass.pidUdpReceiver.shutdown();
-        }
-
-        stopDriveMotors();
-    }
+    }*/
 
     static public void turnPID(double degrees) {
         turnPID(degrees, false);
@@ -1196,14 +1279,41 @@ public class functions {
     static public void moveToDistanceUltrasonicPID(ModernRoboticsI2cRangeSensor rangeSensor, int centimeters, LinearOpMode linearOpMode, boolean gettingCoeffecientsThroughUdp) {
         PID pidClass = new PID();
 
-        pidClass.setCoeffecients(0.01, 0, 0.002);
+        pidClass.setCoeffecients(0.01, 0, 0.002); //Kp was 0.015
 
         double distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
 
         double motorSpeed;
 
-        while (!(distance > centimeters - 1 && distance < centimeters + 1) && linearOpMode.opModeIsActive()) {
+        Acceleration acceleration;
+        Velocity velocity;
+
+        int allowableError = 2;
+
+        ArrayList<Double> distanceOverTime = new ArrayList<Double>();
+
+        while (!(distance > centimeters - allowableError && distance < centimeters + allowableError) && linearOpMode.opModeIsActive()) {
             distance = readAndFilterRangeSensorValues(rangeSensor, linearOpMode);
+
+            distanceOverTime.add(distance);
+
+            boolean stopLoop = false;
+
+            if(distanceOverTime.size() >= 15) {
+                stopLoop = true;
+                for(int i=distanceOverTime.size() - 1; i>=1; i--){
+                    if (!((distanceOverTime.get(i) > (distanceOverTime.get(i-1) - 1)) && (distanceOverTime.get(i) < (distanceOverTime.get(i-1) + 1))))
+                    {
+                        stopLoop = false;
+                    }
+                }
+
+            }
+
+            if(stopLoop){
+                return;
+            }
+
 
             if (gettingCoeffecientsThroughUdp) {
                 motorSpeed = pidClass.calculateOutput(centimeters, distance, true);
@@ -1211,7 +1321,14 @@ public class functions {
                 motorSpeed = pidClass.calculateOutput(centimeters, distance);
             }
 
-            moveInAStraightLine(-motorSpeed);
+            if(rangeSensor == frontRangeSensor){
+                moveInAStraightLine(-motorSpeed);
+            }
+            else if(rangeSensor == rearRangeSensor){
+                moveInAStraightLine(motorSpeed);
+            }
+
+
 
             linearOpMode.telemetry.addData("Distance", distance);
 
@@ -1236,7 +1353,7 @@ public class functions {
     }
 
     static public double convertFromTicksToCM(int ticks){
-        return (2.54 * ticks) / (7 * Math.PI);  //Convert the amount of ticks to centimeters
+        return ticks * (Math.pow((int) ((((((Math.PI * 4) / 16) * 112)) / 4) / 2.54), -1));  //Convert the amount of ticks to centimeters
     }
 
     static public int convertFromCMToTicks(double cm){
@@ -1244,11 +1361,6 @@ public class functions {
     }
 
     static public void moveWithMotionProfiling(double centimeters, String csvFile, LinearOpMode linearOpMode){
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1263,36 +1375,112 @@ public class functions {
 
         MotionProfiling motionProfilingClass = new MotionProfiling();
 
-        motionProfilingClass.setCoeffecients(0.1, 0.07); //Kv should be ~ 1/max velocity
+        motionProfilingClass.setCoeffecients(0.01, 0, 0);
 
         boolean isFileThere = motionProfilingClass.readMotionProfileFile(csvFile);
+
+        double velocityToTravel;
 
         Log.d("JDMotion", Boolean.toString(isFileThere));
 
         if (isFileThere) {
             Log.d("JDMotion", "File was read");
             while (linearOpMode.opModeIsActive()) {
-                centimetersTraveled = convertFromTicksToCM(((backLeftDriveMotor.getCurrentPosition() + backRightDriveMotor.getCurrentPosition()) / 2));
+                centimetersTraveled = convertFromTicksToCM((int) (0.6 * (((Math.abs(backLeftDriveMotor.getCurrentPosition()) + Math.abs(backRightDriveMotor.getCurrentPosition())) / 2))));
 
-                if(centimetersTraveled > centimeters - 0.1 && centimetersTraveled < centimeters + 0.1){
+                Log.d("JDMotion", "Centimeters Traveled: " + Double.toString(centimetersTraveled));
+
+                velocityToTravel = motionProfilingClass.calculatePower(centimeters, centimetersTraveled);
+
+                if(velocityToTravel < 0.1 && velocityToTravel > -0.1){
                     break;
                 }
 
-                moveInAStraightLine(motionProfilingClass.calculatePower(centimeters, centimetersTraveled));
+                moveInAStraightLine(velocityToTravel);
 
 
             }
-            stopDriveMotors();
         }
         else{
             Log.d("JDMotion", "File was not read");
             moveEncoders((int) centimeters, 0.3, linearOpMode);
         }
 
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        stopDriveMotors();
+
+        linearOpMode.sleep(400);
+    }
+
+    public static void relicControl(Gamepad gamepad1, Gamepad gamepad2){
+
+        //To extend/detract cascading rail
+        if (gamepad2.right_bumper) {
+            if (gamepad2.x) {
+                relicExtender.setPower(0.5);
+            } else {
+                relicExtender.setPower(0.1);
+            }
+        } else if (gamepad2.left_bumper) {
+            if (gamepad2.x) {
+                relicExtender.setPower(-0.5);
+            } else {
+                relicExtender.setPower(-0.1);
+            }
+
+        } else {
+            relicExtender.setPower(0);
+        }
+
+        double closePosition = 0.9;
+        double openPosition = 0.0;
+
+        if (gamepad1.b) { //To collect relic
+            relicExtensionServo.setPosition(1);
+
+            if (relicRotationalServo.getPosition() < 0.775) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+            }
+            else if (relicRotationalServo.getPosition() > 0.775) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+            }
+
+            //relicExtensionServo.setPosition(openPosition);
+
+        }
+        else if (gamepad1.x){
+            if (relicRotationalServo.getPosition() < 0.93) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+            }
+            else if (relicRotationalServo.getPosition() > 0.93) {
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+            }
+
+            relicExtensionServo.setPosition(0);
+        }
+        else {
+            //To extend/detract the extension servo on the relic mechanism
+
+            //To move the rotational servo on the relic mechanism
+            if (gamepad1.a && relicRotationalServo.getPosition() < 0.95) { //Go down, stops at 0.95
+                if (relicRotationalServo.getPosition() < 0.9 && gamepad1.x) { //stops at 0.9 if x PRESSED
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                }
+                else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
+                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
+                }
+
+            }
+            else if (gamepad1.y && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
+                relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
+            }
+        }
+
+        if (gamepad1.dpad_down) { //To open
+            relicExtensionServo.setPosition(0);
+        }
+        else if (gamepad1.dpad_up) { //To close
+            relicExtensionServo.setPosition(1);
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.unittests;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
  */
 
 @Autonomous(name = "VisionTest")
-public class visionTest extends LinearOpMode {
+public class VisionTest extends LinearOpMode {
     @Override
 
     public void runOpMode() {

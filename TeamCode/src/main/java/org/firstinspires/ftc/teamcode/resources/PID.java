@@ -85,7 +85,7 @@ public class PID {
         return calculateOutput(target, currentValue, false);
     }
 
-    private boolean firstTime = true;
+   private boolean firstTime = true;
 
     public void updateCoefficients() {
         if (firstTime) {

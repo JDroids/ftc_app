@@ -14,19 +14,22 @@ import java.util.ArrayList;
  */
 
 public class MotionProfiling {
-    private ArrayList<Double> timeList = new ArrayList<Double>();
+    private ArrayList<Integer> timeList = new ArrayList<Integer>();
     private ArrayList<Double> velocityList = new ArrayList<Double>();
     private ArrayList<Double> positionList = new ArrayList<Double>();
 
     private double kv = 0;
     private double kp = 0;
+    private double ki = 0;
 
     private boolean firstTime = true;
 
-    private double startTime;
-    private double currentTime;
+    private int startTime;
+    private int currentTime;
+    private int currentRoundedTime;
 
     private double currentError;
+    private double runningError = 0;
 
     private int currentIndex;
 
@@ -34,27 +37,47 @@ public class MotionProfiling {
 
     public double calculatePower(double distanceToTravel, double currentDistance){
         //We are ignoring Ka because calculating accleration before hand is hard math I cannot do :P
+
         if(firstTime){
-            startTime = System.currentTimeMillis();
+            startTime = (int) System.currentTimeMillis();
             firstTime = false;
         }
 
-        currentTime = (((int) System.currentTimeMillis() - startTime+5)/10)*10; //Rounds to closest 10 milliseconds
+        currentTime = ((int)(System.currentTimeMillis() - startTime));
 
-        currentIndex = timeList.indexOf(currentTime);
+        currentRoundedTime = ((currentTime + 5) / 10) * 10; //Rounds to closest 10 milliseconds
 
-        currentError = velocityList.get(currentIndex) - currentDistance;
+        if(currentRoundedTime > timeList.get(timeList.size() - 1)){
+            currentRoundedTime = timeList.get(timeList.size() - 1);
+            velocityToTravel = 0;
+            currentError = distanceToTravel - currentDistance;
+            runningError = 0;
+        }
+        else {
 
-        velocityToTravel = kv * velocityList.get(currentIndex);
+            Log.d("JDMotion", "Current Time: " + Double.toString(currentRoundedTime));
+
+            currentIndex = timeList.indexOf(currentRoundedTime);
+
+            currentError = positionList.get(currentIndex) - currentDistance;
+
+            velocityToTravel = kv * velocityList.get(currentIndex);
+
+            runningError += currentError;
+        }
+
         velocityToTravel += kp * currentError;
+        velocityToTravel += ki * runningError;
+
 
         return velocityToTravel;
 
     }
 
-    public void setCoeffecients(double Kv, double Kp) {
+    public void setCoeffecients(double Kv, double Kp, double Ki) {
         kv = Kv;
         kp = Kp;
+        ki = Ki;
     }
 
     public boolean readMotionProfileFile(String csvFile){
@@ -74,7 +97,7 @@ public class MotionProfiling {
 
                 Log.d("JDFile", "Retrieved Values: " + lineValue[0]);
 
-                timeList.add(Double.parseDouble(lineValue[0]));
+                timeList.add(Integer.parseInt(lineValue[0]));
                 velocityList.add(Double.parseDouble(lineValue[1]));
                 positionList.add(Double.parseDouble(lineValue[2]));
             }

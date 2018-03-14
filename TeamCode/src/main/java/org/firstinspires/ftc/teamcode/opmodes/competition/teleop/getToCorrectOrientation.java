@@ -4,6 +4,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.resources.functions;
+
 import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.constants.JDColor;
@@ -15,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.resources.functions.moveArcade;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveArcadeFOD;
 import static org.firstinspires.ftc.teamcode.resources.functions.openGrabber;
 import static org.firstinspires.ftc.teamcode.resources.functions.openGrabberWide;
+import static org.firstinspires.ftc.teamcode.resources.functions.relicControl;
 import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.backRightDriveMotor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMotor;
@@ -22,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveM
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicLinearServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
 
 
@@ -55,7 +58,7 @@ public class getToCorrectOrientation extends LinearOpMode {
         boolean useFOD = false;
 
         while (opModeIsActive()) {
-            if ((gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) && useFOD == false) {
+            if ((gamepad1.left_bumper || gamepad1.right_bumper) && useFOD == false) {
                 useFOD = true;
 
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -95,70 +98,12 @@ public class getToCorrectOrientation extends LinearOpMode {
                 openGrabberWide(controlledGrabbers);
             }
 
-            //To extend/detract cascading rail
-            if (gamepad2.right_bumper){
-                if (gamepad2.x) {
-                    relicExtender.setPower(0.5);
-                } else {
-                    relicExtender.setPower(0.1);
-                }
-            } else if (gamepad2.left_bumper) {
-                if (gamepad2.x) {
-                    relicExtender.setPower(-0.5);
-                } else {
-                    relicExtender.setPower(-0.1);
-                }
-
-            } else {
-                relicExtender.setPower(0);
-            }
-
-            if (gamepad1.y) { //To collect relic
-                if (relicRotationalServo.getPosition() < 0.775) {
-                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                } else if (relicRotationalServo.getPosition() > 0.775) {
-                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
-                }
-
-                if (relicLinearServo.getPosition() < 0.3) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.008);
-                } else if (relicLinearServo.getPosition() > 0.3) {
-                    relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.008);
-                }
-            } else {
-                //To extend/detract the linear servo on the relic mechanism
-
-                if (gamepad1.right_bumper) { //To open
-
-                    if (relicLinearServo.getPosition() < 0.9) {
-                        relicLinearServo.setPosition(relicLinearServo.getPosition() + 0.01);
-                    }
-                } else if (gamepad1.left_bumper) { //To close
-
-                    if (relicLinearServo.getPosition() > 0.3) {
-                        relicLinearServo.setPosition(relicLinearServo.getPosition() - 0.01);
-                    }
-                }
-
-
-                //To move the rotational servo on the relic mechanism
-                if (gamepad1.a && relicRotationalServo.getPosition() < 0.95) { //Go down, stops at 0.95
-                    if (relicRotationalServo.getPosition() < 0.9 && gamepad1.x) { //stops at 0.9 if x PRESSED
-                        relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                    } else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
-                        relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                    }
-
-                } else if (gamepad1.b && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
-                    relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
-                }
-            }
+            relicControl(gamepad1, gamepad2);
 
             controlGlyphLifts(gamepad2, this);
 
 
             //A bunch of telemetry for nerds
-            telemetry.addData("relicLinearServo", relicLinearServo.getPosition());
             telemetry.addData("relicRotationalServo", relicRotationalServo.getPosition());
             telemetry.addData("Front Left Motor Power", frontLeftDriveMotor.getPower());
             telemetry.addData("Front Right Motor Power", frontRightDriveMotor.getPower());

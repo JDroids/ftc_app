@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.io.BufferedReader;
@@ -16,6 +17,8 @@ import static org.firstinspires.ftc.teamcode.resources.functions.*;
 /**
  * Created by dansm on 3/8/2018.
  */
+
+@Disabled
 
 @Autonomous(name = "Motion Profile Move")
 public class motionProfilingTest extends LinearOpMode{
@@ -42,6 +45,6 @@ public class motionProfilingTest extends LinearOpMode{
         }
         */
 
-        moveWithMotionProfiling(120, "/sdcard/move120CM.csv", this);
+        moveWithMotionProfiling(30, "/sdcard/CSVFiles/30.0.csv", this);
     }
 }

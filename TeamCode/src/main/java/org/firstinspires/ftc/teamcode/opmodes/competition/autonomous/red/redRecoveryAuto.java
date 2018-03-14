@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.resources.constants;
 import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.AUTONOMOUS;
@@ -22,6 +23,8 @@ import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
+import static org.firstinspires.ftc.teamcode.resources.functions.moveToFirstCryptoColumn;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveUntilCryptoWallUsingUltrasonicv2;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
 import static org.firstinspires.ftc.teamcode.resources.functions.turnPID;
@@ -40,9 +43,6 @@ public class redRecoveryAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        //Code to run after init is pressed
-
         initHardwareMap(hardwareMap);
 
         initServos(AUTONOMOUS);
@@ -60,6 +60,11 @@ public class redRecoveryAuto extends LinearOpMode {
         }
 
         waitForStart();
+
+        if(!opModeIsActive()){ //Enables positioning and then stopping program
+            vuforia.close();
+            return;
+        }
         //Code to run after play is pressed
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -91,26 +96,19 @@ public class redRecoveryAuto extends LinearOpMode {
 
         sleep(100);
 
-        moveForTime(-0.2, 250, this);
+        moveToFirstCryptoColumn(constants.DIRECTION.BACKWARDS, this);
+
+        moveToDistanceUltrasonicPID(frontRangeSensor, 112, this);
 
         sleep(400);
-
-        ElapsedTime globalRuntime = new ElapsedTime();
-        globalRuntime.reset();
-
-        //go to cryptobox
-        moveUntilCryptoWallUsingUltrasonicv2(distanceToWall, RelicRecoveryVuMark.RIGHT, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE, this, globalRuntime);
-        //^ "This force goes to the first wall, this is a complete hack sry <3" -Daniel
-
-        sleep(400);
-
-        globalRuntime.reset();
 
         moveToCryptoColumnEncoders(vuMark, JDColor.RED, FIELD_SIDE.RECOVERY_SIDE, this);
 
         sleep(100);
 
-        globalRuntime.reset();
+        turnPID(90);
+
+        sleep(100);
 
         turnPID(90);
 
