@@ -31,6 +31,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 import static org.firstinspires.ftc.teamcode.resources.hardware.rearRangeSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
+import static org.firstinspires.ftc.teamcode.resources.functions.*;
 
 /**
  * Created by dansm on 12/21/2017.

@@ -13,7 +13,8 @@ public class constants {
     static public final double STRAFING_LIMIT = 0.1;
     static public final double[] BOTTOM_SERVO_GRABBER_INIT_POSITION = new double[]{1, 0};
     static public final double[] BOTTOM_SERVO_GRABBER_CLOSE_POSITION = new double[]{0.25, 0.4};
-    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.4, 0.3};
+    //static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.4, 0.3};
+    static public final double[] BOTTOM_SERVO_GRABBER_OPEN_POSITION = new double[]{0.45, 0.25};
     static public final double[] BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION = new double[]{0.55, 0.2};
 
     static public final double[] TOP_SERVO_GRABBER_INIT_POSITION = new double[]{0.9, 0.3};

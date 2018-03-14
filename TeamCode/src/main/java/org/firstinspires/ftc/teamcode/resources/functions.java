@@ -1066,10 +1066,10 @@ public class functions {
                     distanceToTravel = -16;
                     break;
                 case RIGHT:
-                    distanceToTravel = 5;
+                    distanceToTravel = 8;
                     break;
                 default:
-                    distanceToTravel = 5;
+                    distanceToTravel = 8;
             }
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE) {
             switch (vuMark) {
