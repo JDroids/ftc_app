@@ -1090,7 +1090,7 @@ public class functions {
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.JUDGE_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = 10;
+                    distanceToTravel = 14;
                     break;
                 case CENTER:
                     distanceToTravel = -16;
@@ -1099,7 +1099,7 @@ public class functions {
                     distanceToTravel = -42;
                     break;
                 default:
-                    distanceToTravel = 10;
+                    distanceToTravel = 14;
             }
         } else if (allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
