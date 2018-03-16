@@ -577,12 +577,12 @@ public class functions {
 
         constants.JDColor jewelOnRight = detectJewelColor(linearOpMode);
 
-        if(jewelOnRight != JDColor.NONE){
-            if(jewelOnRight == JDColor.BLUE) {
-                knockJewel(JDColor.RED, stoneColor ,linearOpMode);
+        if(blueJewelsFound >= 4 || redJewelsFound >= 4){
+            if(blueJewelsFound >= 4) {
+                knockJewel(JDColor.RED, stoneColor, linearOpMode);
             }
-            else if(jewelOnRight == JDColor.RED){
-                knockJewel(JDColor.BLUE, stoneColor ,linearOpMode);
+            else if(redJewelsFound >= 4){
+                knockJewel(JDColor.BLUE, stoneColor, linearOpMode);
             }
         }
         else {
@@ -683,17 +683,13 @@ public class functions {
         return jewelColorFound;
     }
 
-    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode) {
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode, boolean resetEncoders) {
+        if(resetEncoders) {
+            frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         int ticks = convertFromCMToTicks(centimeters);
 
         frontLeftDriveMotor.setTargetPosition(-ticks);
@@ -728,6 +724,10 @@ public class functions {
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode){
+        moveEncoders(centimeters, power, linearOpMode, true);
     }
 
     static public ClosableVuforiaLocalizer initVuforia(HardwareMap hMap){
@@ -1099,15 +1099,15 @@ public class functions {
                     distanceToTravel = -42;
                     break;
                 default:
-                    distanceToTravel = 14;
+                    distanceToTravel = 10;
             }
         } else if (allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -40;
+                    distanceToTravel = -46;
                     break;
                 case CENTER:
-                    distanceToTravel = -16;
+                    distanceToTravel = -14;
                     break;
                 case RIGHT:
                     distanceToTravel = 10;
@@ -1137,15 +1137,23 @@ public class functions {
             }
         }
 
-        if (shortDistance){
+        frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        if (shortDistance && distanceToTravel < 0){
             moveForTime(0.3, 300, linearOpMode);
+        }
+        else if (shortDistance && distanceToTravel > 0){
+            moveForTime(-0.3, 300, linearOpMode);
         }
 
         if (distanceToTravel < 0) {
-            moveEncoders(distanceToTravel, -1, linearOpMode);
+            moveEncoders(distanceToTravel, -1, linearOpMode, false);
         }
         else if (distanceToTravel > 0) {
-            moveEncoders(distanceToTravel, 1, linearOpMode);
+            moveEncoders(distanceToTravel, 1, linearOpMode, false);
         }
     }
 
