@@ -369,9 +369,11 @@ public class functions {
         }
 
         if (secondLiftTopSwitch.getState() && -gamepad.right_stick_y < -MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            secondGlyphLift.setPower(-1);
+            secondGlyphLift.setPower(-0.8);
         } else if (secondLiftBottomSwitch.getState() && -gamepad.right_stick_y > MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS) {
-            secondGlyphLift.setPower(1);
+
+
+            secondGlyphLift.setPower(0.8);
         } else {
             secondGlyphLift.setPower(0);
         }
@@ -575,40 +577,49 @@ public class functions {
 
         constants.JDColor jewelOnRight = detectJewelColor(linearOpMode);
 
-        //We assume we are on the blue side
+        if(jewelOnRight != JDColor.NONE){
+            if(jewelOnRight == JDColor.BLUE) {
+                knockJewel(JDColor.RED, stoneColor ,linearOpMode);
+            }
+            else if(jewelOnRight == JDColor.RED){
+                knockJewel(JDColor.BLUE, stoneColor ,linearOpMode);
+            }
+        }
+        else {
 
-        //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
-        if (blueJewelsFound >= 4 && jewelOnRight != JDColor.BLUE) {
-            certainty = blueJewelsFound * 20;
+            //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
+            if (blueJewelsFound >= 4 && jewelOnRight != JDColor.BLUE) {
+                certainty = blueJewelsFound * 20;
 
-            linearOpMode.telemetry.addData("Jewel On Left", "Blue");
-            linearOpMode.telemetry.addData("Certainty", certainty);
-            Log.d("JewelOnLeft", "Blue");
-            Log.d("Certainty", Integer.toString(certainty));
+                linearOpMode.telemetry.addData("Jewel On Left", "Blue");
+                linearOpMode.telemetry.addData("Certainty", certainty);
+                Log.d("JewelOnLeft", "Blue");
+                Log.d("Certainty", Integer.toString(certainty));
 
-            knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
-        } else if (jewelOnRight == JDColor.RED) {
-            if (!(redJewelsFound >= 4)) {
                 knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
-            }
-        } else if (redJewelsFound >= 4 && jewelOnRight != JDColor.RED) {
-            certainty = redJewelsFound * 20;
+            } else if (jewelOnRight == JDColor.RED) {
+                if (!(redJewelsFound >= 4)) {
+                    knockJewel(constants.JDColor.RED, stoneColor, linearOpMode);
+                }
+            } else if (redJewelsFound >= 4 && jewelOnRight != JDColor.RED) {
+                certainty = redJewelsFound * 20;
 
-            linearOpMode.telemetry.addData("Jewel On Left", "Red");
-            linearOpMode.telemetry.addData("Certainty", certainty);
-            Log.d("JewelOnLeft", "Red");
-            Log.d("Certainty", Integer.toString(certainty));
+                linearOpMode.telemetry.addData("Jewel On Left", "Red");
+                linearOpMode.telemetry.addData("Certainty", certainty);
+                Log.d("JewelOnLeft", "Red");
+                Log.d("Certainty", Integer.toString(certainty));
 
-            knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
-        } else if (jewelOnRight == JDColor.BLUE) {
-            if (!(blueJewelsFound >= 4)) {
                 knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
-            }
-        } else {
-            linearOpMode.telemetry.addData("Jewel On Left", "Unclear");
-            Log.d("JewelOnLeft", "Unknown");
+            } else if (jewelOnRight == JDColor.BLUE) {
+                if (!(blueJewelsFound >= 4)) {
+                    knockJewel(constants.JDColor.BLUE, stoneColor, linearOpMode);
+                }
+            } else {
+                linearOpMode.telemetry.addData("Jewel On Left", "Unclear");
+                Log.d("JewelOnLeft", "Unknown");
 
-            knockJewel(jewelOnRight, stoneColor, linearOpMode);
+                knockJewel(jewelOnRight, stoneColor, linearOpMode);
+            }
         }
 
         linearOpMode.telemetry.update();
