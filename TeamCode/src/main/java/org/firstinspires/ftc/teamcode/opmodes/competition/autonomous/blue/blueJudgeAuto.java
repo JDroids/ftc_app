@@ -130,6 +130,10 @@ public class blueJudgeAuto extends LinearOpMode {
 
         sleep(100);
 
+        turnPID(0);
+
+        sleep(100);
+
         depositGlyph(this);
 
         sleep(100);

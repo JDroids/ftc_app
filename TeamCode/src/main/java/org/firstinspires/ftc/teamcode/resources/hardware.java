@@ -5,6 +5,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,10 +16,10 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 public class hardware {
-    static public DcMotor frontLeftDriveMotor = null;
-    static public DcMotor frontRightDriveMotor = null;
-    static public DcMotor backLeftDriveMotor = null;
-    static public DcMotor backRightDriveMotor = null;
+    static public DcMotorEx frontLeftDriveMotor = null;
+    static public DcMotorEx frontRightDriveMotor = null;
+    static public DcMotorEx backLeftDriveMotor = null;
+    static public DcMotorEx backRightDriveMotor = null;
 
     static public DcMotor firstGlyphLift = null;
     static public DcMotor secondGlyphLift = null;
@@ -56,10 +57,10 @@ public class hardware {
         HardwareMap hMap = map;
 
 
-        frontLeftDriveMotor = hMap.dcMotor.get("FrontLeft");
-        frontRightDriveMotor = hMap.dcMotor.get("FrontRight");
-        backLeftDriveMotor = hMap.dcMotor.get("BackLeft");
-        backRightDriveMotor = hMap.dcMotor.get("BackRight");
+        frontLeftDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontLeft");
+        frontRightDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontRight");
+        backLeftDriveMotor = (DcMotorEx)hMap.dcMotor.get("BackLeft");
+        backRightDriveMotor = (DcMotorEx)hMap.dcMotor.get("BackRight");
 
         frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -121,6 +121,11 @@ public class redJudgeAuto extends LinearOpMode {
         sleep(100);
 
         globalRuntime.reset();
+
+        turnPID(180);
+
+        sleep(100);
+
         turnPID(180);
 
         sleep(100);

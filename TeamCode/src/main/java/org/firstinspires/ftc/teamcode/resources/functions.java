@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -326,6 +327,8 @@ public class functions {
     }
 
     static public void depositGlyph(LinearOpMode linearOpMode) throws InterruptedException {
+        moveFirstLiftForTime(-0.25, 1000, linearOpMode);
+
         moveForTime(0.25, 500, linearOpMode);
 
         linearOpMode.sleep(250);
@@ -1056,11 +1059,13 @@ public class functions {
     static public void moveToCryptoColumnEncoders(RelicRecoveryVuMark vuMark, JDColor allianceColor, FIELD_SIDE fieldSide, LinearOpMode linearOpMode) {
         int distanceToTravel = 0; //It should always be set to something other than 0, this is just so the compiler doesn't yell at me
 
+        boolean shortDistance = false;
+
         //Defaults to smallest value as that is closest column so > chance of success
         if (allianceColor == JDColor.RED && fieldSide == FIELD_SIDE.JUDGE_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -48;
+                    distanceToTravel = -40;
                     break;
                 case CENTER:
                     distanceToTravel = -16;
@@ -1091,30 +1096,39 @@ public class functions {
                     distanceToTravel = -40;
                     break;
                 case CENTER:
-                    distanceToTravel = -10;
+                    distanceToTravel = -16;
                     break;
                 case RIGHT:
-                    distanceToTravel = 14;
+                    distanceToTravel = 10;
+                    shortDistance = true;
                     break;
                 default:
-                    distanceToTravel = 14;
+                    distanceToTravel = 10;
+                    shortDistance = true;
+                    break;
             }
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -4;
+                    distanceToTravel = -3;
+                    shortDistance = true;
                     break;
                 case CENTER:
-                    distanceToTravel = 4;
+                    distanceToTravel = 22;
                     break;
                 case RIGHT:
-                    distanceToTravel = 16;
+                    distanceToTravel = 44;
                     break;
                 default:
-                    distanceToTravel = -4;
+                    distanceToTravel = -3;
+                    shortDistance = true;
+                    break;
             }
         }
 
+        if (shortDistance){
+            moveForTime(0.3, 300, linearOpMode);
+        }
 
         if (distanceToTravel < 0) {
             moveEncoders(distanceToTravel, -1, linearOpMode);
@@ -1122,8 +1136,6 @@ public class functions {
         else if (distanceToTravel > 0) {
             moveEncoders(distanceToTravel, 1, linearOpMode);
         }
-
-
     }
 
 

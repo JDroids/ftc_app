@@ -114,6 +114,10 @@ public class redRecoveryAuto extends LinearOpMode {
 
         sleep(100);
 
+        turnPID(90);
+
+        sleep(100);
+
         depositGlyph(this);
 
 
