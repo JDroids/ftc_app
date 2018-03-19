@@ -30,11 +30,11 @@ public class TurnTest extends LinearOpMode{
 
         imuSensor.initialize(parameters);
 
-        turnPID(90);
+        turnPID(90, this);
 
         sleep(100);
 
-        turnPID(180);
+        turnPID(180, this);
 
     }
 }

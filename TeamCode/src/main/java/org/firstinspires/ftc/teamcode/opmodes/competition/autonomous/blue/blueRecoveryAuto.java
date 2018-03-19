@@ -106,15 +106,15 @@ public class blueRecoveryAuto extends LinearOpMode {
 
         sleep(100);
 
-        turnPID(90);
+        turnPID(90, this);
 
         sleep(100);
 
-        turnPID(90);
+        turnPID(90, this);
 
         sleep(100);
 
-        turnPID(90);
+        turnPID(90, this);
 
         sleep(100);
 

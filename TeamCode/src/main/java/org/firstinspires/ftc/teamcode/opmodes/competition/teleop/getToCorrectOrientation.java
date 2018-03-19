@@ -70,7 +70,7 @@ public class getToCorrectOrientation extends LinearOpMode {
 
                 imuSensor.initialize(parameters);
 
-                while (!imuSensor.isGyroCalibrated()) {
+                while (!imuSensor.isGyroCalibrated() && opModeIsActive()) {
                 } //Wait until IMU finishes calibrating
             }
 

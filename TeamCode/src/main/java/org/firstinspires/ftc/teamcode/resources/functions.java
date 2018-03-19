@@ -460,13 +460,13 @@ public class functions {
 
     static public void kickOpposite(LinearOpMode linearOpMode) {
         while(jewelKnocker.getPosition() != 0 && linearOpMode.opModeIsActive()){
-            jewelKnocker.setPosition(jewelKnocker.getPosition() - 0.002);
+            jewelKnocker.setPosition(jewelKnocker.getPosition() - 0.005);
         }
     }
 
     static public void kickSame(LinearOpMode linearOpMode) {
         while(jewelKnocker.getPosition() != 1 && linearOpMode.opModeIsActive()){
-            jewelKnocker.setPosition(jewelKnocker.getPosition() + 0.002);
+            jewelKnocker.setPosition(jewelKnocker.getPosition() + 0.005);
         }
     }
 
@@ -1121,8 +1121,7 @@ public class functions {
         } else if (allianceColor == JDColor.BLUE && fieldSide == FIELD_SIDE.RECOVERY_SIDE) {
             switch (vuMark) {
                 case LEFT:
-                    distanceToTravel = -3;
-                    shortDistance = true;
+                    distanceToTravel = 22;
                     break;
                 case CENTER:
                     distanceToTravel = 22;
@@ -1131,8 +1130,7 @@ public class functions {
                     distanceToTravel = 44;
                     break;
                 default:
-                    distanceToTravel = -3;
-                    shortDistance = true;
+                    distanceToTravel = 22;
                     break;
             }
         }
@@ -1196,7 +1194,7 @@ public class functions {
     }
 
 
-    static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp) {
+    static public void turnPID(double degrees, boolean gettingCoeffecientsThroughUdp, LinearOpMode linearOpMode) {
         PID pidClass = new PID();
 
         Orientation angles;
@@ -1220,7 +1218,7 @@ public class functions {
 
             }
 
-            while (!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) {
+            while ((!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) && linearOpMode.opModeIsActive()) {
                 //Log.d("JDSanityCheck", "Passed while loop");
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
@@ -1250,7 +1248,7 @@ public class functions {
             }
         }
         else {
-            while (!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) {
+            while ((!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) && linearOpMode.opModeIsActive()) {
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
                 currentDeg = angles.firstAngle;
@@ -1302,8 +1300,8 @@ public class functions {
         stopDriveMotors();
     }*/
 
-    static public void turnPID(double degrees) {
-        turnPID(degrees, false);
+    static public void turnPID(double degrees, LinearOpMode linearOpMode) {
+        turnPID(degrees, false, linearOpMode);
     }
 
 
