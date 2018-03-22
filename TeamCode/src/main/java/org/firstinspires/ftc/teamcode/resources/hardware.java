@@ -53,9 +53,7 @@ public class hardware {
 
     static public BNO055IMU imuSensor = null;
 
-    static public void initHardwareMap(HardwareMap map) {
-        HardwareMap hMap = map;
-
+    static public void initHardwareMap(HardwareMap hMap) {
 
         frontLeftDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontLeft");
         frontRightDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontRight");

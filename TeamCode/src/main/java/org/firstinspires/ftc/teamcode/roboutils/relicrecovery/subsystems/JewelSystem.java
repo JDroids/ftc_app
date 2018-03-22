@@ -1,7 +1,10 @@
-package org.firstinspires.ftc.teamcode.roboutils.subsystems;
+package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
 
 /**
  * Created by dansm on 3/21/2018.
@@ -28,13 +31,13 @@ public class JewelSystem extends Subsystem {
     Servo jewelKnocker;
     Servo jewelArm;
 
-    public void initJewelKnocker(HardwareMap hardwareMap){
-        jewelKnocker = hardwareMap.get(Servo.class, "servoJewelKnock");
-        jewelArm = hardwareMap.get(Servo.class, "servoJewelArm");
+    public void initHardware(OpMode opMode){
+        jewelKnocker = opMode.hardwareMap.get(Servo.class, "servoJewelKnock");
+        jewelArm = opMode.hardwareMap.get(Servo.class, "servoJewelArm");
     }
 
     @Override
-    void update(){
+    public void update(){
         if(jewelArmPosition == JEWEL_ARM_POSITIONS.INIT || jewelArmPosition == JEWEL_ARM_POSITIONS.UP){
             jewelArm.setPosition(0.9);
         }

@@ -1,13 +1,16 @@
-package org.firstinspires.ftc.teamcode.roboutils.subsystems;
+package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
 
 /**
  * Created by dansm on 3/21/2018.
  */
 
-public class Grabber extends Subsystem{
+public class Grabber extends Subsystem {
     static public Servo glyphGrabberTL = null;
     static public Servo glyphGrabberTR = null;
     static public Servo glyphGrabberBL = null;
@@ -24,12 +27,13 @@ public class Grabber extends Subsystem{
     GRABBER_POSITIONS topGrabberPosition;
     GRABBER_POSITIONS bottomGrabberPosition;
 
-    public void initGrabber(HardwareMap hardwareMap){
+    public void initHardware(OpMode opMode){
         //The top and bottom servos are flipped in the config, this is fixed with the variable names
-        glyphGrabberTL = hardwareMap.get(Servo.class, "glyphGrabberBL");
-        glyphGrabberTR = hardwareMap.get(Servo.class, "glyphGrabberBR");
-        glyphGrabberBL = hardwareMap.get(Servo.class, "glyphGrabberTL");
-        glyphGrabberBR = hardwareMap.get(Servo.class, "glyphGrabberTR");
+        glyphGrabberTL = opMode.hardwareMap.get(Servo.class, "glyphGrabberBL");
+        glyphGrabberTR = opMode.hardwareMap.get(Servo.class, "glyphGrabberBR");
+        glyphGrabberBL = opMode.hardwareMap.get(Servo.class, "glyphGrabberTL");
+        glyphGrabberBR = opMode.hardwareMap.get(Servo.class, "glyphGrabberTR");
+        this.update();
     }
 
     public void update(){
