@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roboutils.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -12,16 +13,12 @@ public class Robot extends Subsystem{
     FourWheelDriveTrain driveTrain;
     JewelSystem jewelSystem;
     Grabber grabber;
-    
-    public final OpModeConfiguration config;
-    
+
     public Robot(OpMode opMode){
-        config = new OpModeConfiguration(opMode.hardwareMap.appContext);
-        
-        initRobot(opMode.hardwareMap);
+        initRobotHardware(opMode.hardwareMap);
     }
     
-    void initRobot(HardwareMap hardwareMap){
+    void initRobotHardware(HardwareMap hardwareMap){
         driveTrain.driveTrainType = FourWheelDriveTrain.DRIVE_TRAIN_TYPE.MECANUM;
         driveTrain.initFourWheelDriveTrain(hardwareMap);
 
