@@ -12,8 +12,16 @@ public class Robot extends Subsystem{
     FourWheelDriveTrain driveTrain;
     JewelSystem jewelSystem;
     Grabber grabber;
-
-    public void initRobot(HardwareMap hardwareMap){
+    
+    public final OpModeConfiguration config;
+    
+    public Robot(OpMode opMode){
+        config = new OpModeConfiguration(opMode.hardwareMap.appContext);
+        
+        initRobot(opMode.hardwareMap);
+    }
+    
+    void initRobot(HardwareMap hardwareMap){
         driveTrain.driveTrainType = FourWheelDriveTrain.DRIVE_TRAIN_TYPE.MECANUM;
         driveTrain.initFourWheelDriveTrain(hardwareMap);
 
