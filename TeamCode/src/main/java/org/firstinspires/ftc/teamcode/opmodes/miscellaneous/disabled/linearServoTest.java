@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 
 /**
  * Created by dansm on 2/23/2018.

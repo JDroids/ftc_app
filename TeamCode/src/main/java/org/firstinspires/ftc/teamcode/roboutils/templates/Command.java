@@ -7,7 +7,9 @@ package org.firstinspires.ftc.teamcode.roboutils.templates;
 public abstract class Command {
     public CustomOpMode opMode;
 
-    public abstract void run();
+    public abstract void run(CustomOpMode opMode, Object... inputs);
+
     public abstract void loop();
+
     public abstract void stop();
 }

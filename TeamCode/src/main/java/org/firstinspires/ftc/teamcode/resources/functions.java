@@ -7,12 +7,10 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
 import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -29,10 +27,52 @@ import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalize
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.resources.constants.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.BLUE;
+import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_CLOSE_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_INIT_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_OPEN_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.BOTTOM_SERVO_GRABBER_WIDE_OPEN_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.DIRECTION;
+import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
+import static org.firstinspires.ftc.teamcode.resources.constants.FRONT_FACING_CAMERA;
+import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTTOM_GRABBER;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.TOP_GRABBER;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.constants.JDColor;
+import static org.firstinspires.ftc.teamcode.resources.constants.JEWEL_ARM_INIT_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.JEWEL_KNOCKER_INIT_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.MAX_NUMBER_WITHIN_RANGE_OF_TWITCHINESS;
+import static org.firstinspires.ftc.teamcode.resources.constants.MAX_RUNTIME_TO_CRYPTOWALL_MILLISECONDS;
+import static org.firstinspires.ftc.teamcode.resources.constants.RED;
+import static org.firstinspires.ftc.teamcode.resources.constants.STRAFING_LIMIT;
+import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_CLOSE_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_INIT_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_OPEN_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.constants.TOP_SERVO_GRABBER_WIDE_OPEN_POSITION;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.backRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.firstGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.hardware.firstLiftBottomSwitch;
+import static org.firstinspires.ftc.teamcode.resources.hardware.firstLiftTopSwitch;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontRangeSensor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberBL;
+import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberBR;
+import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberTL;
+import static org.firstinspires.ftc.teamcode.resources.hardware.glyphGrabberTR;
+import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.jewelArm;
+import static org.firstinspires.ftc.teamcode.resources.hardware.jewelColorSensor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.jewelKnocker;
+import static org.firstinspires.ftc.teamcode.resources.hardware.rearRangeSensor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
+import static org.firstinspires.ftc.teamcode.resources.hardware.secondGlyphLift;
+import static org.firstinspires.ftc.teamcode.resources.hardware.secondLiftBottomSwitch;
+import static org.firstinspires.ftc.teamcode.resources.hardware.secondLiftTopSwitch;
+import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
 
 
 /**
@@ -459,13 +499,13 @@ public class functions {
 
 
     static public void kickOpposite(LinearOpMode linearOpMode) {
-        while(jewelKnocker.getPosition() != 0 && linearOpMode.opModeIsActive()){
+        while (jewelKnocker.getPosition() != 0 && linearOpMode.opModeIsActive()) {
             jewelKnocker.setPosition(jewelKnocker.getPosition() - 0.005);
         }
     }
 
     static public void kickSame(LinearOpMode linearOpMode) {
-        while(jewelKnocker.getPosition() != 1 && linearOpMode.opModeIsActive()){
+        while (jewelKnocker.getPosition() != 1 && linearOpMode.opModeIsActive()) {
             jewelKnocker.setPosition(jewelKnocker.getPosition() + 0.005);
         }
     }
@@ -577,15 +617,13 @@ public class functions {
 
         constants.JDColor jewelOnRight = detectJewelColor(linearOpMode);
 
-        if(blueJewelsFound >= 4 || redJewelsFound >= 4){
-            if(blueJewelsFound >= 4) {
+        if (blueJewelsFound >= 4 || redJewelsFound >= 4) {
+            if (blueJewelsFound >= 4) {
                 knockJewel(JDColor.RED, stoneColor, linearOpMode);
-            }
-            else if(redJewelsFound >= 4){
+            } else if (redJewelsFound >= 4) {
                 knockJewel(JDColor.BLUE, stoneColor, linearOpMode);
             }
-        }
-        else {
+        } else {
 
             //Knock Jewel takes the color of the jewel on the RIGHT side, which is what we detect with the color sensor, but with OpenCV we detect the LEFT one
             if (blueJewelsFound >= 4 && jewelOnRight != JDColor.BLUE) {
@@ -684,7 +722,7 @@ public class functions {
     }
 
     static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode, boolean resetEncoders) {
-        if(resetEncoders) {
+        if (resetEncoders) {
             frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -726,11 +764,11 @@ public class functions {
         backRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode){
+    static public void moveEncoders(int centimeters, double power, LinearOpMode linearOpMode) {
         moveEncoders(centimeters, power, linearOpMode, true);
     }
 
-    static public ClosableVuforiaLocalizer initVuforia(HardwareMap hMap){
+    static public ClosableVuforiaLocalizer initVuforia(HardwareMap hMap) {
 
         int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -1036,7 +1074,7 @@ public class functions {
         return targetColumn;
     }
 
-    static public void moveToFirstCryptoColumn(DIRECTION direction, LinearOpMode linearOpMode){
+    static public void moveToFirstCryptoColumn(DIRECTION direction, LinearOpMode linearOpMode) {
 
         ElapsedTime mRuntime = new ElapsedTime();
         mRuntime.reset();
@@ -1049,14 +1087,13 @@ public class functions {
         double currentReading = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
         double lastReading = currentReading;
 
-        if(direction == DIRECTION.FORWARDS) {
+        if (direction == DIRECTION.FORWARDS) {
             moveInAStraightLine(motorSpeed);
-        }
-        else if(direction == DIRECTION.BACKWARDS){
+        } else if (direction == DIRECTION.BACKWARDS) {
             moveInAStraightLine(-motorSpeed);
         }
 
-        while(currentReading >= lastReading - 3.5 && linearOpMode.opModeIsActive() && mRuntime.milliseconds() <= 3000){
+        while (currentReading >= lastReading - 3.5 && linearOpMode.opModeIsActive() && mRuntime.milliseconds() <= 3000) {
             lastReading = currentReading;
 
             currentReading = readAndFilterRangeSensorValues(sideRangeSensor, linearOpMode);
@@ -1140,17 +1177,15 @@ public class functions {
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if (shortDistance && distanceToTravel < 0){
+        if (shortDistance && distanceToTravel < 0) {
             moveForTime(0.3, 300, linearOpMode);
-        }
-        else if (shortDistance && distanceToTravel > 0){
+        } else if (shortDistance && distanceToTravel > 0) {
             moveForTime(-0.3, 300, linearOpMode);
         }
 
         if (distanceToTravel < 0) {
             moveEncoders(distanceToTravel, -1, linearOpMode, false);
-        }
-        else if (distanceToTravel > 0) {
+        } else if (distanceToTravel > 0) {
             moveEncoders(distanceToTravel, 1, linearOpMode, false);
         }
     }
@@ -1246,8 +1281,7 @@ public class functions {
 
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
             }
-        }
-        else {
+        } else {
             while ((!(currentDeg > degrees - allowableError && currentDeg < degrees + allowableError)) && linearOpMode.opModeIsActive()) {
                 angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
@@ -1264,7 +1298,8 @@ public class functions {
                 backLeftDriveMotor.setPower(motorSpeed);
                 backRightDriveMotor.setPower(motorSpeed);
 
-                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);}
+                angles = imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+            }
 
         }
         if (gettingCoeffecientsThroughUdp) {
@@ -1328,18 +1363,17 @@ public class functions {
 
             boolean stopLoop = false;
 
-            if(distanceOverTime.size() >= 15) {
+            if (distanceOverTime.size() >= 15) {
                 stopLoop = true;
-                for(int i=distanceOverTime.size() - 1; i>=1; i--){
-                    if (!((distanceOverTime.get(i) > (distanceOverTime.get(i-1) - 1)) && (distanceOverTime.get(i) < (distanceOverTime.get(i-1) + 1))))
-                    {
+                for (int i = distanceOverTime.size() - 1; i >= 1; i--) {
+                    if (!((distanceOverTime.get(i) > (distanceOverTime.get(i - 1) - 1)) && (distanceOverTime.get(i) < (distanceOverTime.get(i - 1) + 1)))) {
                         stopLoop = false;
                     }
                 }
 
             }
 
-            if(stopLoop){
+            if (stopLoop) {
                 return;
             }
 
@@ -1350,13 +1384,11 @@ public class functions {
                 motorSpeed = pidClass.calculateOutput(centimeters, distance);
             }
 
-            if(rangeSensor == frontRangeSensor){
+            if (rangeSensor == frontRangeSensor) {
                 moveInAStraightLine(-motorSpeed);
-            }
-            else if(rangeSensor == rearRangeSensor){
+            } else if (rangeSensor == rearRangeSensor) {
                 moveInAStraightLine(motorSpeed);
             }
-
 
 
             linearOpMode.telemetry.addData("Distance", distance);
@@ -1381,15 +1413,15 @@ public class functions {
         moveToDistanceUltrasonicPID(rangeSensor, centimeters, linearOpMode, false);
     }
 
-    static public double convertFromTicksToCM(int ticks){
+    static public double convertFromTicksToCM(int ticks) {
         return ticks * (Math.pow((int) ((((((Math.PI * 4) / 16) * 112)) / 4) / 2.54), -1));  //Convert the amount of ticks to centimeters
     }
 
-    static public int convertFromCMToTicks(double cm){
+    static public int convertFromCMToTicks(double cm) {
         return (int) ((((((Math.PI * 4) / 16) * 112) * cm) / 4) / 2.54); //Convert the amount of centimeters to ticks
     }
 
-    static public void moveWithMotionProfiling(double centimeters, String csvFile, LinearOpMode linearOpMode){
+    static public void moveWithMotionProfiling(double centimeters, String csvFile, LinearOpMode linearOpMode) {
         frontLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1421,7 +1453,7 @@ public class functions {
 
                 velocityToTravel = motionProfilingClass.calculatePower(centimeters, centimetersTraveled);
 
-                if(velocityToTravel < 0.1 && velocityToTravel > -0.1){
+                if (velocityToTravel < 0.1 && velocityToTravel > -0.1) {
                     break;
                 }
 
@@ -1429,8 +1461,7 @@ public class functions {
 
 
             }
-        }
-        else{
+        } else {
             Log.d("JDMotion", "File was not read");
             moveEncoders((int) centimeters, 0.3, linearOpMode);
         }
@@ -1440,7 +1471,7 @@ public class functions {
         linearOpMode.sleep(400);
     }
 
-    public static void relicControl(Gamepad gamepad1, Gamepad gamepad2){
+    public static void relicControl(Gamepad gamepad1, Gamepad gamepad2) {
 
         //To extend/detract cascading rail
         if (gamepad2.right_bumper) {
@@ -1468,46 +1499,39 @@ public class functions {
 
             if (relicRotationalServo.getPosition() < 0.775) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-            }
-            else if (relicRotationalServo.getPosition() > 0.775) {
+            } else if (relicRotationalServo.getPosition() > 0.775) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
 
             //relicExtensionServo.setPosition(openPosition);
 
-        }
-        else if (gamepad1.x){
+        } else if (gamepad1.x) {
             if (relicRotationalServo.getPosition() < 0.93) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-            }
-            else if (relicRotationalServo.getPosition() > 0.93) {
+            } else if (relicRotationalServo.getPosition() > 0.93) {
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
 
             relicExtensionServo.setPosition(0);
-        }
-        else {
+        } else {
             //To extend/detract the extension servo on the relic mechanism
 
             //To move the rotational servo on the relic mechanism
             if (gamepad1.a && relicRotationalServo.getPosition() < 0.95) { //Go down, stops at 0.95
                 if (relicRotationalServo.getPosition() < 0.9 && gamepad1.x) { //stops at 0.9 if x PRESSED
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
-                }
-                else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
+                } else if (relicRotationalServo.getPosition() < 0.95) { //stops at 0.95 if x NOT pressed
                     relicRotationalServo.setPosition(relicRotationalServo.getPosition() + 0.008);
                 }
 
-            }
-            else if (gamepad1.y && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
+            } else if (gamepad1.y && relicRotationalServo.getPosition() > 0.4) { //Go up, stops at 0.4
                 relicRotationalServo.setPosition(relicRotationalServo.getPosition() - 0.008);
             }
         }
 
         if (gamepad1.dpad_down) { //To open
             relicExtensionServo.setPosition(0);
-        }
-        else if (gamepad1.dpad_up) { //To close
+        } else if (gamepad1.dpad_up) { //To close
             relicExtensionServo.setPosition(1);
         }
 

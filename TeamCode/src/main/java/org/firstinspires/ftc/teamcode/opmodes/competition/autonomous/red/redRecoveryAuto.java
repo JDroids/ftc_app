@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.red;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.resources.constants;
@@ -21,11 +20,9 @@ import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToFirstCryptoColumn;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveUntilCryptoWallUsingUltrasonicv2;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
 import static org.firstinspires.ftc.teamcode.resources.functions.turnPID;
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontRangeSensor;
@@ -61,7 +58,7 @@ public class redRecoveryAuto extends LinearOpMode {
 
         waitForStart();
 
-        if(!opModeIsActive()){ //Enables positioning and then stopping program
+        if (!opModeIsActive()) { //Enables positioning and then stopping program
             vuforia.close();
             return;
         }

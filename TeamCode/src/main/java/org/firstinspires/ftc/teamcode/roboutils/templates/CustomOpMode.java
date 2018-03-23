@@ -8,6 +8,6 @@ import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRe
  * Created by dansm on 3/22/2018.
  */
 
-public abstract class CustomOpMode extends LinearOpMode{
+public abstract class CustomOpMode extends LinearOpMode {
     public RelicRecoveryRobot robot;
 }

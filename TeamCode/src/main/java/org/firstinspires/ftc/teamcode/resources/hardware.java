@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.resources;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -55,10 +54,10 @@ public class hardware {
 
     static public void initHardwareMap(HardwareMap hMap) {
 
-        frontLeftDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontLeft");
-        frontRightDriveMotor = (DcMotorEx)hMap.dcMotor.get("FrontRight");
-        backLeftDriveMotor = (DcMotorEx)hMap.dcMotor.get("BackLeft");
-        backRightDriveMotor = (DcMotorEx)hMap.dcMotor.get("BackRight");
+        frontLeftDriveMotor = (DcMotorEx) hMap.dcMotor.get("FrontLeft");
+        frontRightDriveMotor = (DcMotorEx) hMap.dcMotor.get("FrontRight");
+        backLeftDriveMotor = (DcMotorEx) hMap.dcMotor.get("BackLeft");
+        backRightDriveMotor = (DcMotorEx) hMap.dcMotor.get("BackRight");
 
         frontLeftDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

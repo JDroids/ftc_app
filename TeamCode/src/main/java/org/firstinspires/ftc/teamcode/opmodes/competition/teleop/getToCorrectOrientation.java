@@ -4,8 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.resources.functions;
-
 import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS;
 import static org.firstinspires.ftc.teamcode.resources.constants.JDColor;
@@ -24,8 +22,6 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMo
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
 
 

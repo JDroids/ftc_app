@@ -6,36 +6,71 @@ package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.commands;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.resources.PID;
 import org.firstinspires.ftc.teamcode.roboutils.templates.Command;
+import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
+
+import java.util.ArrayList;
 
 public class AutonomousMovement {
-    Command turnPID = new Command() {
-        public double targetDegrees;
-        public boolean gettingCoefficentsThroughUDP = false;
+    public enum RANGE_SENSORS{
+        FRONT_RANGE_SENSOR,
+        SIDE_RANGE_SENSOR,
+        REAR_RANGE_SENSOR
+    }
 
-        PID pidClass = new PID();
+    public Command turn = new Command() {
+        double targetDegrees;
+        boolean gettingCoefficentsThroughUDP = false;
 
         double currentDeg;
         double motorSpeed;
 
+        Orientation angles;
+        PID pidClass;
+
         double allowableError = 0.7;
 
-        Orientation angles;
-
         @Override
-        public void run() {
-            angles = opMode.robot.drive.imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+        public void run(CustomOpMode opMode, Object... arguments) {
+            switch (arguments.length) {
+                case 0:
+                    //If there are no arguments, throw exception
+                    throw new IllegalArgumentException("Not Enough Arguments Given");
+                case 1:
+                    try {
+                        this.currentDeg = (double) arguments[0];
+                    } catch (ClassCastException e) {
+                        throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
+                    }
 
-            pidClass.setCoeffecients(0.015, 0.0, 0.002);
+                    break;
+                case 2:
+                    try {
+                        this.currentDeg = (double) arguments[0];
+                        gettingCoefficentsThroughUDP = (boolean) arguments[1];
+                    } catch (ClassCastException e) {
+                        throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
+                    }
 
-            double currentDeg = angles.firstAngle;
+                    break;
+                default:
+                    //If extra arguments are given, throw exception
+                    throw new IllegalArgumentException("Too Many Arguments Given");
+            }
 
-            this.loop();
+            this.opMode = opMode;
+
+            opMode.robot.update();
+            angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+
+            opMode.robot.update();
         }
 
         @Override
@@ -51,7 +86,7 @@ public class AutonomousMovement {
 
                 while ((!(currentDeg > targetDegrees - allowableError && currentDeg < targetDegrees + allowableError)) && opMode.opModeIsActive()) {
                     //Log.d("JDSanityCheck", "Passed while loop");
-                    angles = opMode.robot.drive.imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
                     currentDeg = angles.firstAngle;
 
@@ -72,14 +107,14 @@ public class AutonomousMovement {
 
                     opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
 
-                    angles = opMode.robot.drive.imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
                     opMode.robot.update();
                 }
             }
             else {
                 while ((!(currentDeg > targetDegrees - allowableError && currentDeg < targetDegrees + allowableError)) && opMode.opModeIsActive()) {
-                    angles = opMode.robot.drive.imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
                     currentDeg = angles.firstAngle;
 
@@ -91,7 +126,7 @@ public class AutonomousMovement {
 
                     opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
 
-                    angles = opMode.robot.drive.imuSensor.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
                     opMode.robot.update();
                 }
@@ -100,6 +135,117 @@ public class AutonomousMovement {
             if (gettingCoefficentsThroughUDP) {
                 Log.d("JDPID", "Shutting down Udp receiver");
                 pidClass.pidUdpReceiver.shutdown();
+            }
+            this.stop();
+        }
+
+        @Override
+        public void stop(){
+            opMode.robot.drive.stopDriveMotors();
+            opMode.robot.update();
+        }
+    };
+
+    public Command moveToDistanceUltrasonic = new Command() {
+        RANGE_SENSORS rangeSensor;
+        int centimeters;
+        boolean gettingCoefficentsThroughUDP;
+        double motorSpeed;
+        ArrayList<Double> distanceOverTime = new ArrayList<Double>();
+        double distance;
+
+        PID pidClass;
+
+        double allowableError = 2;
+
+        @Override
+        public void run(CustomOpMode opMode, Object... inputs) {
+            switch (inputs.length){
+                case 0:
+                    throw new IllegalArgumentException("Not Enough Arguments Given");
+                case 1:
+                    throw new IllegalArgumentException("Not Enough Arguments Given");
+                case 2:
+                    try {
+                        rangeSensor = (RANGE_SENSORS) inputs[0];
+                        centimeters = (int) inputs[1];
+                    }
+                    catch (ClassCastException e){
+                        throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
+                    }
+                    break;
+                case 3:
+                    try {
+                        rangeSensor = (RANGE_SENSORS) inputs[0];
+                        centimeters = (int) inputs[1];
+                        gettingCoefficentsThroughUDP = (boolean) inputs[2];
+                    }
+                    catch (ClassCastException e){
+                        throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
+                    }
+                default:
+                    throw new IllegalArgumentException("Too Many Arguments Given");
+            }
+
+            pidClass = new PID();
+
+            pidClass.setCoeffecients(0.01, 0, 0.002);
+
+            this.opMode = opMode;
+
+            opMode.robot.update();
+        }
+
+        @Override
+        public void loop() {
+            while (!(distance > centimeters - allowableError && distance < centimeters + allowableError) && opMode.opModeIsActive()) {
+                if(rangeSensor == RANGE_SENSORS.FRONT_RANGE_SENSOR){
+                    distance = opMode.robot.drive.frontRangeSensorDistance;
+                }
+                else if(rangeSensor == RANGE_SENSORS.REAR_RANGE_SENSOR){
+                    distance = opMode.robot.drive.rearRangeSensorDistance;
+                }
+
+                distanceOverTime.add(distance);
+
+                boolean stopLoop = false;
+
+                if (distanceOverTime.size() >= 15) {
+                    stopLoop = true;
+                    for (int i = distanceOverTime.size() - 1; i >= 1; i--) {
+                        if (!((distanceOverTime.get(i) > (distanceOverTime.get(i - 1) - 1)) && (distanceOverTime.get(i) < (distanceOverTime.get(i - 1) + 1)))) {
+                            stopLoop = false;
+                        }
+                    }
+
+                }
+
+                if (stopLoop) {
+                    this.stop();
+                    return;
+                }
+
+
+                if (gettingCoefficentsThroughUDP) {
+                    motorSpeed = pidClass.calculateOutput(centimeters, distance, true);
+                }
+                else {
+                    motorSpeed = pidClass.calculateOutput(centimeters, distance);
+                }
+
+                if (rangeSensor == RANGE_SENSORS.FRONT_RANGE_SENSOR) {
+                    opMode.robot.drive.moveAtPower(-motorSpeed);
+                }
+                else if (rangeSensor == RANGE_SENSORS.REAR_RANGE_SENSOR) {
+                    opMode.robot.drive.moveAtPower(motorSpeed);
+                }
+
+
+                opMode.telemetry.addData("Distance", distance);
+
+                opMode.telemetry.update();
+
+                opMode.robot.update();
             }
             this.stop();
         }

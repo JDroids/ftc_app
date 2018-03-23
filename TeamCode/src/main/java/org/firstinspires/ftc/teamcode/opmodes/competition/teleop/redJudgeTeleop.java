@@ -20,8 +20,6 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.frontLeftDriveMo
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontRightDriveMotor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtender;
-import static org.firstinspires.ftc.teamcode.resources.hardware.relicExtensionServo;
 import static org.firstinspires.ftc.teamcode.resources.hardware.relicRotationalServo;
 
 /**

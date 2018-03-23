@@ -5,18 +5,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
-import static org.firstinspires.ftc.teamcode.resources.hardware.*;
+import static org.firstinspires.ftc.teamcode.resources.functions.turnPID;
+import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
+import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 
 /**
  * Created by dansm on 3/10/2018.
  */
 
 @Disabled
-@Autonomous(name="Turn Test")
+@Autonomous(name = "Turn Test")
 
-public class TurnTest extends LinearOpMode{
-    public void runOpMode(){
+public class TurnTest extends LinearOpMode {
+    public void runOpMode() {
         initHardwareMap(hardwareMap);
 
         waitForStart();

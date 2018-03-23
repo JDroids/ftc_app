@@ -35,25 +35,24 @@ public class MotionProfiling {
 
     private double velocityToTravel;
 
-    public double calculatePower(double distanceToTravel, double currentDistance){
+    public double calculatePower(double distanceToTravel, double currentDistance) {
         //We are ignoring Ka because calculating accleration before hand is hard math I cannot do :P
 
-        if(firstTime){
+        if (firstTime) {
             startTime = (int) System.currentTimeMillis();
             firstTime = false;
         }
 
-        currentTime = ((int)(System.currentTimeMillis() - startTime));
+        currentTime = ((int) (System.currentTimeMillis() - startTime));
 
         currentRoundedTime = ((currentTime + 5) / 10) * 10; //Rounds to closest 10 milliseconds
 
-        if(currentRoundedTime > timeList.get(timeList.size() - 1)){
+        if (currentRoundedTime > timeList.get(timeList.size() - 1)) {
             currentRoundedTime = timeList.get(timeList.size() - 1);
             velocityToTravel = 0;
             currentError = distanceToTravel - currentDistance;
             runningError = 0;
-        }
-        else {
+        } else {
 
             Log.d("JDMotion", "Current Time: " + Double.toString(currentRoundedTime));
 
@@ -80,7 +79,7 @@ public class MotionProfiling {
         ki = Ki;
     }
 
-    public boolean readMotionProfileFile(String csvFile){
+    public boolean readMotionProfileFile(String csvFile) {
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
@@ -103,14 +102,11 @@ public class MotionProfiling {
             }
 
             Log.d("JDFile", "Passed while loop");
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             return false;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
-        }
-        finally {
+        } finally {
             if (br != null) {
                 try {
                     br.close();
@@ -119,10 +115,9 @@ public class MotionProfiling {
                 }
             }
 
-            if(!timeList.isEmpty()){
+            if (!timeList.isEmpty()) {
                 return true;
-            }
-            else{
+            } else {
                 return false;
             }
         }

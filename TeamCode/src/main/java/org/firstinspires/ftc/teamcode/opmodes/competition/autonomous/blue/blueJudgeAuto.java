@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.competition.autonomous.blue;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
@@ -26,7 +20,6 @@ import static org.firstinspires.ftc.teamcode.resources.functions.getVumark;
 import static org.firstinspires.ftc.teamcode.resources.functions.initServos;
 import static org.firstinspires.ftc.teamcode.resources.functions.initVuforia;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftForTime;
-import static org.firstinspires.ftc.teamcode.resources.functions.moveForTime;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
@@ -67,7 +60,7 @@ public class blueJudgeAuto extends LinearOpMode {
 
         waitForStart();
 
-        if(!opModeIsActive()){ //Enables positioning and then stopping program
+        if (!opModeIsActive()) { //Enables positioning and then stopping program
             vuforia.close();
             return;
         }

@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.resources.external.ClosableVuforiaLocalizer;
 
 import static org.firstinspires.ftc.teamcode.resources.constants.AUTONOMOUS;
-import static org.firstinspires.ftc.teamcode.resources.constants.DIRECTION;
 import static org.firstinspires.ftc.teamcode.resources.constants.FIELD_SIDE;
 import static org.firstinspires.ftc.teamcode.resources.constants.GLYPH_LIFT_AUTO_SPEED;
 import static org.firstinspires.ftc.teamcode.resources.constants.GRABBERS.BOTH_GRABBERS;
@@ -24,14 +23,12 @@ import static org.firstinspires.ftc.teamcode.resources.functions.moveFirstLiftFo
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToCryptoColumnEncoders;
 import static org.firstinspires.ftc.teamcode.resources.functions.moveToDistanceUltrasonicPID;
 import static org.firstinspires.ftc.teamcode.resources.functions.readAndFilterRangeSensorValues;
-import static org.firstinspires.ftc.teamcode.resources.functions.turn;
 import static org.firstinspires.ftc.teamcode.resources.functions.turnPID;
 import static org.firstinspires.ftc.teamcode.resources.hardware.frontRangeSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
 import static org.firstinspires.ftc.teamcode.resources.hardware.rearRangeSensor;
 import static org.firstinspires.ftc.teamcode.resources.hardware.sideRangeSensor;
-import static org.firstinspires.ftc.teamcode.resources.functions.*;
 
 /**
  * Created by dansm on 12/21/2017.
@@ -63,7 +60,7 @@ public class redJudgeAuto extends LinearOpMode {
 
         waitForStart();
 
-        if(!opModeIsActive()){ //Enables positioning and then stopping program
+        if (!opModeIsActive()) { //Enables positioning and then stopping program
             vuforia.close();
             return;
         }
