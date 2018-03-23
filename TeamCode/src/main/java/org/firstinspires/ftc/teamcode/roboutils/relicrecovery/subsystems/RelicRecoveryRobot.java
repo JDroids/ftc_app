@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,14 +12,14 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
 
 //TODO: Implement relic stuff, glyph lifts
 
-public class Robot extends Subsystem {
-    MecanumDrive drive;
-    JewelSystem jewelSystem;
-    Grabber grabber;
-    RelicRecoverer relicRecoverer;
-    GlyphLifts glyphLifts;
+public class RelicRecoveryRobot extends Subsystem {
+    public MecanumDrive drive;
+    public JewelSystem jewelSystem;
+    public Grabber grabber;
+    public RelicRecoverer relicRecoverer;
+    public GlyphLifts glyphLifts;
 
-    public Robot(OpMode opMode){
+    public RelicRecoveryRobot(OpMode opMode){
         initHardware(opMode);
     }
     

@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 
 public abstract class DriveTrain extends Subsystem{
-    ArrayList<DcMotorEx> motors = new ArrayList<DcMotorEx>();
+    public ArrayList<DcMotorEx> motors = new ArrayList<DcMotorEx>();
 
     public ArrayList<Double> motorSpeeds = new ArrayList<Double>();
 

@@ -91,7 +91,7 @@ Each of the clones would then appear along side each other in the Android Studio
 together with the FtcRobotController module (and the original TeamCode module).
 
 Selective Team phones can then be programmed by selecting the desired Module from the pulldown list
-prior to clicking to the green Run arrow.
+prior to clicking to the green run arrow.
 
 Warning:  This is not for the inexperienced Software developer.
 You will need to be comfortable with File manipulations and managing Android Studio Modules.

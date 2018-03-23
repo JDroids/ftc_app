@@ -417,8 +417,8 @@ public class functions {
         while (linearOpMode.opModeIsActive()) {
             ElapsedTime mRuntime = new ElapsedTime();
 
-            linearOpMode.telemetry.addData("Status", "Run Time: " + mRuntime.toString());
-            Log.d("JDJewel", "Run Time: " + mRuntime.toString());
+            linearOpMode.telemetry.addData("Status", "run Time: " + mRuntime.toString());
+            Log.d("JDJewel", "run Time: " + mRuntime.toString());
 
             linearOpMode.telemetry.addData("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString()); // Current Result
             Log.d("JDJewel", "Current Order: " + jewelDetector.getCurrentOrder().toString());
