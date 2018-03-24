@@ -240,11 +240,6 @@ public class AutonomousMovement {
                     opMode.robot.drive.moveAtPower(motorSpeed);
                 }
 
-
-                opMode.telemetry.addData("Distance", distance);
-
-                opMode.telemetry.update();
-
                 opMode.robot.update();
             }
             this.stop();

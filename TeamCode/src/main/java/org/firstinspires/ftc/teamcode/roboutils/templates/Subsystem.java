@@ -14,6 +14,10 @@ public abstract class Subsystem {
 
     public abstract void update();
 
+    /**
+     * Used to init the hardware of each subsystem
+     * @param opMode
+     */
     public abstract void initHardware(CustomOpMode opMode);
 
 }
