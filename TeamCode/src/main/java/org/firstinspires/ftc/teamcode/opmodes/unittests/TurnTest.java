@@ -14,7 +14,7 @@ import static org.firstinspires.ftc.teamcode.resources.hardware.initHardwareMap;
  */
 
 @Disabled
-@Autonomous(name = "Turn Test")
+@Autonomous(name = "TurnTest")
 
 public class TurnTest extends LinearOpMode {
     public void runOpMode() {

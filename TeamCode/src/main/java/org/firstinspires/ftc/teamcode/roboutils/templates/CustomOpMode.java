@@ -14,8 +14,17 @@ import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRe
 public abstract class CustomOpMode extends LinearOpMode {
     public RelicRecoveryRobot robot;
 
-    public void universalLog(String caption, String content){
-        this.telemetry.addData(caption, content);
-        Log.d("JDLog", caption + content);
+    public boolean partOfLoggingGroup = true;
+
+    //StringBuilder sb = new StringBuilder();
+
+    public void universalLog(String caption, String content) {
+        /*sb.append(caption);
+        sb.append(": ");
+        sb.append(content);
+        sb.append("\n");*/
+
+        telemetry.addData(caption, content);
+        Log.d("JDLog", caption + ": " + content);
     }
 }

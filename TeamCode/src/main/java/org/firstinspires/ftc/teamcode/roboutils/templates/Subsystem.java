@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public abstract class Subsystem {
 
+    CustomOpMode opMode;
     /**
      * run control code (e.g., read sensors and update motors) and add telemetry.
      */

@@ -6,12 +6,22 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 import org.firstinspires.ftc.teamcode.roboutils.templates.DriveTrain;
+import org.opencv.core.Mat;
+
+import java.util.ArrayList;
+
+import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 
 /**
  * Created by dansm on 3/21/2018.
@@ -22,6 +32,18 @@ public class MecanumDrive extends DriveTrain {
     public double frontRangeSensorDistance;
     public double sideRangeSensorDistance;
     public double rearRangeSensorDistance;
+
+    public int frontLeftEncoderTicks;
+    public int frontRightEncoderTicks;
+    public int backLeftEncoderTicks;
+    public int backRightEncoderTicks;
+
+    public double heading;
+    public Waypoint position;
+
+    public DcMotorEx.RunMode motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
+
+    public boolean areMotorsBusy = false;
 
     //These are under MecanumDrive as they are uniquely for movement
     BNO055IMU imuSensor;
@@ -34,6 +56,9 @@ public class MecanumDrive extends DriveTrain {
     public void initHardware(CustomOpMode opMode) {
         this.opMode = opMode;
 
+        this.motors = new ArrayList<DcMotorEx>();
+        this.motorSpeeds = new ArrayList<Double>();
+
         motors.add(opMode.hardwareMap.get(DcMotorEx.class, "FrontLeft"));
         motors.add(opMode.hardwareMap.get(DcMotorEx.class, "FrontRight"));
         motors.add(opMode.hardwareMap.get(DcMotorEx.class, "BackLeft"));
@@ -41,27 +66,62 @@ public class MecanumDrive extends DriveTrain {
 
         imuSensor = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        imuSensor.initialize(parameters);
+
         frontRangeSensor = opMode.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "frontRange");
         sideRangeSensor = opMode.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
         rearRangeSensor = opMode.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
-        for (DcMotorEx motor : motors) {
-            motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        }
+        motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
 
         this.opMode = opMode;
     }
 
+    public void setToRelativePosition(double power, int frontLeftTicks, int frontRightTicks, int backLeftTicks, int backRightTicks){
+        for(DcMotorEx motor : motors){
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        moveAtPower(power);
+
+        motors.get(0).setTargetPosition(frontLeftEncoderTicks + frontLeftTicks);
+        motors.get(1).setTargetPosition(frontRightEncoderTicks + frontRightTicks);
+        motors.get(2).setTargetPosition(backLeftEncoderTicks + backLeftTicks);
+        motors.get(3).setTargetPosition(backRightEncoderTicks + backRightTicks);
+    }
+
+    public void setAllMotorsToRelativePosition(double power, int position) {
+        setToRelativePosition(1, -position, position, -position, position);
+    }
+
     public void update(){
         for (DcMotorEx motor : motors) {
+            motor.setMode(motorRunMode);
             motor.setPower(motorSpeeds.get(motors.indexOf(motor)));
         }
+
+        areMotorsBusy = motors.get(0).isBusy() || motors.get(1).isBusy() || motors.get(2).isBusy() || motors.get(3).isBusy();
+
+        frontLeftEncoderTicks = motors.get(0).getCurrentPosition();
+        frontRightEncoderTicks = motors.get(1).getCurrentPosition();
+        backLeftEncoderTicks = motors.get(2).getCurrentPosition();
+        backRightEncoderTicks = motors.get(3).getCurrentPosition();
 
         imuAngularOrientation = imuSensor.getAngularOrientation();
 
         frontRangeSensorDistance = readAndFilterRangeSensorValues(frontRangeSensor, this.opMode);
         sideRangeSensorDistance = readAndFilterRangeSensorValues(sideRangeSensor, this.opMode);
         rearRangeSensorDistance = readAndFilterRangeSensorValues(rearRangeSensor, this.opMode);
+
+        heading = ((imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES).firstAngle + 180) * -1) * (Math.PI/180);
+        //In radians
     }
 
     public void setMotorPower(double frontLeftMotorPower, double frontRightMotorPower, double backLeftMotorPower, double backRightMotorPower) {
@@ -89,5 +149,6 @@ public class MecanumDrive extends DriveTrain {
         }
         return distance;
     }
+
 
 }

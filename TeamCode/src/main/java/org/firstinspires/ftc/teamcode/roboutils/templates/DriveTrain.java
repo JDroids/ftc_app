@@ -9,9 +9,9 @@ import java.util.ArrayList;
  */
 
 public abstract class DriveTrain extends Subsystem {
-    public ArrayList<DcMotorEx> motors = new ArrayList<DcMotorEx>();
+    public ArrayList<DcMotorEx> motors;
 
-    public ArrayList<Double> motorSpeeds = new ArrayList<Double>();
+    public ArrayList<Double> motorSpeeds;
 
     public void update() {
         for (DcMotorEx motor : motors) {

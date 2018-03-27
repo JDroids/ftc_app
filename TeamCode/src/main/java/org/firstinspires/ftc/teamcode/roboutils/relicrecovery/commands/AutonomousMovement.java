@@ -6,13 +6,16 @@ package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.commands;
 
 import android.util.Log;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.resources.PID;
+
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.PID;
+
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.templates.Command;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 
@@ -23,6 +26,10 @@ public class AutonomousMovement {
         FRONT_RANGE_SENSOR,
         SIDE_RANGE_SENSOR,
         REAR_RANGE_SENSOR
+    }
+
+    static public int convertFromCMToTicks(double cm) {
+        return (int) ((((((Math.PI * 4) / 16) * 112) * cm) / 4) / 2.54); //Convert the amount of centimeters to ticks
     }
 
     public Command turn = new Command() {
@@ -45,7 +52,7 @@ public class AutonomousMovement {
                     throw new IllegalArgumentException("Not Enough Arguments Given");
                 case 1:
                     try {
-                        this.currentDeg = (double) arguments[0];
+                        this.targetDegrees = (double) arguments[0];
                     } catch (ClassCastException e) {
                         throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
                     }
@@ -53,8 +60,8 @@ public class AutonomousMovement {
                     break;
                 case 2:
                     try {
-                        this.currentDeg = (double) arguments[0];
-                        gettingCoefficentsThroughUDP = (boolean) arguments[1];
+                        this.targetDegrees = (double) arguments[0];
+                        this.gettingCoefficentsThroughUDP = (boolean) arguments[1];
                     } catch (ClassCastException e) {
                         throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
                     }
@@ -70,11 +77,18 @@ public class AutonomousMovement {
             opMode.robot.update();
             angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
 
+            pidClass = new PID();
+
+            pidClass.setCoeffecients(0.007, 0.0, 0.002);
+
             opMode.robot.update();
+
+            this.loop();
         }
 
         @Override
         public void loop() {
+            currentDeg = angles.firstAngle;
             if ((targetDegrees <= 180 && targetDegrees >= 175) || (targetDegrees >= -180 && targetDegrees <= -175)) {
                 Log.d("JDSanityCheck", "Passed if statement");
                 if (targetDegrees <= -175) {
@@ -104,12 +118,11 @@ public class AutonomousMovement {
                     } else {
                         motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg);
                     }
-
                     opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
 
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-
                     opMode.robot.update();
+
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 }
             }
             else {
@@ -124,18 +137,17 @@ public class AutonomousMovement {
                         motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg);
                     }
 
+                    Log.d("JDTurn", "Motor Power: "+ motorSpeed);
+
                     opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
 
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-
                     opMode.robot.update();
+
+                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
                 }
 
             }
-            if (gettingCoefficentsThroughUDP) {
-                Log.d("JDPID", "Shutting down Udp receiver");
-                pidClass.pidUdpReceiver.shutdown();
-            }
+
             this.stop();
         }
 
@@ -143,6 +155,10 @@ public class AutonomousMovement {
         public void stop(){
             opMode.robot.drive.stopDriveMotors();
             opMode.robot.update();
+            if (gettingCoefficentsThroughUDP) {
+                Log.d("JDPID", "Shutting down Udp receiver");
+                pidClass.pidUdpReceiver.shutdown();
+            }
         }
     };
 
@@ -194,6 +210,8 @@ public class AutonomousMovement {
             this.opMode = opMode;
 
             opMode.robot.update();
+
+            this.loop();
         }
 
         @Override
@@ -247,6 +265,68 @@ public class AutonomousMovement {
 
         @Override
         public void stop() {
+            opMode.robot.drive.stopDriveMotors();
+            opMode.robot.update();
+        }
+    };
+
+    public Command getToWaypoint = new Command() {
+        AutonomousMovement autonomousMovement;
+        Waypoint targetPosition;
+
+        double changeInX;
+        double changeInY;
+        double distanceToTravel;
+
+        double whatToTurnTo;
+
+        @Override
+        public void run(CustomOpMode opMode, Object... inputs) {
+            autonomousMovement = new AutonomousMovement();
+
+            switch (inputs.length){
+                case 0:
+                    //If there are no arguments, throw exception
+                    throw new IllegalArgumentException("Not Enough Arguments Given");
+                case 1:
+                    try {
+                        this.targetPosition = (Waypoint) inputs[0];
+                    } catch (ClassCastException e) {
+                        throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
+                    }
+                    break;
+                default:
+                    //If extra arguments are given, throw exception
+                    throw new IllegalArgumentException("Too Many Arguments Given");
+            }
+
+            opMode.robot.update();
+
+            changeInX = targetPosition.x - opMode.robot.drive.position.x;
+            changeInY = targetPosition.y - opMode.robot.drive.position.y;
+            distanceToTravel = Math.sqrt(Math.pow(changeInX, 2) + Math.pow(changeInY, 2));
+
+            autonomousMovement.turn.run(opMode, Math.atan2(changeInY, changeInX));
+
+            opMode.robot.update();
+
+            this.loop();
+        }
+
+        @Override
+        public void loop() {
+            opMode.robot.drive.setAllMotorsToRelativePosition(1.0, convertFromCMToTicks(distanceToTravel));
+
+            while(!opMode.robot.drive.areMotorsBusy){
+                opMode.robot.update();
+            }
+            this.stop();
+        }
+
+        @Override
+        public void stop() {
+            opMode.robot.drive.position = targetPosition;
+            opMode.robot.drive.motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
             opMode.robot.drive.stopDriveMotors();
             opMode.robot.update();
         }

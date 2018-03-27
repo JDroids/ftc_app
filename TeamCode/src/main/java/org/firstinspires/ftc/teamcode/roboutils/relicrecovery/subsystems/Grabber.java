@@ -24,8 +24,8 @@ public class Grabber extends Subsystem {
         CLOSED
     }
 
-    GRABBER_POSITIONS topGrabberPosition;
-    GRABBER_POSITIONS bottomGrabberPosition;
+    public GRABBER_POSITIONS topGrabberPosition;
+    public GRABBER_POSITIONS bottomGrabberPosition;
 
     public void initHardware(CustomOpMode opMode) {
         //The top and bottom servos are flipped in the config, this is fixed with the variable names

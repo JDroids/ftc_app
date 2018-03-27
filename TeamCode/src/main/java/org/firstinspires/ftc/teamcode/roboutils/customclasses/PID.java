@@ -58,7 +58,7 @@ public class PID {
 
             Log.d("JDPID", "CurrentVal: " + Double.toString(currentValue));
             Log.d("JDPID", "Output: " + Double.toString(output));
-
+            Log.d("JDPID", "Target: " + Double.toString(target));
 
             return output;
         } else {
@@ -76,6 +76,11 @@ public class PID {
             //Remember some stuff for next loop
             previousError = error;
             lastTime = System.currentTimeMillis();
+
+            Log.d("JDPID", "CurrentVal: " + Double.toString(currentValue));
+            Log.d("JDPID", "Output: " + Double.toString(output));
+            Log.d("JDPID", "Is Output NAN?: " + Boolean.toString(Double.isNaN(output)));
+            Log.d("JDPID", "Target: " + Double.toString(target));
 
             return output;
         }

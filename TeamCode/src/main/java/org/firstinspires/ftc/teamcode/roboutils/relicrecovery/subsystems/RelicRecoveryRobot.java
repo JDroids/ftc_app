@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
-import android.util.Log;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
 
@@ -11,7 +7,7 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
  * Created by dansm on 3/21/2018.
  */
 
-//TODO: Implement relic stuff, glyph lifts
+//TODO: put this. everywhere where a subsystem is mentioned
 
 public class RelicRecoveryRobot extends Subsystem {
     public MecanumDrive drive;
@@ -25,15 +21,21 @@ public class RelicRecoveryRobot extends Subsystem {
     public RelicRecoveryRobot(CustomOpMode opMode) {
         this.opMode = opMode;
 
+        this.drive = new MecanumDrive();
+        this.jewelSystem = new JewelSystem();
+        this.grabber = new Grabber();
+        this.relicRecoverer = new RelicRecoverer();
+        this.glyphLifts = new GlyphLifts();
+
         initHardware(this.opMode);
     }
 
     public void initHardware(CustomOpMode opMode) {
-        drive.initHardware(opMode);
-        jewelSystem.initHardware(opMode);
-        grabber.initHardware(opMode);
-        relicRecoverer.initHardware(opMode);
-        glyphLifts.initHardware(opMode);
+        this.drive.initHardware(this.opMode);
+        this.jewelSystem.initHardware(this.opMode);
+        this.grabber.initHardware(this.opMode);
+        this.relicRecoverer.initHardware(this.opMode);
+        this.glyphLifts.initHardware(this.opMode);
     }
 
     public void initServosForAutonomous() {
@@ -45,6 +47,8 @@ public class RelicRecoveryRobot extends Subsystem {
 
         relicRecoverer.relicExtensionServoPosition = RelicRecoverer.RELIC_EXTENSION_SERVO_POSITION.INIT;
         relicRecoverer.relicRotationalServoPosition = 1.0;
+
+        drive.moveAtPower(0);
     }
 
     public void initServosForTeleop() {
@@ -59,8 +63,12 @@ public class RelicRecoveryRobot extends Subsystem {
 
         glyphLifts.firstGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
         glyphLifts.secondGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
-    }
 
+        drive.motorSpeeds.add(0.0);
+        drive.motorSpeeds.add(0.0);
+        drive.motorSpeeds.add(0.0);
+        drive.motorSpeeds.add(0.0);
+    }
 
     @Override
     public void update() {
@@ -72,6 +80,8 @@ public class RelicRecoveryRobot extends Subsystem {
         this.opMode.universalLog("Front Range Sensor Distance", Double.toString(this.drive.frontRangeSensorDistance));
         this.opMode.universalLog("Side Range Sensor Distance", Double.toString(this.drive.sideRangeSensorDistance));
         this.opMode.universalLog("Rear Range Sensor Distance", Double.toString(this.drive.rearRangeSensorDistance));
+
+        this.opMode.universalLog("Heading", Double.toString(drive.imuAngularOrientation.firstAngle));
 
         this.opMode.universalLog("Front Left Motor Power", Double.toString(this.drive.motorSpeeds.get(0)));
         this.opMode.universalLog("Front Right Motor Power", Double.toString(this.drive.motorSpeeds.get(1)));
@@ -86,6 +96,7 @@ public class RelicRecoveryRobot extends Subsystem {
 
         this.opMode.universalLog("Jewel Arm Position", this.jewelSystem.jewelArmPosition.name());
         this.opMode.universalLog("Jewel Knocker Position", this.jewelSystem.jewelKnockerPosition.name());
+
 
         this.opMode.telemetry.update();
     }
