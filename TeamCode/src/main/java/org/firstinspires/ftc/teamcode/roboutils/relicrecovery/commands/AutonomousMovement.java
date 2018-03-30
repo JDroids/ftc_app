@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.commands;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -26,10 +27,6 @@ public class AutonomousMovement {
         FRONT_RANGE_SENSOR,
         SIDE_RANGE_SENSOR,
         REAR_RANGE_SENSOR
-    }
-
-    static public int convertFromCMToTicks(double cm) {
-        return (int) ((((((Math.PI * 4) / 16) * 112) * cm) / 4) / 2.54); //Convert the amount of centimeters to ticks
     }
 
     public Command turn = new Command() {
@@ -79,7 +76,7 @@ public class AutonomousMovement {
 
             pidClass = new PID();
 
-            pidClass.setCoeffecients(0.007, 0.0, 0.002);
+            pidClass.setCoeffecients(0.015, 0.0, 0.002);
 
             opMode.robot.update();
 
@@ -271,14 +268,20 @@ public class AutonomousMovement {
     };
 
     public Command getToWaypoint = new Command() {
+        double allowableError = 0.1;
+
         AutonomousMovement autonomousMovement;
         Waypoint targetPosition;
+        CustomOpMode opMode;
 
         double changeInX;
         double changeInY;
         double distanceToTravel;
 
         double whatToTurnTo;
+        int encoderTarget;
+
+        PID pidClass;
 
         @Override
         public void run(CustomOpMode opMode, Object... inputs) {
@@ -300,35 +303,46 @@ public class AutonomousMovement {
                     throw new IllegalArgumentException("Too Many Arguments Given");
             }
 
-            opMode.robot.update();
+            this.opMode = opMode;
 
-            changeInX = targetPosition.x - opMode.robot.drive.position.x;
-            changeInY = targetPosition.y - opMode.robot.drive.position.y;
+            this.opMode.robot.update();
+
+            changeInX = targetPosition.x - this.opMode.robot.drive.position.x;
+            changeInY = targetPosition.y - this.opMode.robot.drive.position.y;
             distanceToTravel = Math.sqrt(Math.pow(changeInX, 2) + Math.pow(changeInY, 2));
 
-            autonomousMovement.turn.run(opMode, Math.atan2(changeInY, changeInX));
+            autonomousMovement.turn.run(this.opMode, (180/Math.PI * Math.atan2(changeInY, changeInX)));
 
-            opMode.robot.update();
+            Log.d("JDWaypoint", "Distance To Travel: " + distanceToTravel);
+
+            encoderTarget = (int) (this.opMode.robot.drive.convertFromCMToTicks(distanceToTravel) + opMode.robot.drive.averageEncoderTicks);
+
+            this.opMode.robot.drive.motorRunMode = DcMotor.RunMode.RUN_TO_POSITION;
+
+            this.opMode.robot.update();
+
+            this.opMode.robot.drive.setAllMotorsToRelativePosition(encoderTarget);
+            this.opMode.robot.drive.moveAtPower(1);
+
+            this.opMode.robot.update();
 
             this.loop();
         }
 
         @Override
         public void loop() {
-            opMode.robot.drive.setAllMotorsToRelativePosition(1.0, convertFromCMToTicks(distanceToTravel));
-
-            while(!opMode.robot.drive.areMotorsBusy){
-                opMode.robot.update();
+            while(!this.opMode.robot.drive.areMotorsBusy){
+                this.opMode.robot.update();
             }
             this.stop();
         }
 
         @Override
         public void stop() {
-            opMode.robot.drive.position = targetPosition;
-            opMode.robot.drive.motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
-            opMode.robot.drive.stopDriveMotors();
-            opMode.robot.update();
+            this.opMode.robot.drive.position = targetPosition;
+            this.opMode.robot.drive.motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
+            this.opMode.robot.drive.stopDriveMotors();
+            this.opMode.robot.update();
         }
     };
 }

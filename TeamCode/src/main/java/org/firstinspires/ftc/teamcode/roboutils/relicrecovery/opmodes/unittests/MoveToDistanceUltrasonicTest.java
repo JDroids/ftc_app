@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.opmodes.unittests
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.commands.AutonomousMovement;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.Grabber;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRecoveryRobot;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 
 public class MoveToDistanceUltrasonicTest extends CustomOpMode{
     public void runOpMode(){
-        robot = new RelicRecoveryRobot(this);
+        robot = new RelicRecoveryRobot(this, new Waypoint(0, 0));
         robot.initHardware(this);
 
         robot.initServosForTeleop();

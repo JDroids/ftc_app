@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
 
@@ -18,7 +19,7 @@ public class RelicRecoveryRobot extends Subsystem {
 
     CustomOpMode opMode;
 
-    public RelicRecoveryRobot(CustomOpMode opMode) {
+    public RelicRecoveryRobot(CustomOpMode opMode, Waypoint startingPosition) {
         this.opMode = opMode;
 
         this.drive = new MecanumDrive();
@@ -26,6 +27,8 @@ public class RelicRecoveryRobot extends Subsystem {
         this.grabber = new Grabber();
         this.relicRecoverer = new RelicRecoverer();
         this.glyphLifts = new GlyphLifts();
+
+        this.drive.position = startingPosition;
 
         initHardware(this.opMode);
     }
@@ -77,11 +80,14 @@ public class RelicRecoveryRobot extends Subsystem {
         grabber.update();
         relicRecoverer.update();
 
+        this.opMode.universalLog("Robot Position", (int) this.drive.position.x + ", " + (int) this.drive.position.y);
+        this.opMode.universalLog("Distance Traveled (CM)", Double.toString(this.drive.distanceTraveledInCM));
+
         this.opMode.universalLog("Front Range Sensor Distance", Double.toString(this.drive.frontRangeSensorDistance));
         this.opMode.universalLog("Side Range Sensor Distance", Double.toString(this.drive.sideRangeSensorDistance));
         this.opMode.universalLog("Rear Range Sensor Distance", Double.toString(this.drive.rearRangeSensorDistance));
 
-        this.opMode.universalLog("Heading", Double.toString(drive.imuAngularOrientation.firstAngle));
+        this.opMode.universalLog("Heading", Double.toString(drive.heading));
 
         this.opMode.universalLog("Front Left Motor Power", Double.toString(this.drive.motorSpeeds.get(0)));
         this.opMode.universalLog("Front Right Motor Power", Double.toString(this.drive.motorSpeeds.get(1)));

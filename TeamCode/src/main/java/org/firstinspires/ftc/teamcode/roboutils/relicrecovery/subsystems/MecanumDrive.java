@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems;
 
-import android.graphics.PorterDuff;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,11 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 import org.firstinspires.ftc.teamcode.roboutils.templates.DriveTrain;
-import org.opencv.core.Mat;
 
 import java.util.ArrayList;
-
-import static org.firstinspires.ftc.teamcode.resources.hardware.imuSensor;
 
 /**
  * Created by dansm on 3/21/2018.
@@ -44,6 +38,12 @@ public class MecanumDrive extends DriveTrain {
     public DcMotorEx.RunMode motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
 
     public boolean areMotorsBusy = false;
+
+    int distanceTraveledInTicks = 0;
+    public double distanceTraveledInCM = 0;
+    public double averageEncoderTicks;
+
+    double changeInX;
 
     //These are under MecanumDrive as they are uniquely for movement
     BNO055IMU imuSensor;
@@ -79,17 +79,33 @@ public class MecanumDrive extends DriveTrain {
         sideRangeSensor = opMode.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sideRange");
         rearRangeSensor = opMode.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rearRange");
 
-        motorRunMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
+        motorRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
 
         this.opMode = opMode;
     }
 
-    public void setToRelativePosition(double power, int frontLeftTicks, int frontRightTicks, int backLeftTicks, int backRightTicks){
+    public int convertFromCMToTicks(double cm) {
+        return (int) (cm/10 * Math.PI * (1120/16));
+        /*
+        1120 = Bare NeveRest ticks per revolution
+        16 = our motor reduction of 1:16
+        10 = the radius of our wheels in cm
+        */
+    }
+
+    public double convertFromTicksToCM(int ticks) {
+        return (ticks / (1120/16)) * (10 * Math.PI);
+        /*
+        1120 = Bare NeveRest ticks per revolution
+        16 = our motor reduction of 1:16
+        10 = the radius of our wheels in cm
+        */
+    }
+
+    public void setToRelativePosition(int frontLeftTicks, int frontRightTicks, int backLeftTicks, int backRightTicks){
         for(DcMotorEx motor : motors){
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
-        moveAtPower(power);
 
         motors.get(0).setTargetPosition(frontLeftEncoderTicks + frontLeftTicks);
         motors.get(1).setTargetPosition(frontRightEncoderTicks + frontRightTicks);
@@ -97,11 +113,21 @@ public class MecanumDrive extends DriveTrain {
         motors.get(3).setTargetPosition(backRightEncoderTicks + backRightTicks);
     }
 
-    public void setAllMotorsToRelativePosition(double power, int position) {
-        setToRelativePosition(1, -position, position, -position, position);
+    public void setAllMotorsToRelativePosition(int position) {
+        setToRelativePosition(-position, position, -position, position);
     }
 
-    public void update(){
+    int timesRun = 0;
+    double r;
+
+    public void update() {
+        if (timesRun == 0) {
+            motorRunMode = DcMotorEx.RunMode.STOP_AND_RESET_ENCODER;
+        }
+        else if(timesRun == 1){
+            motorRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
+        }
+
         for (DcMotorEx motor : motors) {
             motor.setMode(motorRunMode);
             motor.setPower(motorSpeeds.get(motors.indexOf(motor)));
@@ -114,14 +140,27 @@ public class MecanumDrive extends DriveTrain {
         backLeftEncoderTicks = motors.get(2).getCurrentPosition();
         backRightEncoderTicks = motors.get(3).getCurrentPosition();
 
+        distanceTraveledInTicks = (int) (((Math.abs(frontLeftEncoderTicks) + Math.abs(frontRightEncoderTicks) + Math.abs(backLeftEncoderTicks) + Math.abs(backRightEncoderTicks)) / 4) - distanceTraveledInTicks);
+        distanceTraveledInCM = convertFromTicksToCM(distanceTraveledInTicks);
+
+        averageEncoderTicks = (-frontLeftEncoderTicks + frontRightEncoderTicks + -backLeftEncoderTicks + backRightEncoderTicks) / 4;
+
         imuAngularOrientation = imuSensor.getAngularOrientation();
 
         frontRangeSensorDistance = readAndFilterRangeSensorValues(frontRangeSensor, this.opMode);
         sideRangeSensorDistance = readAndFilterRangeSensorValues(sideRangeSensor, this.opMode);
         rearRangeSensorDistance = readAndFilterRangeSensorValues(rearRangeSensor, this.opMode);
 
-        heading = ((imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES).firstAngle + 180) * -1) * (Math.PI/180);
+        heading = ((imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES).firstAngle + 180) * -1) * (Math.PI / 180);
         //In radians
+
+        r = Math.sqrt(1 + Math.pow(heading, 2));
+
+
+        position.x = distanceTraveledInCM / r + position.x;
+        position.y = (distanceTraveledInCM * heading) / r + position.y;
+
+        timesRun++;
     }
 
     public void setMotorPower(double frontLeftMotorPower, double frontRightMotorPower, double backLeftMotorPower, double backRightMotorPower) {

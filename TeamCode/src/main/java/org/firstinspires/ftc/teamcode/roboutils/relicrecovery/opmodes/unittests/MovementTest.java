@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 
@@ -11,13 +12,12 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
  * Created by dansm on 3/24/2018.
  */
 
-@Disabled
 @TeleOp(name="MovementTest", group="Tests")
 
 public class MovementTest extends CustomOpMode{
     @Override
     public void runOpMode(){
-        robot = new RelicRecoveryRobot(this);
+        robot = new RelicRecoveryRobot(this, new Waypoint(0, 0));
 
         robot.initHardware(this);
 

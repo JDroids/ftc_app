@@ -1,41 +1,43 @@
 package org.firstinspires.ftc.teamcode.roboutils.relicrecovery.opmodes.unittests;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.commands.AutonomousMovement;
 import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
 
+import java.util.ArrayList;
+
 /**
- * Created by dansm on 3/23/2018.
+ * Created by dansm on 3/27/2018.
  */
 
-@Disabled
-@Autonomous(name="Turn Test", group="Tests")
+@Autonomous(name="GetToWaypointTest", group="Tests")
+public class GetToWaypointTest extends CustomOpMode {
 
-public class TurnTest extends CustomOpMode {
     public void runOpMode() {
         robot = new RelicRecoveryRobot(this, new Waypoint(0, 0));
+
         robot.initHardware(this);
-
-        Log.d("JDLog", "Passed hardware init");
-
-        waitForStart();
 
         robot.initServosForTeleop();
 
         robot.update();
 
-        sleep(1000);
+        waitForStart();
 
         AutonomousMovement autonomousMovement = new AutonomousMovement();
 
-        autonomousMovement.turn.run(this, 90.0);
+        ArrayList<Waypoint> waypointList = new ArrayList<>();
 
-        autonomousMovement.turn.run(this, 0.0);
+        waypointList.add(new Waypoint(30, 0));
+        waypointList.add(new Waypoint(30, 30));
+        waypointList.add(new Waypoint(0, 30));
+        waypointList.add(new Waypoint(0, 0));
+
+        for (Waypoint waypoint : waypointList) {
+            autonomousMovement.getToWaypoint.run(this, waypoint);
+        }
     }
 }
