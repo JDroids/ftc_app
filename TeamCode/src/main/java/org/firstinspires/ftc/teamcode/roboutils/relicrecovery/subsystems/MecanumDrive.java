@@ -39,8 +39,17 @@ public class MecanumDrive extends DriveTrain {
 
     public boolean areMotorsBusy = false;
 
-    int distanceTraveledInTicks = 0;
-    public double distanceTraveledInCM = 0;
+    int leftSideTicks;
+    int rightSideTicks;
+
+    double leftSideDistance;
+    double rightSideDistance;
+
+    double distance;
+    double previousDistance;
+
+    double changeInDistance;
+
     public double averageEncoderTicks;
 
     double changeInX;
@@ -97,7 +106,7 @@ public class MecanumDrive extends DriveTrain {
         return (ticks / (1120/16)) * (10 * Math.PI);
         /*
         1120 = Bare NeveRest ticks per revolution
-        16 = our motor reduction of 1:16
+        16 = our motor reduction of 16:1
         10 = the radius of our wheels in cm
         */
     }
@@ -118,7 +127,6 @@ public class MecanumDrive extends DriveTrain {
     }
 
     int timesRun = 0;
-    double r;
 
     public void update() {
         if (timesRun == 0) {
@@ -135,30 +143,38 @@ public class MecanumDrive extends DriveTrain {
 
         areMotorsBusy = motors.get(0).isBusy() || motors.get(1).isBusy() || motors.get(2).isBusy() || motors.get(3).isBusy();
 
+        previousDistance = distance;
+
         frontLeftEncoderTicks = motors.get(0).getCurrentPosition();
         frontRightEncoderTicks = motors.get(1).getCurrentPosition();
         backLeftEncoderTicks = motors.get(2).getCurrentPosition();
         backRightEncoderTicks = motors.get(3).getCurrentPosition();
 
-        distanceTraveledInTicks = (int) (((Math.abs(frontLeftEncoderTicks) + Math.abs(frontRightEncoderTicks) + Math.abs(backLeftEncoderTicks) + Math.abs(backRightEncoderTicks)) / 4) - distanceTraveledInTicks);
-        distanceTraveledInCM = convertFromTicksToCM(distanceTraveledInTicks);
+        leftSideTicks = (-frontLeftEncoderTicks + -backLeftEncoderTicks) / 2;
+        rightSideTicks = (frontRightEncoderTicks + backRightEncoderTicks) / 2;
 
-        averageEncoderTicks = (-frontLeftEncoderTicks + frontRightEncoderTicks + -backLeftEncoderTicks + backRightEncoderTicks) / 4;
+        leftSideDistance = convertFromTicksToCM(leftSideTicks);
+        rightSideDistance = convertFromTicksToCM(rightSideTicks);
+
+        distance = (leftSideDistance + rightSideDistance) / 2;
+
+        changeInDistance = distance - previousDistance;
 
         imuAngularOrientation = imuSensor.getAngularOrientation();
+
+        heading = ((imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES).firstAngle + 180) * -1) * (Math.PI / 180);
+        //In radians
+
+        position.heading = heading;
+        
+        position.x = position.x + changeInDistance * Math.cos(position.heading);
+        position.y = position.y + changeInDistance * Math.sin(position.heading);
+
 
         frontRangeSensorDistance = readAndFilterRangeSensorValues(frontRangeSensor, this.opMode);
         sideRangeSensorDistance = readAndFilterRangeSensorValues(sideRangeSensor, this.opMode);
         rearRangeSensorDistance = readAndFilterRangeSensorValues(rearRangeSensor, this.opMode);
 
-        heading = ((imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES).firstAngle + 180) * -1) * (Math.PI / 180);
-        //In radians
-
-        r = Math.sqrt(1 + Math.pow(heading, 2));
-
-
-        position.x = distanceTraveledInCM / r + position.x;
-        position.y = (distanceTraveledInCM * heading) / r + position.y;
 
         timesRun++;
     }

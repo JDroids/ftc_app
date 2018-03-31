@@ -81,7 +81,6 @@ public class RelicRecoveryRobot extends Subsystem {
         relicRecoverer.update();
 
         this.opMode.universalLog("Robot Position", (int) this.drive.position.x + ", " + (int) this.drive.position.y);
-        this.opMode.universalLog("Distance Traveled (CM)", Double.toString(this.drive.distanceTraveledInCM));
 
         this.opMode.universalLog("Front Range Sensor Distance", Double.toString(this.drive.frontRangeSensorDistance));
         this.opMode.universalLog("Side Range Sensor Distance", Double.toString(this.drive.sideRangeSensorDistance));

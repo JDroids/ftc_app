@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.roboutils.customclasses.PID;
 import org.firstinspires.ftc.teamcode.roboutils.customclasses.Waypoint;
 import org.firstinspires.ftc.teamcode.roboutils.templates.Command;
 import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
+import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 
@@ -30,10 +31,12 @@ public class AutonomousMovement {
     }
 
     public Command turn = new Command() {
-        double targetDegrees;
+        double targetRadians;
+        double safeTargetRadians;
         boolean gettingCoefficentsThroughUDP = false;
 
-        double currentDeg;
+        double currentRad;
+        double safeCurrentRad;
         double motorSpeed;
 
         Orientation angles;
@@ -49,7 +52,7 @@ public class AutonomousMovement {
                     throw new IllegalArgumentException("Not Enough Arguments Given");
                 case 1:
                     try {
-                        this.targetDegrees = (double) arguments[0];
+                        this.targetRadians = (double) arguments[0];
                     } catch (ClassCastException e) {
                         throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
                     }
@@ -57,7 +60,7 @@ public class AutonomousMovement {
                     break;
                 case 2:
                     try {
-                        this.targetDegrees = (double) arguments[0];
+                        this.targetRadians = (double) arguments[0];
                         this.gettingCoefficentsThroughUDP = (boolean) arguments[1];
                     } catch (ClassCastException e) {
                         throw new IllegalArgumentException("Argument(s) of the wrong type (Casting failed)");
@@ -72,7 +75,8 @@ public class AutonomousMovement {
             this.opMode = opMode;
 
             opMode.robot.update();
-            angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+            currentRad = this.opMode.robot.drive.heading;
+            safeCurrentRad = Math.atan2(Math.sin(currentRad), Math.cos(currentRad));
 
             pidClass = new PID();
 
@@ -80,69 +84,23 @@ public class AutonomousMovement {
 
             opMode.robot.update();
 
+            //Ensuring target is between pi and -pi
+            safeTargetRadians = Math.atan2(Math.sin(targetRadians), Math.cos(targetRadians));
+
             this.loop();
         }
 
         @Override
         public void loop() {
-            currentDeg = angles.firstAngle;
-            if ((targetDegrees <= 180 && targetDegrees >= 175) || (targetDegrees >= -180 && targetDegrees <= -175)) {
-                Log.d("JDSanityCheck", "Passed if statement");
-                if (targetDegrees <= -175) {
-                    Log.d("JDSanityCheck", "this shouldn't happen");
-                    targetDegrees = 180 - Math.abs(targetDegrees);
-                    targetDegrees += 180;
+            while (this.opMode.opModeIsActive()) {
+                currentRad = this.opMode.robot.drive.heading;
 
-                }
+                //Ensuring target is between pi and -pi
+                safeCurrentRad = Math.atan2(Math.sin(currentRad), Math.cos(currentRad));
 
-                while ((!(currentDeg > targetDegrees - allowableError && currentDeg < targetDegrees + allowableError)) && opMode.opModeIsActive()) {
-                    //Log.d("JDSanityCheck", "Passed while loop");
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
+                motorSpeed = pidClass.calculateOutput(safeTargetRadians, this.opMode.robot.drive.heading, gettingCoefficentsThroughUDP);
 
-                    currentDeg = angles.firstAngle;
-
-                    Log.d("JDSanityCheck", "Current Degrees Before Math: " + currentDeg);
-
-                    if (currentDeg < 0) {
-                        currentDeg = 180 - Math.abs(currentDeg);
-                        currentDeg += 180;
-                    }
-
-                    Log.d("JDSanityCheck", "Current Degrees After Math: " + currentDeg);
-
-                    if (gettingCoefficentsThroughUDP) {
-                        motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg, true);
-                    } else {
-                        motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg);
-                    }
-                    opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
-
-                    opMode.robot.update();
-
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-                }
-            }
-            else {
-                while ((!(currentDeg > targetDegrees - allowableError && currentDeg < targetDegrees + allowableError)) && opMode.opModeIsActive()) {
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-
-                    currentDeg = angles.firstAngle;
-
-                    if (gettingCoefficentsThroughUDP) {
-                        motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg, true);
-                    } else {
-                        motorSpeed = pidClass.calculateOutput(targetDegrees, currentDeg);
-                    }
-
-                    Log.d("JDTurn", "Motor Power: "+ motorSpeed);
-
-                    opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
-
-                    opMode.robot.update();
-
-                    angles = opMode.robot.drive.imuAngularOrientation.toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).toAngleUnit(AngleUnit.DEGREES);
-                }
-
+                this.opMode.robot.drive.setMotorPower(motorSpeed, motorSpeed, motorSpeed, motorSpeed);
             }
 
             this.stop();
