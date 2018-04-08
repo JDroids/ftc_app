@@ -78,6 +78,7 @@ public class RelicRecoveryRobot extends Subsystem {
         drive.update();
         jewelSystem.update();
         grabber.update();
+        glyphLifts.update();
         relicRecoverer.update();
 
         this.opMode.universalLog("Robot Position", (int) this.drive.position.x + ", " + (int) this.drive.position.y);

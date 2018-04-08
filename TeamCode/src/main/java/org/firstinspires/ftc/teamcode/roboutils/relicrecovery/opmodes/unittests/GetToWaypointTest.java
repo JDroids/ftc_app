@@ -31,13 +31,14 @@ public class GetToWaypointTest extends CustomOpMode {
 
         ArrayList<Waypoint> waypointList = new ArrayList<>();
 
-        waypointList.add(new Waypoint(30, 0));
+        //waypointList.add(new Waypoint(30, 0));
         waypointList.add(new Waypoint(30, 30));
-        waypointList.add(new Waypoint(0, 30));
-        waypointList.add(new Waypoint(0, 0));
+        //waypointList.add(new Waypoint(0, 30));
+        //waypointList.add(new Waypoint(0, 0));
 
         for (Waypoint waypoint : waypointList) {
             autonomousMovement.getToWaypoint.run(this, waypoint);
+            sleep(1000);
         }
     }
 }

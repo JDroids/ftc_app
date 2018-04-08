@@ -14,8 +14,6 @@ import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRe
 public abstract class CustomOpMode extends LinearOpMode {
     public RelicRecoveryRobot robot;
 
-    public boolean partOfLoggingGroup = true;
-
     //StringBuilder sb = new StringBuilder();
 
     public void universalLog(String caption, String content) {

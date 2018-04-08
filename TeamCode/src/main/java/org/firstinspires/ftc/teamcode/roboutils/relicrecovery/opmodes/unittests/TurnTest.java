@@ -14,7 +14,8 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.CustomOpMode;
  * Created by dansm on 3/23/2018.
  */
 
-@Autonomous(name="Turn Test", group="Tests")
+
+@Autonomous(name="TurnTest", group="Tests")
 
 public class TurnTest extends CustomOpMode {
     public void runOpMode() {
@@ -33,8 +34,16 @@ public class TurnTest extends CustomOpMode {
 
         AutonomousMovement autonomousMovement = new AutonomousMovement();
 
-        autonomousMovement.turn.run(this, Math.PI);
+        boolean gettingCoefficientsWirelessely = true;
 
-        autonomousMovement.turn.run(this, 0.0);
+        autonomousMovement.turn.run(this, 22.5, gettingCoefficientsWirelessely);
+
+        autonomousMovement.turn.run(this, 45.0, gettingCoefficientsWirelessely);
+
+        autonomousMovement.turn.run(this, 90.0, gettingCoefficientsWirelessely);
+
+        autonomousMovement.turn.run(this, 180.0, gettingCoefficientsWirelessely);
+
+        autonomousMovement.turn.run(this, 0.0, gettingCoefficientsWirelessely);
     }
 }
