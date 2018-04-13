@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.roboutils.templates.Subsystem;
  * Created by dansm on 3/21/2018.
  */
 
-//TODO: put this. everywhere where a subsystem is mentioned
-
 public class RelicRecoveryRobot extends Subsystem {
     public MecanumDrive drive;
     public JewelSystem jewelSystem;
@@ -30,7 +28,7 @@ public class RelicRecoveryRobot extends Subsystem {
 
         this.drive.position = startingPosition;
 
-        initHardware(this.opMode);
+        this.initHardware(this.opMode);
     }
 
     public void initHardware(CustomOpMode opMode) {
@@ -42,44 +40,44 @@ public class RelicRecoveryRobot extends Subsystem {
     }
 
     public void initServosForAutonomous() {
-        jewelSystem.jewelArmPosition = JewelSystem.JEWEL_ARM_POSITIONS.INIT;
-        jewelSystem.jewelKnockerPosition = JewelSystem.JEWEL_KNOCKER_POSITIONS.INIT;
+        this.jewelSystem.jewelArmPosition = JewelSystem.JEWEL_ARM_POSITIONS.INIT;
+        this.jewelSystem.jewelKnockerPosition = JewelSystem.JEWEL_KNOCKER_POSITIONS.INIT;
 
-        grabber.topGrabberPosition = Grabber.GRABBER_POSITIONS.INIT;
-        grabber.bottomGrabberPosition = Grabber.GRABBER_POSITIONS.INIT;
+        this.grabber.topGrabberPosition = Grabber.GRABBER_POSITIONS.INIT;
+        this.grabber.bottomGrabberPosition = Grabber.GRABBER_POSITIONS.INIT;
 
-        relicRecoverer.relicExtensionServoPosition = RelicRecoverer.RELIC_EXTENSION_SERVO_POSITION.INIT;
-        relicRecoverer.relicRotationalServoPosition = 1.0;
+        this.relicRecoverer.relicExtensionServoPosition = RelicRecoverer.RELIC_EXTENSION_SERVO_POSITION.INIT;
+        this.relicRecoverer.relicRotationalServoPosition = 1.0;
 
-        drive.moveAtPower(0);
+        this.drive.moveAtPower(0);
     }
 
     public void initServosForTeleop() {
-        jewelSystem.jewelArmPosition = JewelSystem.JEWEL_ARM_POSITIONS.INIT;
-        jewelSystem.jewelKnockerPosition = JewelSystem.JEWEL_KNOCKER_POSITIONS.INIT;
+        this.jewelSystem.jewelArmPosition = JewelSystem.JEWEL_ARM_POSITIONS.INIT;
+        this.jewelSystem.jewelKnockerPosition = JewelSystem.JEWEL_KNOCKER_POSITIONS.INIT;
 
-        grabber.topGrabberPosition = Grabber.GRABBER_POSITIONS.TELEOP_INIT;
-        grabber.bottomGrabberPosition = Grabber.GRABBER_POSITIONS.TELEOP_INIT;
+        this.grabber.topGrabberPosition = Grabber.GRABBER_POSITIONS.TELEOP_INIT;
+        this.grabber.bottomGrabberPosition = Grabber.GRABBER_POSITIONS.TELEOP_INIT;
 
-        relicRecoverer.relicExtensionServoPosition = RelicRecoverer.RELIC_EXTENSION_SERVO_POSITION.INIT;
-        relicRecoverer.relicRotationalServoPosition = 1.0;
+        this.relicRecoverer.relicExtensionServoPosition = RelicRecoverer.RELIC_EXTENSION_SERVO_POSITION.INIT;
+        this.relicRecoverer.relicRotationalServoPosition = 1.0;
 
-        glyphLifts.firstGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
-        glyphLifts.secondGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
+        this.glyphLifts.firstGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
+        this.glyphLifts.secondGlyphLiftState = GlyphLifts.GLYPH_LIFT_STATES.STOP;
 
-        drive.motorSpeeds.add(0.0);
-        drive.motorSpeeds.add(0.0);
-        drive.motorSpeeds.add(0.0);
-        drive.motorSpeeds.add(0.0);
+        this.drive.motorSpeeds.add(0.0);
+        this.drive.motorSpeeds.add(0.0);
+        this.drive.motorSpeeds.add(0.0);
+        this.drive.motorSpeeds.add(0.0);
     }
 
     @Override
     public void update() {
-        drive.update();
-        jewelSystem.update();
-        grabber.update();
-        glyphLifts.update();
-        relicRecoverer.update();
+        this.drive.update();
+        this.jewelSystem.update();
+        this.grabber.update();
+        this.glyphLifts.update();
+        this.relicRecoverer.update();
 
         this.opMode.universalLog("Robot Position", (int) this.drive.position.x + ", " + (int) this.drive.position.y);
 

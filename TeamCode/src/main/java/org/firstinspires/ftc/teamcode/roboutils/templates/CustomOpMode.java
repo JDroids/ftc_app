@@ -8,20 +8,24 @@ import org.firstinspires.ftc.teamcode.roboutils.relicrecovery.subsystems.RelicRe
 
 /**
  * Created by dansm on 3/22/2018.
- * An abstract class that is used so implementations of the Command class {@link Command} can access the running CustomOpMode's robot
+ * An expansion of LinearOpMode
  */
 
 public abstract class CustomOpMode extends LinearOpMode {
+    /**
+     * Used for easily accessing the robot in various places
+     */
+
     public RelicRecoveryRobot robot;
 
-    //StringBuilder sb = new StringBuilder();
+    /**
+     * Logs something to both Logcat (at level debug) and telemetry
+     *
+     * The tag for the thing logged to Logcat is "JDLog"
+     * Telemetry is not updated within this function, that has to be done externally
+     */
 
     public void universalLog(String caption, String content) {
-        /*sb.append(caption);
-        sb.append(": ");
-        sb.append(content);
-        sb.append("\n");*/
-
         telemetry.addData(caption, content);
         Log.d("JDLog", caption + ": " + content);
     }
